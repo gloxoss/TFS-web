@@ -36,30 +36,69 @@ export async function register(formData: FormData) {
   const passwordConfirm = formData.get("passwordConfirm") as string;
 
   try {
-    const user = await client.collection("users").create({ 
-      name, 
-      email, 
-      password, 
-      passwordConfirm 
+    // First check name existence
+    const nameExists = await client.collection('users').getList(1, 1, {
+      filter: `name = "${name}"`,
     });
-    
-    console.log("User created:", user); // Debug log
-    
-    // Login after registration
-    const authData = await client.collection("users").authWithPassword(email, password);
-    console.log("Auto-login successful:", authData); // Debug log
 
-    // Force redirect instead of using Next.js redirect
-    return { redirect: "/dashboard" };
-  } catch (e) {
-    console.error('Registration error:', e);
-    if (e instanceof ClientResponseError) {
-      const firstError = Object.values(e.data.data)[0];
-      return { error: Array.isArray(firstError) ? firstError[0] : "Registration failed" };
+    if (nameExists.totalItems > 0) {
+      return { errors: ["This name is already taken"] };
     }
-    return { error: "An unexpected error occurred" };
+
+    // Then check email existence
+    const emailExists = await client.collection('users').getList(1, 1, {
+      filter: `email = "${email}"`,
+    });
+
+    if (emailExists.totalItems > 0) {
+      return { errors: ["This email is already registered"] };
+    }
+
+    // Create new user
+    await client
+      .collection("users")
+      .create({ name, email, password, passwordConfirm });
+    
+    // Auto-login after successful registration
+    await client.collection("users").authWithPassword(email, password);
+    
+    return { redirect: "/dashboard" };
+  } catch (error: unknown) {
+    if (error instanceof ClientResponseError) {
+      // Get validation errors from the data field
+      const validationErrors = error.data.data;
+      if (validationErrors) {
+        const errors: string[] = [];
+        console.log(validationErrors);
+        // Extract validation errors for each field
+        for (const field in validationErrors) {
+          const fieldError = validationErrors[field];
+          if (fieldError.code === 'validation_not_unique') {
+            if (field === 'name') {
+              errors.push('This name is already taken');
+            } else if (field === 'email') {
+              errors.push('This email is already registered');
+            }
+          } else if (fieldError.message) {
+            errors.push(fieldError.message);
+          }
+        }
+
+        if (errors.length > 0) {
+          return { errors };
+        }
+      }
+
+      // If there's a specific error message in the response
+      if (error.message) {
+        return { errors: [error.message] };
+      }
+    }
+
+    return { errors: ["Registration failed. Please try again."] };
   }
 }
+
 
 export async function logout() {
   const client = await createServerClient();
