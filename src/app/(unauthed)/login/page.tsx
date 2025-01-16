@@ -11,11 +11,12 @@ export default function Login() {
   async function handleSubmit(formData: FormData) {
     setError(null);
     const result = await login(formData);
+    
     if (result?.error) {
       setError(result.error);
-    }else {
-      // Registration was successful, redirect to dashboard
-      router.push('/dashboard');
+    } else if (result?.redirect) {
+      // Use router.push for client-side navigation
+      router.push(result.redirect);
     }
   }
 

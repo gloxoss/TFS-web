@@ -29,21 +29,20 @@ export async function updateSession(request: NextRequest) {
   ) as TypedPocketBase;
 
   // Check if the session is still valid
-  // IMPORTANT: We must check if the authStore is valid before proceeding with any requests
   if (client.authStore.isValid) {
     try {
       await client.collection("users").authRefresh();
-    } catch {
+    } catch (error) {
+      console.error('Auth refresh error:', error);
       client.authStore.clear();
     }
   }
 
-  // Allow access to the login and register pages
-  // Please adjust this to match your application's security requirements
-  if (
-    !client.authStore.isValid &&
-    !["/", "/login", "/register"].includes(request.nextUrl.pathname)
-  ) {
+  // Only redirect to login if not accessing public routes
+  const publicPaths = ['/', '/login', '/register'];
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname);
+
+  if (!client.authStore.isValid && !isPublicPath) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     response = NextResponse.redirect(url);

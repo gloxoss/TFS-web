@@ -1,9 +1,31 @@
+// lib/actions/auth.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerClient } from "../pocketbase/server";
 import { ClientResponseError } from "pocketbase";
+
+export async function login(formData: FormData) {
+  const client = await createServerClient();
+
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    const authData = await client.collection("users").authWithPassword(email, password);
+    console.log("Login successful:", authData); // Debug log
+    
+    // Force redirect instead of using Next.js redirect
+    return { redirect: "/dashboard" };
+  } catch (e) {
+    console.error('Login error:', e);
+    if (e instanceof ClientResponseError) {
+      return { error: "Invalid email or password" };
+    }
+    return { error: "An unexpected error occurred" };
+  }
+}
 
 export async function register(formData: FormData) {
   const client = await createServerClient();
@@ -14,34 +36,21 @@ export async function register(formData: FormData) {
   const passwordConfirm = formData.get("passwordConfirm") as string;
 
   try {
-    // Check if user with the same name exists
-    const nameExists = await client.collection('users').getList(1, 1, {
-      filter: `name = "${name}"`,
+    const user = await client.collection("users").create({ 
+      name, 
+      email, 
+      password, 
+      passwordConfirm 
     });
-
-    if (nameExists.totalItems > 0) {
-      return { error: "This name is already taken" };
-    }
-
-    // Check if user with the same email exists
-    const emailExists = await client.collection('users').getList(1, 1, {
-      filter: `email = "${email}"`,
-    });
-
-    if (emailExists.totalItems > 0) {
-      return { error: "This email is already registered" };
-    }
-
-    // Create new user
-    await client
-      .collection("users")
-      .create({ name, email, password, passwordConfirm });
     
-    // Log in the user after successful registration
-    await client.collection("users").authWithPassword(email, password);
+    console.log("User created:", user); // Debug log
     
-    revalidatePath("/");
-    redirect("/dashboard");
+    // Login after registration
+    const authData = await client.collection("users").authWithPassword(email, password);
+    console.log("Auto-login successful:", authData); // Debug log
+
+    // Force redirect instead of using Next.js redirect
+    return { redirect: "/dashboard" };
   } catch (e) {
     console.error('Registration error:', e);
     if (e instanceof ClientResponseError) {
@@ -52,28 +61,9 @@ export async function register(formData: FormData) {
   }
 }
 
-export async function login(formData: FormData) {
-  const client = await createServerClient();
-
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  try {
-    await client.collection("users").authWithPassword(email, password);
-    revalidatePath("/");
-    redirect("/dashboard");
-  } catch (e) {
-    console.error('Login error:', e);
-    if (e instanceof ClientResponseError) {
-      return { error: "Invalid email or password" };
-    }
-    return { error: "An unexpected error occurred" };
-  }
-}
-
 export async function logout() {
   const client = await createServerClient();
   await client.authStore.clear();
-  revalidatePath("/");
+  await revalidatePath("/", "layout");
   redirect("/login");
 }

@@ -9,14 +9,14 @@ export default function Register() {
   const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
-    setError(null); // Clear previous errors
+    setError(null);
     const result = await register(formData);
     
     if (result?.error) {
       setError(result.error);
-    } else {
-      // Registration was successful, redirect to dashboard
-      router.push('/dashboard');
+    } else if (result?.redirect) {
+      // Use router.push for client-side navigation
+      router.push(result.redirect);
     }
   }
 
