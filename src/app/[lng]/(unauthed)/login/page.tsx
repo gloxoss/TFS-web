@@ -5,30 +5,25 @@ import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from 'react-i18next';
 
-interface AuthResponse {
-  error?: string;
-  redirect?: string;
-}
-
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const params = useParams();
   const { t } = useTranslation();
-  
+  const lng = params.lng as string;
+
   async function handleSubmit(formData: FormData) {
     setError(null);
-    const result = await login(formData) as AuthResponse;
+    formData.append('language', lng);
+    const result = await login(formData);
     
     if (result?.error) {
       setError(t('auth.loginError'));
     } else if (result?.redirect) {
-      // Add language prefix to the redirect path
-      const lng = params.lng as string;
       router.push(`/${lng}${result.redirect}`);
     }
   }
-
+  
   return (
     <div className="max-w-md mx-auto">
       <form action={handleSubmit} className="bg-base-100 rounded-lg shadow-md p-8">

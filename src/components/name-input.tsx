@@ -1,7 +1,11 @@
+// components/name-input.tsx
+'use client';
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { usePocketBase } from "@/components/pocketbase-provider";
 import { debounce } from 'lodash';
 import { Check, X, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function NameInput() {
   const [name, setName] = useState('');
@@ -10,11 +14,12 @@ export default function NameInput() {
   const [error, setError] = useState<string | null>(null);
   
   const client = usePocketBase();
+  const { t } = useTranslation();
 
   const checkNameAvailability = useCallback(async (nameToCheck: string) => {
     if (nameToCheck.length < 4) {
       setIsAvailable(null);
-      setError("Name must be at least 4 characters long");
+      setError(t('auth.name.tooShort'));
       return;
     }
 
@@ -28,15 +33,15 @@ export default function NameInput() {
       
       setIsAvailable(response.totalItems === 0);
       if (response.totalItems > 0) {
-        setError("This name is already taken");
+        setError(t('auth.name.taken'));
       }
     } catch (e) {
       console.error('Name check error:', e);
-      setError("Error checking name availability");
+      setError(t('auth.name.checkError'));
     } finally {
       setIsChecking(false);
     }
-  }, [client]);
+  }, [client, t]);
 
   // Memoize the debounced function
   const debouncedCheck = useMemo(
@@ -50,22 +55,21 @@ export default function NameInput() {
     } else {
       setIsAvailable(null);
       if (name.length > 0) {
-        setError("Name must be at least 4 characters long");
+        setError(t('auth.name.tooShort'));
       } else {
         setError(null);
       }
     }
 
-    // Cleanup function
     return () => {
       debouncedCheck.cancel();
     };
-  }, [name, debouncedCheck]);
+  }, [name, debouncedCheck, t]);
 
   return (
     <div>
       <label htmlFor="name" className="block text-sm font-medium text-base-content/80 mb-1">
-        Name
+        {t('auth.name.label')}
       </label>
       <div className="relative">
         <input
@@ -74,7 +78,7 @@ export default function NameInput() {
           name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
+          placeholder={t('auth.name.placeholder')}
           required
           className={`input input-bordered w-full bg-base-200 focus:bg-base-100 transition-colors pr-10
             ${error ? 'input-error' : isAvailable ? 'input-success' : ''}`}
@@ -93,7 +97,7 @@ export default function NameInput() {
         <p className="mt-1 text-sm text-error">{error}</p>
       )}
       {isAvailable && (
-        <p className="mt-1 text-sm text-success">This name is available</p>
+        <p className="mt-1 text-sm text-success">{t('auth.name.available')}</p>
       )}
     </div>
   );

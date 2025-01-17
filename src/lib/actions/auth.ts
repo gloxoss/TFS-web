@@ -5,6 +5,12 @@ import { revalidatePath } from "next/cache";
 import { createServerClient } from "../pocketbase/server";
 import { ClientResponseError } from "pocketbase";
 
+interface AuthResult {
+  error?: string;
+  errors?: string[];
+  redirect?: string;
+}
+
 export async function login(formData: FormData) {
   const client = await createServerClient();
   const email = formData.get("email") as string;
@@ -15,7 +21,7 @@ export async function login(formData: FormData) {
     // Return the base path, the client will add the language prefix
     return { redirect: "/dashboard" };
   } catch (e) {
-    console.error('Login error:', e);
+    console.error("Login error:", e);
     if (e instanceof ClientResponseError) {
       return { error: "Invalid email or password" };
     }
@@ -23,17 +29,18 @@ export async function login(formData: FormData) {
   }
 }
 
-export async function register(formData: FormData) {
+export async function register(formData: FormData): Promise<AuthResult> {
   const client = await createServerClient();
 
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const passwordConfirm = formData.get("passwordConfirm") as string;
+  const language = formData.get("language") as string; // Get language from form
 
   try {
     // First check name existence
-    const nameExists = await client.collection('users').getList(1, 1, {
+    const nameExists = await client.collection("users").getList(1, 1, {
       filter: `name = "${name}"`,
     });
 
@@ -42,7 +49,7 @@ export async function register(formData: FormData) {
     }
 
     // Then check email existence
-    const emailExists = await client.collection('users').getList(1, 1, {
+    const emailExists = await client.collection("users").getList(1, 1, {
       filter: `email = "${email}"`,
     });
 
@@ -51,14 +58,19 @@ export async function register(formData: FormData) {
     }
 
     // Create new user
-    await client
-      .collection("users")
-      .create({ name, email, password, passwordConfirm });
-    
+    await client.collection("users").create({
+      name,
+      email,
+      password,
+      passwordConfirm,
+      language, // Store language preference in user record if your PB schema supports it
+    });
+
     // Auto-login after successful registration
     await client.collection("users").authWithPassword(email, password);
-    
-    return { redirect: "/dashboard" };
+
+    // Return the base path and language
+    return { redirect: `/dashboard` };
   } catch (error: unknown) {
     if (error instanceof ClientResponseError) {
       const validationErrors = error.data?.data;
@@ -66,11 +78,11 @@ export async function register(formData: FormData) {
         const errors: string[] = [];
         for (const field in validationErrors) {
           const fieldError = validationErrors[field];
-          if (fieldError.code === 'validation_not_unique') {
-            if (field === 'name') {
-              errors.push('This name is already taken');
-            } else if (field === 'email') {
-              errors.push('This email is already registered');
+          if (fieldError.code === "validation_not_unique") {
+            if (field === "name") {
+              errors.push("This name is already taken");
+            } else if (field === "email") {
+              errors.push("This email is already registered");
             }
           } else if (fieldError.message) {
             errors.push(fieldError.message);
