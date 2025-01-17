@@ -15,7 +15,15 @@ export function LanguageSwitcher({ lng }: LanguageSwitcherProps) {
 
   const handleLanguageChange = (newLng: string) => {
     const currentPath = window.location.pathname
-    const newPath = currentPath.replace(`/${lng}/`, `/${newLng}/`)
+    let newPath: string
+
+    // Handle root path specially
+    if (currentPath === '/' || currentPath === `/${lng}` || currentPath === `/${lng}/`) {
+      newPath = `/${newLng}`
+    } else {
+      newPath = currentPath.replace(`/${lng}/`, `/${newLng}/`)
+    }
+
     router.push(newPath)
     i18n.changeLanguage(newLng)
   }
