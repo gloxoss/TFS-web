@@ -2,28 +2,31 @@
 
 import { logout } from "@/lib/actions/auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "./pocketbase-provider";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ClientWrapper } from './client-wrapper'
-
-
-// interface NavbarProps {
-//   lng: string;
-// }
+import { ClientWrapper } from './client-wrapper';
 
 export function Navbar({ lng }: { lng: string }) {
   const user = useUser();
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result?.redirect) {
+      router.push(`/${lng}${result.redirect}`);
+    }
   };
 
   const isActive = (path: string) => {
@@ -85,7 +88,7 @@ export function Navbar({ lng }: { lng: string }) {
                 </li>
                 <li>
                   <button
-                    onClick={() => logout()}
+                    onClick={handleLogout}
                     className="px-4 py-2 rounded-md hover:bg-base-200 transition-colors"
                   >
                     {t('nav.logout')}
@@ -133,9 +136,9 @@ export function Navbar({ lng }: { lng: string }) {
                 {t('nav.dashboard')}
               </Link>
               <button
-                onClick={() => {
-                  logout();
+                onClick={async () => {
                   setIsMenuOpen(false);
+                  await handleLogout();
                 }}
                 className="w-full text-left px-4 py-2 rounded-md hover:bg-base-200 transition-colors"
               >
