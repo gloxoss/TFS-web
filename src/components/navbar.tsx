@@ -1,27 +1,35 @@
-"use client";
+'use client';
 
 import { logout } from "@/lib/actions/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "./pocketbase-provider";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ClientWrapper } from './client-wrapper'
 
-export function Navbar() {
+
+// interface NavbarProps {
+//   lng: string;
+// }
+
+export function Navbar({ lng }: { lng: string }) {
   const user = useUser();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const isActive = (path: string) => {
-    return pathname === path;
+    return pathname === `/${lng}${path}`;
   };
 
-  // Common link style with active state
   const linkStyle = (path: string) => `
     px-4 py-2 rounded-md transition-colors
     ${isActive(path) 
@@ -31,12 +39,12 @@ export function Navbar() {
   `;
 
   return (
+    <ClientWrapper>
     <nav className="border-b shadow-sm bg-base-100">
       <div className="navbar mx-auto max-w-7xl px-4">
-        {/* Logo/Brand - Always visible */}
         <div className="navbar-start">
           <Link 
-            href="/" 
+            href={`/${lng}`}
             className={`text-xl font-bold transition-colors ${
               isActive('/') ? 'text-primary' : 'hover:text-primary'
             }`}
@@ -45,9 +53,9 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile menu button */}
         <div className="navbar-end flex md:hidden">
           <ThemeToggle />
+          <LanguageSwitcher lng={lng} />
           <button
             onClick={toggleMenu}
             className="btn btn-ghost btn-circle ml-2"
@@ -61,18 +69,18 @@ export function Navbar() {
           </button>
         </div>
 
-        {/* Desktop menu - Hidden on mobile */}
         <div className="navbar-end hidden md:flex items-center gap-2">
           <ThemeToggle />
+          <LanguageSwitcher lng={lng} />
           <ul className="flex items-center space-x-2">
             {user ? (
               <>
                 <li>
                   <Link 
-                    href="/dashboard" 
+                    href={`/${lng}/dashboard`}
                     className={linkStyle('/dashboard')}
                   >
-                    {user.email}
+                    {t('nav.dashboard')}
                   </Link>
                 </li>
                 <li>
@@ -80,7 +88,7 @@ export function Navbar() {
                     onClick={() => logout()}
                     className="px-4 py-2 rounded-md hover:bg-base-200 transition-colors"
                   >
-                    Log out
+                    {t('nav.logout')}
                   </button>
                 </li>
               </>
@@ -88,18 +96,18 @@ export function Navbar() {
               <>
                 <li>
                   <Link 
-                    href="/login"
+                    href={`/${lng}/login`}
                     className={linkStyle('/login')}
                   >
-                    Login
+                    {t('nav.login')}
                   </Link>
                 </li>
                 <li>
                   <Link 
-                    href="/register"
+                    href={`/${lng}/register`}
                     className={linkStyle('/register')}
                   >
-                    Register
+                    {t('nav.register')}
                   </Link>
                 </li>
               </>
@@ -108,7 +116,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu - Slides down when open */}
+      {/* Mobile menu */}
       <div className={`
         md:hidden transition-all duration-300 ease-in-out
         ${isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}
@@ -118,11 +126,11 @@ export function Navbar() {
           {user ? (
             <>
               <Link 
-                href="/dashboard" 
+                href={`/${lng}/dashboard`}
                 className={`block ${linkStyle('/dashboard')}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                {user.email}
+                {t('nav.dashboard')}
               </Link>
               <button
                 onClick={() => {
@@ -131,29 +139,30 @@ export function Navbar() {
                 }}
                 className="w-full text-left px-4 py-2 rounded-md hover:bg-base-200 transition-colors"
               >
-                Log out
+                {t('nav.logout')}
               </button>
             </>
           ) : (
             <>
               <Link 
-                href="/login"
+                href={`/${lng}/login`}
                 className={`block ${linkStyle('/login')}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Login
+                {t('nav.login')}
               </Link>
               <Link 
-                href="/register"
+                href={`/${lng}/register`}
                 className={`block ${linkStyle('/register')}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Register
+                {t('nav.register')}
               </Link>
             </>
           )}
         </div>
       </div>
     </nav>
+    </ClientWrapper>
   );
 }

@@ -1,43 +1,53 @@
-// components/footer.tsx
-import Link from 'next/link';
-import { Github, Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
+'use client'
 
-export function Footer() {
+import Link from 'next/link'
+import { Github, Facebook, Twitter, Linkedin, Mail } from 'lucide-react'
+import { useTranslation } from '@/app/i18n/client'
+import { ClientWrapper } from './client-wrapper'
+
+
+// interface FooterProps {
+//   lng: string
+// }
+
+export function Footer({ lng }: { lng: string }) {
+  const { t } = useTranslation(lng, 'common')
+
   return (
+    <ClientWrapper>
     <footer className="border-t mt-auto bg-base-200">
       <div className="mx-auto max-w-7xl py-12 px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Column 1 - About */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">About Us</h3>
+           {/* Column 1 - About */}
+           <div>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.about')}</h3>
             <p className="text-sm text-base-content/80">
-              A modern authentication system built with Next.js and PocketBase.
-              Secure, fast, and easy to use.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Column 2 - Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Home
+                <Link href={`/${lng}`} className="hover:text-primary transition-colors">
+                  {t('nav.home')}
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard" className="hover:text-primary transition-colors">
-                  Dashboard
+                <Link href={`/${lng}/dashboard`} className="hover:text-primary transition-colors">
+                  {t('nav.dashboard')}
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-primary transition-colors">
-                  Login
+                <Link href={`/${lng}/login`} className="hover:text-primary transition-colors">
+                  {t('nav.login')}
                 </Link>
               </li>
               <li>
-                <Link href="/register" className="hover:text-primary transition-colors">
-                  Register
+                <Link href={`/${lng}/register`} className="hover:text-primary transition-colors">
+                  {t('nav.register')}
                 </Link>
               </li>
             </ul>
@@ -45,7 +55,7 @@ export function Footer() {
 
           {/* Column 3 - Resources */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Resources</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.resources')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <a 
@@ -82,7 +92,7 @@ export function Footer() {
 
           {/* Column 4 - Connect */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.connect')}</h3>
             <div className="flex flex-col space-y-4">
               <a 
                 href="https://github.com/shadowchess-org"
@@ -125,7 +135,7 @@ export function Footer() {
                 className="flex items-center gap-2 hover:text-primary transition-colors"
               >
                 <Mail className="h-5 w-5" />
-                <span>Email Us</span>
+                <span>{t('footer.emailUs')}</span>
               </a>
             </div>
           </div>
@@ -133,9 +143,10 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-base-300 text-center text-sm text-base-content/60">
-          <p>© {new Date().getFullYear()} PB-Next-client. All rights reserved.</p>
+          <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
         </div>
       </div>
     </footer>
+    </ClientWrapper>
   );
 }

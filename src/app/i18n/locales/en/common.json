@@ -1,0 +1,42 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Log out"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
+    "login": "Login",
+    "register": "Register",
+    "loginError": "Invalid email or password",
+    "registerSuccess": "Registration successful",
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "settings": "Settings",
+    "serverInfo": "Server Information",
+    "clientInfo": "Client Information",
+    "recentActivity": "Recent Activity",
+    "profile": "Profile",
+    "sessions": "Sessions",
+    "activity": "Activity"
+  },
+  "footer": {
+    "about": "About Us",
+    "description": "A modern authentication system built with Next.js and PocketBase. Secure, fast, and easy to use.",
+    "quickLinks": "Quick Links",
+    "resources": "Resources",
+    "connect": "Connect With Us",
+    "emailUs": "Email Us",
+    "copyright": "© {{year}} PB-Next. All rights reserved."
+  }
+}

@@ -2,21 +2,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createServerClient } from "../pocketbase/server";
 import { ClientResponseError } from "pocketbase";
 
 export async function login(formData: FormData) {
   const client = await createServerClient();
-
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
   try {
-    const authData = await client.collection("users").authWithPassword(email, password);
-    console.log("Login successful:", authData); // Debug log
-    
-    // Force redirect instead of using Next.js redirect
+    await client.collection("users").authWithPassword(email, password);
+    // Return the base path, the client will add the language prefix
     return { redirect: "/dashboard" };
   } catch (e) {
     console.error('Login error:', e);
@@ -65,12 +61,9 @@ export async function register(formData: FormData) {
     return { redirect: "/dashboard" };
   } catch (error: unknown) {
     if (error instanceof ClientResponseError) {
-      // Get validation errors from the data field
-      const validationErrors = error.data.data;
+      const validationErrors = error.data?.data;
       if (validationErrors) {
         const errors: string[] = [];
-        console.log(validationErrors);
-        // Extract validation errors for each field
         for (const field in validationErrors) {
           const fieldError = validationErrors[field];
           if (fieldError.code === 'validation_not_unique') {
@@ -83,26 +76,21 @@ export async function register(formData: FormData) {
             errors.push(fieldError.message);
           }
         }
-
         if (errors.length > 0) {
           return { errors };
         }
       }
-
-      // If there's a specific error message in the response
       if (error.message) {
         return { errors: [error.message] };
       }
     }
-
     return { errors: ["Registration failed. Please try again."] };
   }
 }
 
-
 export async function logout() {
   const client = await createServerClient();
   await client.authStore.clear();
-  await revalidatePath("/", "layout");
-  redirect("/login");
+  revalidatePath("/", "layout");
+  return { redirect: "/login" };
 }

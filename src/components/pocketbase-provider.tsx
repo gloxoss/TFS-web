@@ -42,6 +42,15 @@ export function PocketBaseProvider({
     authRefresh();
   }, [initialToken, initialUser]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      clientRef.current.authStore.loadFromCookie(document.cookie);
+      clientRef.current.authStore.onChange(() => {
+        document.cookie = clientRef.current.authStore.exportToCookie({ httpOnly: false });
+      });
+    }
+  }, []);
+
   return (
     <PocketBaseContext.Provider value={clientRef.current}>
       {children}

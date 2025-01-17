@@ -1,41 +1,27 @@
-// components/theme-toggle.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-
-const THEME_LIGHT = 'lofi';
-const THEME_DARK = 'dark';
+import { useTheme } from '@/hooks/use-theme';
 
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    // Get initial theme from localStorage or system preference
-    const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialIsDark = savedTheme ? savedTheme === THEME_DARK : systemPrefersDark;
-    
-    setIsDark(initialIsDark);
-    document.documentElement.setAttribute('data-theme', initialIsDark ? THEME_DARK : THEME_LIGHT);
-  }, []);
+  // Only render UI after first mount to avoid hydration mismatch
+  useEffect(() => setMounted(true), []);
 
-  const toggleTheme = () => {
-    const newIsDark = !isDark;
-    const newTheme = newIsDark ? THEME_DARK : THEME_LIGHT;
-    
-    setIsDark(newIsDark);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-  };
+  if (!mounted) {
+    return null; // Return null on first render to avoid hydration mismatch
+  }
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => setTheme(theme === 'dark' ? 'lofi' : 'dark')}
       className="btn btn-ghost btn-circle"
       aria-label="Toggle theme"
     >
-      {isDark ? (
+      {theme === 'dark' ? (
         <Sun className="h-5 w-5" />
       ) : (
         <Moon className="h-5 w-5" />
