@@ -3,7 +3,7 @@
 import { logout } from "@/lib/actions/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useUser } from "./pocketbase-provider";
+import { useUser } from "../pocketbase-provider";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { Menu, X } from "lucide-react";

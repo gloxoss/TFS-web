@@ -4,7 +4,7 @@
 import { register } from "@/lib/actions/auth";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import NameInput from "@/components/name-input";
+import NameInput from "@/components/ui/name-input";
 import { AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

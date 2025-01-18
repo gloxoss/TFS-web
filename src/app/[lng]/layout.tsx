@@ -1,5 +1,5 @@
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/ui/navbar";
+import { Footer } from "@/components/ui/footer";
 import { PocketBaseProvider } from "@/components/pocketbase-provider";
 import { createServerClient } from "@/lib/pocketbase/server";
 import { cn } from "@/lib/utils";
