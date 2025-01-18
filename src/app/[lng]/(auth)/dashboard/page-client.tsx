@@ -2,7 +2,7 @@
 "use client";
 
 import { useUser } from "@/components/pocketbase-provider";
-import { Shield } from "lucide-react";
+//import { Shield } from "lucide-react";
 
 export function DashboardClient() {
   const user = useUser();

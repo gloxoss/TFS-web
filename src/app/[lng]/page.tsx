@@ -96,7 +96,7 @@ export default async function Home() {
         <p className="text-base text-muted-foreground">
           Visit{" "}
           <a
-            href="https://github.com/jianyuan/pocketbase-nextjs-auth"
+            href="https://github.com/shadowchess-org/PB-Next"
             target="_blank"
             className="link link-primary"
           >
