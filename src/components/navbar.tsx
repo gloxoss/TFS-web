@@ -34,13 +34,13 @@ export function Navbar({ lng }: { lng: string }) {
   };
 
   const linkStyle = (path: string) => `
-    px-4 py-2 rounded-md transition-colors
-    ${
-      isActive(path)
-        ? "bg-primary text-primary-content hover:bg-primary-focus"
-        : "hover:bg-base-200"
-    }
-  `;
+  px-4 py-2 rounded-md transition-colors inline-flex items-center
+  ${
+    isActive(path)
+      ? "bg-primary text-primary-content hover:bg-primary-focus"
+      : "hover:bg-base-200"
+  }
+`;
 
   return (
     <ClientWrapper>
@@ -56,6 +56,12 @@ export function Navbar({ lng }: { lng: string }) {
               PB-Next
             </Link>
           </div>
+
+          <li>
+            <Link href={`/${lng}/about`} className={linkStyle("/about")}>
+              {t("nav.about")}
+            </Link>
+          </li>
 
           <div className="navbar-end flex md:hidden">
             <LanguageSwitcher lng={lng} />

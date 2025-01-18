@@ -4,7 +4,8 @@
     "dashboard": "Panel",
     "login": "Iniciar sesión",
     "register": "Registrarse",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "about": "About"
   },
   "auth": {
     "register": "Registrarse",
