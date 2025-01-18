@@ -2,13 +2,14 @@
 
 import { login } from "@/lib/actions/auth";
 import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const { t } = useTranslation();
   const lng = params.lng as string;
 
@@ -20,7 +21,15 @@ export default function Login() {
     if (result?.error) {
       setError(t('auth.loginError'));
     } else if (result?.redirect) {
-      router.push(`/${lng}${result.redirect}`);
+      // Check if there's a redirect parameter in the URL
+      const redirectTo = searchParams.get('redirect');
+      if (redirectTo && redirectTo.startsWith('/')) {
+        // Ensure the redirect URL is safe (starts with /)
+        router.push(redirectTo);
+      } else {
+        // Default redirect to dashboard
+        router.push(`/${lng}${result.redirect}`);
+      }
     }
   }
   
@@ -70,5 +79,5 @@ export default function Login() {
         </div>
       </form>
     </div>
-  )
-}
+    );
+  }
