@@ -16,6 +16,7 @@
     "passwordPlaceholder": "Enter your password",
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Confirm your password",
+    "loginError": "Incorrect email or password",
     "name": {
       "label": "Name",
       "placeholder": "Enter your name",
