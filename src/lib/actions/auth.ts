@@ -36,7 +36,7 @@ export async function register(formData: FormData): Promise<AuthResult> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const passwordConfirm = formData.get("passwordConfirm") as string;
-  const language = formData.get("language") as string; // Get language from form
+  const language = formData.get("language") as string;
 
   try {
     // First check name existence
@@ -58,18 +58,34 @@ export async function register(formData: FormData): Promise<AuthResult> {
     }
 
     // Create new user
+    // await client.collection("users").create({
+    //   name,
+    //   email,
+    //   password,
+    //   passwordConfirm,
+    //   language, // Store language preference in user record if your PB schema supports it
+    // });
+
+    // Create new user
     await client.collection("users").create({
       name,
       email,
       password,
       passwordConfirm,
-      language, // Store language preference in user record if your PB schema supports it
+      language,
     });
 
-    // Auto-login after successful registration
+    // Login after registration and ensure the auth store is updated
     await client.collection("users").authWithPassword(email, password);
 
-    // Return the base path and language
+    // Make sure the auth is saved in cookies
+    if (typeof document !== "undefined") {
+      document.cookie = client.authStore.exportToCookie({ httpOnly: false });
+    }
+
+    // Add a small delay to ensure auth state propagation
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     return { redirect: `/dashboard` };
   } catch (error: unknown) {
     if (error instanceof ClientResponseError) {

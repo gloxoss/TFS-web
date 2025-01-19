@@ -24,7 +24,18 @@ export default function Register() {
     if (result?.errors) {
       setErrors(result.errors.map(error => t(`auth.errors.${error}`)));
     } else if (result?.redirect) {
+      // Store auth attempt state temporarily
+      sessionStorage.setItem('auth_attempt', 'true');
+      
+      // Add a small delay to ensure auth state propagation
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       router.push(`/${lng}${result.redirect}`);
+      
+      // Clean up after navigation
+      setTimeout(() => {
+        sessionStorage.removeItem('auth_attempt');
+      }, 1000);
     }
   }
 
