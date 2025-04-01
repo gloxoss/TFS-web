@@ -49,7 +49,7 @@ export default function Register() {
         {errors.length > 0 && (
           <div className="bg-error/10 border border-error/30 text-error px-4 py-3 rounded-lg mb-6">
             <div className="flex items-center gap-2 mb-2">
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <AlertCircle className="h-5 w-5 shrink-0" />
               <span className="font-medium">{t('auth.registrationFailed')}:</span>
             </div>
             <ul className="list-disc ml-5 space-y-1">

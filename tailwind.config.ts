@@ -1,4 +1,4 @@
-import daisyui from "daisyui";
+//import daisyui from "daisyui";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,8 +19,8 @@ export default {
       },
     },
   },
-  plugins: [daisyui],
-  daisyui: {
-    themes: ["lofi", "dark"], // specify the themes we want to use
-  },
+  // plugins: [daisyui],
+  // daisyui: {
+  //   themes: ["lofi", "dark"], // specify the themes we want to use
+  // },
 } satisfies Config;

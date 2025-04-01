@@ -33,7 +33,7 @@ export function LanguageSwitcher({ lng }: LanguageSwitcherProps) {
       <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
         <span className="text-xl">{lng.toUpperCase()}</span>
       </div>
-      <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+      <ul tabIndex={0} className="dropdown-content z-1 menu p-2 shadow-sm bg-base-100 rounded-box w-52">
         {languages.map((language) => (
           <li key={language}>
             <button

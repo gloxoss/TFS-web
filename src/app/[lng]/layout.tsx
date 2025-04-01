@@ -66,7 +66,7 @@ export default async function RootLayout({
             initialUser={client.authStore.record}
           >
             <Navbar lng={lng} />
-            <main className="flex-grow">
+            <main className="grow">
               <div className="mx-auto max-w-7xl px-4 py-12">{children}</div>
             </main>
             <Footer lng={lng} />

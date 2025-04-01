@@ -36,7 +36,7 @@ export function AboutClient({ lng }: { lng: string }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[1, 2, 3, 4].map((num) => (
               <div key={num} className="flex items-center gap-4">
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-content">
+                <div className="shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-content">
                   {num}
                 </div>
                 <p className="text-base-content/80">{t(`about.features.list.${num}`)}</p>

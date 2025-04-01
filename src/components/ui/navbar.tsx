@@ -44,7 +44,7 @@ export function Navbar({ lng }: { lng: string }) {
 
   return (
     <ClientWrapper>
-      <nav className="border-b shadow-sm bg-base-100">
+      <nav className="border-b shadow-xs bg-base-100">
         <div className="navbar mx-auto max-w-7xl px-4">
           <div className="navbar-start">
             <Link
