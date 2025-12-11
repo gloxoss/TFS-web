@@ -1,0 +1,35 @@
+{
+  "title": "Votre demande de devis",
+  "description": "Vérifiez votre sélection d'équipement et procédez à la demande de devis.",
+  "continueShopping": "Continuer vos achats",
+  "empty": {
+    "title": "Votre panier est vide",
+    "description": "Parcourez notre catalogue d'équipement cinéma professionnel et ajoutez des articles à votre demande de devis.",
+    "browseEquipment": "Parcourir l'équipement"
+  },
+  "items": {
+    "title": "Articles",
+    "clearAll": "Tout effacer",
+    "remove": "Supprimer",
+    "rentalDates": "Dates de location",
+    "quantity": "Qté",
+    "perDay": "/jour",
+    "days": "jours",
+    "lineTotal": "Sous-total"
+  },
+  "summary": {
+    "title": "Récapitulatif",
+    "subtotal": "Sous-total",
+    "discount": "Remise durée",
+    "discountNote": "({{percent}}% pour {{days}}+ jours)",
+    "total": "Total estimé",
+    "proceedToQuote": "Demander un devis",
+    "note": "Le prix final sera confirmé après examen par notre équipe."
+  },
+  "drawer": {
+    "title": "Votre devis",
+    "viewCart": "Voir le panier complet",
+    "checkout": "Demander un devis",
+    "empty": "Aucun article"
+  }
+}

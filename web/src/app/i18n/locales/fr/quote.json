@@ -1,0 +1,102 @@
+{
+  "title": "Demander un devis",
+  "description": "Remplissez le formulaire ci-dessous pour soumettre votre demande de location. Notre équipe examinera et répondra dans les 24 heures.",
+  "steps": {
+    "contact": "Coordonnées",
+    "project": "Détails du projet",
+    "review": "Vérifier & Soumettre"
+  },
+  "contact": {
+    "title": "Coordonnées",
+    "subtitle": "Comment pouvons-nous vous contacter ?",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrez votre prénom",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Entrez votre nom",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "vous@exemple.com",
+    "phone": "Numéro de téléphone",
+    "phonePlaceholder": "+33 1 23 45 67 89",
+    "company": "Entreprise (Optionnel)",
+    "companyPlaceholder": "Votre société de production"
+  },
+  "project": {
+    "title": "Détails du projet",
+    "subtitle": "Parlez-nous de votre production",
+    "projectType": "Type de projet",
+    "projectTypePlaceholder": "Sélectionner le type de projet",
+    "projectTypes": {
+      "film": "Long métrage",
+      "commercial": "Publicité",
+      "documentary": "Documentaire",
+      "music_video": "Clip musical",
+      "corporate": "Vidéo d'entreprise",
+      "event": "Couverture événementielle",
+      "other": "Autre"
+    },
+    "projectDescription": "Description du projet (Optionnel)",
+    "projectDescriptionPlaceholder": "Brève description de votre projet...",
+    "deliveryPreference": "Préférence de livraison",
+    "deliveryPreferencePlaceholder": "Sélectionner une option de livraison",
+    "deliveryOptions": {
+      "pickup": "Je récupère sur place",
+      "delivery": "Livraison à mon adresse",
+      "flexible": "Flexible - à discuter"
+    },
+    "notes": "Notes supplémentaires (Optionnel)",
+    "notesPlaceholder": "Exigences particulières, préférences horaires ou questions..."
+  },
+  "review": {
+    "title": "Vérifiez votre demande",
+    "subtitle": "Veuillez vérifier toutes les informations avant de soumettre",
+    "contactSection": "Coordonnées",
+    "projectSection": "Détails du projet",
+    "itemsSection": "Équipement",
+    "edit": "Modifier",
+    "items": "articles",
+    "rentalPeriod": "Période de location",
+    "days": "jours",
+    "subtotal": "Sous-total",
+    "discount": "Remise durée",
+    "total": "Total estimé",
+    "termsLabel": "J'accepte les",
+    "termsLink": "Conditions d'utilisation",
+    "termsAnd": "et la",
+    "privacyLink": "Politique de confidentialité",
+    "submit": "Soumettre la demande",
+    "submitting": "Envoi en cours..."
+  },
+  "success": {
+    "title": "Demande de devis envoyée !",
+    "subtitle": "Merci pour votre demande",
+    "confirmationLabel": "Numéro de confirmation",
+    "message": "Nous avons reçu votre demande de devis et l'examinerons sous peu. Vous recevrez un e-mail de confirmation avec les détails.",
+    "nextSteps": "Et ensuite ?",
+    "step1": "Notre équipe examinera votre sélection d'équipement",
+    "step2": "Nous vérifierons la disponibilité pour vos dates",
+    "step3": "Vous recevrez un devis détaillé dans les 24 heures",
+    "backToEquipment": "Parcourir plus d'équipement",
+    "viewDashboard": "Voir mes demandes"
+  },
+  "error": {
+    "emptyCart": "Votre panier est vide. Veuillez ajouter des articles avant de soumettre.",
+    "submissionFailed": "Impossible de soumettre votre demande de devis. Veuillez réessayer ou nous contacter directement.",
+    "tryAgain": "Réessayer"
+  },
+  "navigation": {
+    "back": "Retour",
+    "next": "Suivant",
+    "backToCart": "Retour au panier"
+  },
+  "validation": {
+    "firstNameRequired": "Le prénom est requis",
+    "lastNameRequired": "Le nom est requis",
+    "emailRequired": "L'e-mail est requis",
+    "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+    "phoneRequired": "Le numéro de téléphone est requis",
+    "phoneInvalid": "Veuillez entrer un numéro de téléphone valide",
+    "projectTypeRequired": "Veuillez sélectionner un type de projet",
+    "deliveryRequired": "Veuillez sélectionner une préférence de livraison",
+    "termsRequired": "Vous devez accepter les conditions pour continuer"
+  }
+}

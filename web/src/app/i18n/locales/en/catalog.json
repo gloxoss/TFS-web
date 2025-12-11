@@ -1,0 +1,58 @@
+{
+  "title": "Equipment Catalog",
+  "description": "Browse our professional cinema equipment available for rent",
+  "search": {
+    "placeholder": "Search equipment...",
+    "noResults": "No equipment found",
+    "noResultsHint": "Try adjusting your filters or search term"
+  },
+  "filters": {
+    "allCategories": "All Categories",
+    "clearFilters": "Clear Filters"
+  },
+  "product": {
+    "dailyRate": "Daily Rate",
+    "perDay": "/day",
+    "viewDetails": "View Details",
+    "addToQuote": "Add to Quote",
+    "outOfStock": "Currently Unavailable",
+    "featured": "Featured",
+    "inStock": "In Stock",
+    "limited": "Limited Availability"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "results": "results"
+  },
+  "categories": {
+    "camera": "Cameras",
+    "lens": "Lenses",
+    "light": "Lighting",
+    "audio": "Audio",
+    "grip": "Grip & Support",
+    "misc": "Accessories"
+  },
+  "detail": {
+    "backToCatalog": "Back to Catalog",
+    "specifications": "Specifications",
+    "description": "Description",
+    "rentalPeriod": "Rental Period",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "quantity": "Quantity",
+    "addToCart": "Add to Quote",
+    "addedToCart": "Added to Quote!",
+    "selectDates": "Please select rental dates",
+    "estimatedTotal": "Estimated Total",
+    "days": "days",
+    "relatedProducts": "You May Also Like"
+  },
+  "meta": {
+    "title": "Equipment Catalog | TFS Cinema Rental",
+    "description": "Browse our professional cinema equipment catalog. Cameras, lenses, lighting, and more available for rent."
+  }
+}

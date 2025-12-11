@@ -3,8 +3,9 @@
 @config '../../tailwind.config.ts';
 
 @plugin "daisyui" {
-    themes: lofi --default, dark --prefersdark;
-  }
+  themes: lofi --default, dark --prefersdark;
+}
+
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
@@ -14,6 +15,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -28,14 +30,20 @@
   body {
     cursor: none;
   }
-  
-  a, button, [role="button"], input, textarea, select {
+
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select {
     cursor: none;
   }
 }
 
 /* Lenis smooth scroll */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -157,5 +165,72 @@ html.lenis, html.lenis body {
 @media screen and (max-width: 479px) {
   .progressive-blur_wrap {
     display: block;
+  }
+}
+
+/* TV Noise Animation */
+.noise-wrapper {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 40;
+
+  /* --- CUSTOMIZE HERE --- */
+  opacity: 0.05;
+  /* 1. VISIBILITY: Lower = subtle, Higher = strong (0.05 - 0.15 recommended) */
+  background-size: 150px 150px;
+  /* 2. GRAIN SIZE: Lower px = Finer/Smaller grain. (e.g. 50px = Tiny, 200px = Chunky) */
+  /* --------------------- */
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: noise 0.2s steps(3) infinite;
+}
+
+@keyframes noise {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-5%, -5%);
+  }
+
+  20% {
+    transform: translate(-10%, 5%);
+  }
+
+  30% {
+    transform: translate(5%, -10%);
+  }
+
+  40% {
+    transform: translate(-5%, 15%);
+  }
+
+  50% {
+    transform: translate(-10%, 5%);
+  }
+
+  60% {
+    transform: translate(15%, 0);
+  }
+
+  70% {
+    transform: translate(0, 10%);
+  }
+
+  80% {
+    transform: translate(-15%, 0);
+  }
+
+  90% {
+    transform: translate(10%, 5%);
+  }
+
+  100% {
+    transform: translate(5%, 0);
   }
 }

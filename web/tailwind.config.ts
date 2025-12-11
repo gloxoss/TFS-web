@@ -15,6 +15,11 @@ const config: Config = {
   theme: {
     extend: {
       // We will define our specific brand colors here later to override defaults
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
+        display: ["var(--font-oswald)", "sans-serif"],
+      },
       colors: {
         brand: {
           50: "#f0f9ff",
@@ -26,6 +31,8 @@ const config: Config = {
       animation: {
         // Aceternity often relies on specific custom animations
         shimmer: "shimmer 2s linear infinite",
+        "scrolling-banner": "scrolling-banner var(--duration) linear infinite",
+        "scrolling-banner-vertical": "scrolling-banner-vertical var(--duration) linear infinite",
       },
       keyframes: {
         shimmer: {
@@ -35,6 +42,14 @@ const config: Config = {
           to: {
             backgroundPosition: "-200% 0",
           },
+        },
+        "scrolling-banner": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-50% - var(--gap)/2))" },
+        },
+        "scrolling-banner-vertical": {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(calc(-50% - var(--gap)/2))" },
         },
       },
     },
