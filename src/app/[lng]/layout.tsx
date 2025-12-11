@@ -5,7 +5,7 @@ import { createServerClient } from "@/lib/pocketbase/server";
 import { cn } from "@/lib/utils";
 import { dir } from 'i18next';
 import { languages } from '../i18n/settings';
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Cormorant_Garamond } from "next/font/google";
 import type { Metadata } from "next";
 import { I18nProvider } from '@/components/providers/i18n-client-provider'
 import "../globals.css";
@@ -13,8 +13,8 @@ import { Providers } from "@/app/providers";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import CustomCursor from "@/components/ui/CustomCursor";
 import ProgressiveBlur from "@/components/ui/ProgressiveBlur";
-
-
+import { EffectsLayer } from "@/components/ui/effects-layer";
+import { CartDrawerWrapper } from "@/components/cart/CartDrawerWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +24,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -56,6 +63,7 @@ export default async function RootLayout({
       className={cn(
         geistSans.variable,
         geistMono.variable,
+        cormorant.variable,
         "antialiased h-full dark"
       )}
       suppressHydrationWarning
@@ -73,11 +81,13 @@ export default async function RootLayout({
               <SmoothScroll>
                 <CustomCursor />
                 <ProgressiveBlur />
+                <EffectsLayer />
                 <Navbar lng={lng} />
                 <main className="grow">
                   {children}
                 </main>
                 <Footer lng={lng} />
+                <CartDrawerWrapper lng={lng} />
               </SmoothScroll>
             </Providers>
           </PocketBaseProvider>
