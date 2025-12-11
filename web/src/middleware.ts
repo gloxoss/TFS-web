@@ -1,60 +1,46 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { fallbackLng, languages } from "./app/i18n/settings";
-import { createServerClient } from "@/lib/pocketbase/server";
-
-// Protected routes that require authentication
-const protectedRoutes = ["/dashboard"];
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import PocketBase from 'pocketbase';
 
 export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const response = NextResponse.next();
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
 
-  // Skip middleware for static files, API routes, etc.
-  if (
-    pathname.includes(".") || // files with extensions
-    pathname.startsWith("/_next/") || // Next.js internals
-    pathname.startsWith("/api/") // API routes
-  ) {
-    return NextResponse.next();
+  // Load auth state from cookies
+  const authCookie = request.cookies.get('pb_auth');
+  if (authCookie) {
+    pb.authStore.loadFromCookie(authCookie.value);
   }
 
-  // Check if pathname starts with a locale
-  const pathnameHasLocale = languages.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
+  // 1. Check if user is logged in
+  const isValid = pb.authStore.isValid;
+  
+  // 2. Define Protected Routes
+  const isAdminPath = request.nextUrl.pathname.startsWith('/admin');
+  const isAccountPath = request.nextUrl.pathname.startsWith('/account');
 
-  if (!pathnameHasLocale) {
-    // Redirect if there is no locale
-    const locale = fallbackLng;
-    const newUrl = new URL(request.url);
-    newUrl.pathname = `/${locale}${pathname}`;
-    return NextResponse.redirect(newUrl);
+  // 3. Logic: Redirect if not allowed
+  if ((isAdminPath || isAccountPath) && !isValid) {
+    // Not logged in -> Go to Login
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
   }
 
-  // Extract the path without the locale prefix for route checking
-  const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, "");
-
-  // Check if the route requires authentication
-  if (protectedRoutes.some((route) => pathWithoutLocale.startsWith(route))) {
-    const client = await createServerClient();
-
-    if (!client.authStore.isValid) {
-      // Get auth cookie to check if we just authenticated
-      const authCookie = request.cookies.get("pb_auth");
-
-      // If we have no auth cookie, redirect to login
-      if (!authCookie) {
-        const locale = pathname.split("/")[1];
-        const loginUrl = new URL(`/${locale}/login`, request.url);
-        loginUrl.searchParams.set("redirect", pathname);
-        return NextResponse.redirect(loginUrl);
-      }
+  if (isAdminPath && isValid) {
+    // Logged in but checking Role
+    const userRole = pb.authStore.model?.role;
+    if (userRole !== 'admin') {
+      // Not an admin -> Go to Home (or 403 page)
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      return NextResponse.redirect(url);
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|images|favicon.ico).*)"],
+  matcher: ['/admin/:path*', '/account/:path*'],
 };

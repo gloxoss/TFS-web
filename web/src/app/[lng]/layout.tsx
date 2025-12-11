@@ -9,6 +9,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import { I18nProvider } from '@/components/providers/i18n-client-provider'
 import "../globals.css";
+import { Providers } from "@/app/providers";
+import SmoothScroll from "@/components/ui/SmoothScroll";
+import CustomCursor from "@/components/ui/CustomCursor";
+import ProgressiveBlur from "@/components/ui/ProgressiveBlur";
 
 
 
@@ -52,24 +56,30 @@ export default async function RootLayout({
       className={cn(
         geistSans.variable,
         geistMono.variable,
-        "antialiased h-full"
+        "antialiased h-full dark"
       )}
       suppressHydrationWarning
     >
       <head>
         <meta name="darkreader-lock" />
       </head>
-      <body className="min-h-screen flex flex-col bg-base-100" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col cursor-none md:cursor-none" suppressHydrationWarning>
         <I18nProvider lng={lng} namespaces={['common']}>
           <PocketBaseProvider
             initialToken={client.authStore.token}
             initialUser={client.authStore.record}
           >
-            <Navbar lng={lng} />
-            <main className="grow">
-              <div className="mx-auto max-w-7xl px-4 py-12">{children}</div>
-            </main>
-            <Footer lng={lng} />
+            <Providers>
+              <SmoothScroll>
+                <CustomCursor />
+                <ProgressiveBlur />
+                <Navbar lng={lng} />
+                <main className="grow">
+                  {children}
+                </main>
+                <Footer lng={lng} />
+              </SmoothScroll>
+            </Providers>
           </PocketBaseProvider>
         </I18nProvider>
       </body>

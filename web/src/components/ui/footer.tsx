@@ -1,152 +1,118 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { Github, Facebook, Twitter, Linkedin, Mail } from 'lucide-react'
-import { useTranslation } from '@/app/i18n/client'
-import { ClientWrapper } from './client-wrapper'
-
-
-// interface FooterProps {
-//   lng: string
-// }
+import { Facebook, Github, Instagram, Twitter, Linkedin, Youtube, Mail } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "@/app/i18n/client";
+import { ClientWrapper } from "./client-wrapper";
 
 export function Footer({ lng }: { lng: string }) {
-  const { t } = useTranslation(lng, 'common')
+  const { t } = useTranslation(lng, 'common');
+
+  const navigation = {
+    solutions: [
+      { name: 'Catalog', href: `/${lng}/catalog` },
+      { name: 'Kits', href: `/${lng}/kits` },
+      { name: 'Lenses', href: `/${lng}/catalog/lenses` },
+      { name: 'Cameras', href: `/${lng}/catalog/cameras` },
+    ],
+    support: [
+      { name: 'Contact Us', href: `/${lng}/contact` },
+      { name: 'FAQ', href: `/${lng}/faq` },
+      { name: 'Terms of Service', href: `/${lng}/terms` },
+      { name: 'Privacy Policy', href: `/${lng}/privacy` },
+    ],
+    company: [
+      { name: 'About Us', href: `/${lng}/about` },
+      { name: 'Blog', href: `/${lng}/blog` },
+      { name: 'Careers', href: `/${lng}/careers` },
+    ],
+    social: [
+      { name: 'Facebook', href: '#', icon: Facebook },
+      { name: 'Instagram', href: '#', icon: Instagram },
+      { name: 'X', href: '#', icon: Twitter },
+      { name: 'GitHub', href: 'https://github.com/shadowchess-org', icon: Github },
+      { name: 'YouTube', href: '#', icon: Youtube },
+    ],
+  };
 
   return (
     <ClientWrapper>
-    <footer className="border-t mt-auto bg-base-200">
-      <div className="mx-auto max-w-7xl py-12 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-           {/* Column 1 - About */}
-           <div>
-            <h3 className="text-lg font-semibold mb-4">{t('footer.about')}</h3>
-            <p className="text-sm text-base-content/80">
-              {t('footer.description')}
-            </p>
-          </div>
-
-          {/* Column 2 - Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">{t('footer.quickLinks')}</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href={`/${lng}`} className="hover:text-primary transition-colors">
-                  {t('nav.home')}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${lng}/dashboard`} className="hover:text-primary transition-colors">
-                  {t('nav.dashboard')}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${lng}/login`} className="hover:text-primary transition-colors">
-                  {t('nav.login')}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${lng}/register`} className="hover:text-primary transition-colors">
-                  {t('nav.register')}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3 - Resources */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">{t('footer.resources')}</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a 
-                  href="https://nextjs.org/docs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                >
-                  Next.js Docs
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://pocketbase.io/docs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                >
-                  PocketBase Docs
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://github.com/shadowchess-org/PB-Next"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                >
-                  GitHub Repository
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4 - Connect */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">{t('footer.connect')}</h3>
-            <div className="flex flex-col space-y-4">
-              <a 
-                href="https://github.com/shadowchess-org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Github className="h-5 w-5" />
-                <span>GitHub</span>
-              </a>
-              <a 
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Facebook className="h-5 w-5" />
-                <span>Facebook</span>
-              </a>
-              <a 
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Twitter className="h-5 w-5" />
-                <span>Twitter</span>
-              </a>
-              <a 
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Linkedin className="h-5 w-5" />
-                <span>LinkedIn</span>
-              </a>
-              <a 
-                href="mailto:contact@example.com"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Mail className="h-5 w-5" />
-                <span>{t('footer.emailUs')}</span>
-              </a>
+      <footer className="bg-gray-900 text-gray-300" aria-labelledby="footer-heading">
+        <h2 id="footer-heading" className="sr-only">Footer</h2>
+        <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+          <div className="xl:grid xl:grid-cols-3 xl:gap-8">
+            <div className="space-y-8">
+              <Link href={`/${lng}`} className="flex items-center gap-2 text-white">
+                <span className="text-2xl font-bold font-display tracking-tight">Horizon Courts</span>
+              </Link>
+              <p className="text-sm leading-6 text-gray-400">
+                Unleash your potential with professional-grade equipment and facilities.
+                Designed for champions, available for everyone.
+              </p>
+              <div className="flex space-x-6">
+                {navigation.social.map((item) => (
+                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-white transition-colors">
+                    <span className="sr-only">{item.name}</span>
+                    <item.icon className="h-6 w-6" aria-hidden="true" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+              <div className="md:grid md:grid-cols-2 md:gap-8">
+                <div>
+                  <h3 className="text-sm font-semibold leading-6 text-white">Products</h3>
+                  <ul role="list" className="mt-6 space-y-4">
+                    {navigation.solutions.map((item) => (
+                      <li key={item.name}>
+                        <Link href={item.href} className="text-sm leading-6 hover:text-white transition-colors">
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-10 md:mt-0">
+                  <h3 className="text-sm font-semibold leading-6 text-white">Support</h3>
+                  <ul role="list" className="mt-6 space-y-4">
+                    {navigation.support.map((item) => (
+                      <li key={item.name}>
+                        <Link href={item.href} className="text-sm leading-6 hover:text-white transition-colors">
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div className="md:grid md:grid-cols-2 md:gap-8">
+                <div>
+                  <h3 className="text-sm font-semibold leading-6 text-white">Company</h3>
+                  <ul role="list" className="mt-6 space-y-4">
+                    {navigation.company.map((item) => (
+                      <li key={item.name}>
+                        <Link href={item.href} className="text-sm leading-6 hover:text-white transition-colors">
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-10 md:mt-0">
+                  {/* Extra column or Newsletter could go here */}
+                </div>
+              </div>
             </div>
           </div>
+          <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
+            <p className="text-xs leading-5 text-gray-400">
+              &copy; {new Date().getFullYear()} Horizon Courts / PB-Next. All rights reserved.
+            </p>
+          </div>
         </div>
-
-        {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-base-300 text-center text-sm text-base-content/60">
-          <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
-        </div>
-      </div>
-    </footer>
+      </footer>
     </ClientWrapper>
   );
 }
