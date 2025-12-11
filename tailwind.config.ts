@@ -1,26 +1,61 @@
-//import daisyui from "daisyui";
 import type { Config } from "tailwindcss";
+const { heroui } = require("@heroui/react");
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
 
-export default {
+const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}", // HeroUI
   ],
+  darkMode: "class", // Important for switching modes
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["var(--font-geist-sans)"],
-        mono: ["var(--font-geist-mono)"],
-      },
+      // We will define our specific brand colors here later to override defaults
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        brand: {
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          500: "#0ea5e9", // Example Primary
+          900: "#0c4a6e",
+        }
+      },
+      animation: {
+        // Aceternity often relies on specific custom animations
+        shimmer: "shimmer 2s linear infinite",
+      },
+      keyframes: {
+        shimmer: {
+          from: {
+            backgroundPosition: "0 0",
+          },
+          to: {
+            backgroundPosition: "-200% 0",
+          },
+        },
       },
     },
   },
-  // plugins: [daisyui],
-  // daisyui: {
-  //   themes: ["lofi", "dark"], // specify the themes we want to use
-  // },
-} satisfies Config;
+  plugins: [
+    heroui(), // HeroUI Plugin
+    addVariablesForColors, // Aceternity Helper
+  ],
+};
+
+// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
+// Aceternity UI components specifically need this to function.
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ":root": newVars,
+  });
+}
+
+export default config;

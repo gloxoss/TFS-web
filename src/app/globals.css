@@ -22,3 +22,140 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
+
+/* Custom cursor - hide default on desktop only */
+@media (min-width: 768px) {
+  body {
+    cursor: none;
+  }
+  
+  a, button, [role="button"], input, textarea, select {
+    cursor: none;
+  }
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Progressive Blur Effect - Exact implementation with layered masks */
+.progressive-blur_wrap {
+  z-index: 99;
+  pointer-events: none;
+  width: 100%;
+  height: 6rem;
+  position: fixed;
+  inset: auto 0% 0%;
+  overflow: clip;
+  transform: rotate(180deg);
+}
+
+.progressive-blur_panel {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  position: absolute;
+  -webkit-mask: linear-gradient(#0000 10%, #000 20% 40%, #0000 50%);
+  mask: linear-gradient(#0000 10%, #000 20% 40%, #0000 50%);
+}
+
+.progressive-blur_panel.is-1 {
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  -webkit-mask: linear-gradient(#000 0% 10%, #0000 30%);
+  mask: linear-gradient(#000 0% 10%, #0000 30%);
+}
+
+.progressive-blur_panel.is-2 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / var(--ratio)));
+  backdrop-filter: blur(calc(var(--blur) / var(--ratio)));
+  -webkit-mask: linear-gradient(#0000 0%, #000 10% 20%, #0000 40%);
+  mask: linear-gradient(#0000 0%, #000 10% 20%, #0000 40%);
+}
+
+.progressive-blur_panel.is-3 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 0%, #000 20% 30%, #0000 50%);
+  mask: linear-gradient(#0000 0%, #000 20% 30%, #0000 50%);
+}
+
+.progressive-blur_panel.is-4 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 10%, #000 30% 40%, #0000 60%);
+  mask: linear-gradient(#0000 10%, #000 30% 40%, #0000 60%);
+}
+
+.progressive-blur_panel.is-5 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 20%, #000 40% 50%, #0000 70%);
+  mask: linear-gradient(#0000 20%, #000 40% 50%, #0000 70%);
+}
+
+.progressive-blur_panel.is-6 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 30%, #000 50% 60%, #0000 80%);
+  mask: linear-gradient(#0000 30%, #000 50% 60%, #0000 80%);
+}
+
+.progressive-blur_panel.is-7 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 40%, #000 60% 70%, #0000 90%);
+  mask: linear-gradient(#0000 40%, #000 60% 70%, #0000 90%);
+}
+
+.progressive-blur_panel.is-8 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 50%, #000 70% 80%, #0000 100%);
+  mask: linear-gradient(#0000 50%, #000 70% 80%, #0000 100%);
+}
+
+.progressive-blur_panel.is-9 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 60%, #000 80% 90%, #0000 100%);
+  mask: linear-gradient(#0000 60%, #000 80% 90%, #0000 100%);
+}
+
+.progressive-blur_panel.is-10 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 70%, #000 90%, #0000 100%);
+  mask: linear-gradient(#0000 70%, #000 90%, #0000 100%);
+}
+
+@media screen and (max-width: 767px) {
+  .progressive-blur_wrap {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .progressive-blur_wrap {
+    display: block;
+  }
+}
