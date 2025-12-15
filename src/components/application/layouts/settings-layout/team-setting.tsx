@@ -64,7 +64,7 @@ const TeamSetting = React.forwardRef<HTMLDivElement, TeamSettingCardProps>(
                                     defaultSelectedKeys={["member"]}
                                 >
                                     {roleOptions.map((roleOption) => (
-                                        <SelectItem key={roleOption.value} value={roleOption.value}>
+                                        <SelectItem key={roleOption.value}>
                                             {roleOption.label}
                                         </SelectItem>
                                     ))}

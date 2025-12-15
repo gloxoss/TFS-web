@@ -1,16 +1,23 @@
 import PocketBase from 'pocketbase';
 import { IAuthService } from './interface';
-import { User, UserRole } from '@/types/user';
+import { User, UserRole, ROLES } from '@/types/auth';
 import { cookies } from 'next/headers'; // Essential for Server Actions
 
 // Singleton instance to avoid creating multiple connections
 export const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
 
+/**
+ * @deprecated This service is DEPRECATED. Use Server Actions in `src/lib/actions/session.ts` instead.
+ * This class bypasses the secure HttpOnly cookie authentication flow.
+ */
 export class PocketBaseAuthService implements IAuthService {
-  
+  constructor() {
+    console.warn('[DEPRECATED] PocketBaseAuthService is deprecated. Use session.ts Server Actions instead.');
+  }
+
   async login(email: string, pass: string) {
     const authData = await pb.collection('users').authWithPassword(email, pass);
-    
+
     // Map PB record to our clean User type
     const user: User = {
       id: authData.record.id,
@@ -46,6 +53,6 @@ export class PocketBaseAuthService implements IAuthService {
   }
 
   isAdmin(user: User): boolean {
-    return user.role === 'admin';
+    return user.role === ROLES.ADMIN;
   }
 }

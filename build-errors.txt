@@ -1,0 +1,833 @@
+﻿
+> web@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.2.4
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe : 
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpec 
+   ified: (:String) [], RemoteExcept  
+  ion
+    + FullyQualifiedErrorId : NativeC 
+   ommandError
+ 
+Failed to compile.
+
+./src/app/(dev)/playground-layouts/hom
+epage/page.tsx
+5:41  Error: 'MonitorPlay' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/logout/route.ts
+4:28  Error: 'request' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/[lng]/(admin)/admin/requests
+/page.tsx
+3:10  Error: 'Suspense' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/[lng]/(auth)/login/page.tsx
+9:11  Error: 't' is assigned a value 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/[lng]/(public)/about/about-c
+lient.tsx
+14:9  Error: 'VALUES_ITEMS' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/[lng]/(public)/equipment/[sl
+ug]/page.tsx
+39:11  Error: 'lng' is assigned a 
+value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/[lng]/(public)/page.tsx
+2:22  Error: 'BarChart3' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+2:33  Error: 'Layers' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+3:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+17:9  Error: 'client' is assigned a 
+value but never used.  
+@typescript-eslint/no-unused-vars
+18:23  Error: React Hook 
+"useTranslation" cannot be called in 
+an async function.  
+react-hooks/rules-of-hooks
+
+./src/app/[lng]/(public)/quote/page.ts
+x
+61:9  Error: 'router' is assigned a 
+value but never used.  
+@typescript-eslint/no-unused-vars
+75:10  Error: 'checkingEmail' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+154:42  Error: 'isValid' is assigned 
+a value but never used.  
+@typescript-eslint/no-unused-vars
+158:9  Error: 'totalItems' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+525:27  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/app/[lng]/playground/page.tsx
+8:8  Error: 'SettingsForm' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+9:8  Error: 'Footer' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+10:8  Error: 'Testimonials' is 
+defined but never used.  
+@typescript-eslint/no-unused-vars
+11:8  Error: 'CtaCentered' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+13:8  Error: 'FaqCentered' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+15:8  Error: 'Table' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+18:8  Error: 'Badge' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+20:8  Error: 'Avatar' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+21:8  Error: 'Tabs' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+22:8  Error: 'Alert' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+30:8  Error: 'Breadcrumbs' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+31:8  Error: 'EmptyState' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+100:19  Error: 'setSteps' is assigned 
+a value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/app/[lng]/playground-home/page.t
+sx
+5:41  Error: 'MonitorPlay' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+44:1  Warning: Prevent client 
+components from being async 
+functions. See: https://nextjs.org/doc
+s/messages/no-async-client-component  
+@next/next/no-async-client-component
+45:13  Error: 'lng' is assigned a 
+value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/admin/request-detail-
+view.tsx
+6:27  Error: 'XCircle' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+6:49  Error: 'Save' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+126:51  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/admin/requests-table.
+tsx
+5:15  Error: 'Clock' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+5:22  Error: 'CheckCircle' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+5:35  Error: 'XCircle' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+53:42  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+84:26  Error: 'e' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application/authentic
+ation/CenteredSignUpWithAnimatedForm.t
+sx
+6:27  Error: 'Eye' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+6:32  Error: 'EyeOff' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application/authentic
+ation/CenteredSignUpWithTwoSteps.tsx
+24:41  Error: The `{}` ("empty 
+object") type allows any non-nullish 
+value, including literals like `0` 
+and `""`.
+- If that's what you want, disable 
+this lint rule with an inline comment 
+or configure the 'allowObjectTypes' 
+rule option.
+- If you want a type meaning "any 
+object", you probably want `object` 
+instead.
+- If you want a type meaning "any 
+value", you probably want `unknown` 
+instead.  @typescript-eslint/no-empty-
+object-type
+
+./src/components/application/command-m
+enus/command-menu-with-categories/comm
+and-menu-with-categories.tsx
+3:15  Error: 'FC' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+205:9  Error: 'categoryGroupMap' is 
+never reassigned. Use 'const' 
+instead.  prefer-const
+318:13  Error: 'categoryGroups' is 
+never reassigned. Use 'const' 
+instead.  prefer-const
+354:56  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+356:17  Error: Expected an assignment 
+or function call and instead saw an 
+expression.  @typescript-eslint/no-unu
+sed-expressions
+546:60  Error: '_index' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application/command-m
+enus/command-menu-with-categories/comp
+onent-files.ts
+13:13  Error: 'newImport' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+
+./src/components/application/layouts/m
+essaging-application/messaging-chat-in
+put.tsx
+9:18  Error: An interface declaring 
+no members is equivalent to its 
+supertype.  @typescript-eslint/no-empt
+y-object-type
+
+./src/components/application/layouts/s
+ettings-layout/team-manage-table.tsx
+190:8  Warning: React Hook 
+React.useMemo has a duplicate 
+dependency: 'rolesFilter'. Either 
+omit it or remove the dependency 
+array.  react-hooks/exhaustive-deps
+
+./src/components/application/layouts/s
+hared/SidebarDrawer.tsx
+93:25  Error: Use "@ts-expect-error" 
+instead of "@ts-ignore", as 
+"@ts-ignore" will do nothing if the 
+following line is error-free.  
+@typescript-eslint/ban-ts-comment
+
+./src/components/application-ui/elemen
+ts/avatar.tsx
+28:5  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/application-ui/elemen
+ts/button-group.tsx
+11:21  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/application-ui/elemen
+ts/dropdown.tsx
+50:26  Error: Use "@ts-expect-error" 
+instead of "@ts-ignore", as 
+"@ts-ignore" will do nothing if the 
+following line is error-free.  
+@typescript-eslint/ban-ts-comment
+
+./src/components/application-ui/forms/
+auth/sign-in-card.tsx
+3:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+18:21  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/application-ui/forms/
+rich-select.tsx
+3:20  Error: 'useState' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+5:17  Error: 'ChevronDown' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+32:50  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+63:71  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/application-ui/forms/
+select.tsx
+30:13  Error: 'open' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application-ui/headin
+gs/page-heading.tsx
+3:10  Error: 'ChevronDown' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application-ui/lists/
+feed.tsx
+3:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application-ui/lists/
+stacked-list.tsx
+54:13  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/application-ui/lists/
+table.tsx
+12:10  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/application-ui/naviga
+tion/command-palette.tsx
+15:30  Error: 'FilePlus' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+15:40  Error: 'Hash' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+15:46  Error: 'Tag' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+17:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+161:32  Error: `'` can be escaped 
+with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  
+react/no-unescaped-entities
+161:58  Error: `"` can be escaped 
+with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  
+react/no-unescaped-entities
+161:66  Error: `"` can be escaped 
+with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  
+react/no-unescaped-entities
+
+./src/components/application-ui/naviga
+tion/pagination.tsx
+3:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application-ui/naviga
+tion/steps.tsx
+2:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application-ui/overla
+ys/modal.tsx
+6:10  Error: 'cn' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/application-ui/overla
+ys/slide-over.tsx
+4:13  Error: 'XIcon' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/cart/CartItem.tsx
+58:9  Error: 'handleDateChange' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/dashboard/dashboard-s
+idebar.tsx
+8:5  Error: 'FileText' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+62:26  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/dashboard/user-quotes
+-list.tsx
+174:19  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+251:7  Error: Do not use an `<a>` 
+element to navigate to 
+`/en/equipment/`. Use `<Link />` from 
+`next/link` instead. See: https://next
+js.org/docs/messages/no-html-link-for-
+pages  
+@next/next/no-html-link-for-pages
+251:7  Error: Do not use an `<a>` 
+element to navigate to 
+`/en/equipment/`. Use `<Link />` from 
+`next/link` instead. See: https://next
+js.org/docs/messages/no-html-link-for-
+pages  
+@next/next/no-html-link-for-pages
+251:7  Error: Do not use an `<a>` 
+element to navigate to 
+`/en/equipment/`. Use `<Link />` from 
+`next/link` instead. See: https://next
+js.org/docs/messages/no-html-link-for-
+pages  
+@next/next/no-html-link-for-pages
+
+./src/components/forms/settings-form.t
+sx
+4:10  Error: 'cn' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+227:27  Error: `'` can be escaped 
+with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  
+react/no-unescaped-entities
+
+./src/components/layout/sidebar-shell.
+tsx
+14:5  Error: 'LogOut' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/footer.tsx
+1:48  Error: 'Linkedin' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/footers/Foo
+terWithColumns.tsx
+13:13  Error: 't' is assigned a value 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/global-oper
+ations-grid.tsx
+6:19  Error: 'Search' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+6:27  Error: 'Zap' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+6:41  Error: 'GlobeIcon' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/hero/HeroCo
+ntent.tsx
+90:55  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/marketing/hero/HeroNa
+vbar.tsx
+4:64  Error: 'Button' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/hero-basic/
+FadeInImage.tsx
+32:17  Warning: Image elements must 
+have an alt prop, either with 
+meaningful text, or an empty string 
+for decorative images.  
+jsx-a11y/alt-text
+
+./src/components/marketing/hero-basic/
+Icons.tsx
+21:7  Error: 'OpenCollectiveIcon' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/hero-center
+ed/ScrollingBanner.tsx
+58:21  Error: Use "@ts-expect-error" 
+instead of "@ts-ignore", as 
+"@ts-ignore" will do nothing if the 
+following line is error-free.  
+@typescript-eslint/ban-ts-comment
+74:90  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/marketing/hero-cinema
+-v2.tsx
+7:10  Error: 'cn' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+116:41  Error: `'` can be escaped 
+with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  
+react/no-unescaped-entities
+
+./src/components/marketing/hero-immers
+ive.tsx
+5:10  Error: 'ArrowRight' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+5:22  Error: 'Play' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+20:13  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/marketing/hero-impact
+.tsx
+4:84  Error: 'useMotionValueEvent' is 
+defined but never used.  
+@typescript-eslint/no-unused-vars
+44:11  Error: 'velocityBlur' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+139:32  Error: `'` can be escaped 
+with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  
+react/no-unescaped-entities
+
+./src/components/marketing/pricing/Sim
+plePricingSelector.tsx
+6:25  Error: 'TiersEnum' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/marketing/testimonial
+s.tsx
+1:8  Error: 'Image' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+54:33  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+65:37  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/products/KitBuilder.t
+sx
+14:10  Error: 'Product' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+166:23  Warning: Using `<img>` could 
+result in slower LCP and higher 
+bandwidth. Consider using `<Image />` 
+from `next/image` or a custom image 
+loader to automatically optimize 
+images. This may incur additional 
+usage or cost from your provider. 
+See: https://nextjs.org/docs/messages/
+no-img-element  
+@next/next/no-img-element
+
+./src/components/ui/date-range-picker.
+tsx
+34:3  Error: 'maxDays' is assigned a 
+value but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/ui/evervault-card.tsx
+16:9  Error: 'mouseX' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+17:9  Error: 'mouseY' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+22:13  Error: 'str' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+26:63  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+27:15  Error: 'left' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+27:21  Error: 'top' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+65:63  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+66:9  Error: 'maskImage' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+67:9  Error: 'style' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+98:46  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/components/ui/footer.tsx
+3:48  Error: 'Linkedin' is defined 
+but never used.  
+@typescript-eslint/no-unused-vars
+3:67  Error: 'Mail' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+4:8  Error: 'Image' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+6:10  Error: 'cn' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+11:11  Error: 't' is assigned a value 
+but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/components/ui/globe.tsx
+63:5  Error: 'numbersOfRings' is 
+never reassigned. Use 'const' 
+instead.  prefer-const
+63:5  Error: 'numbersOfRings' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+91:34  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+123:13  Error: 'points' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+126:19  Error: 'rgb' is assigned a 
+value but never used.  
+@typescript-eslint/no-unused-vars
+168:27  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+244:8  Warning: React Hook useEffect 
+has missing dependencies: 'gl', 
+'size.height', and 'size.width'. 
+Either include them or remove the 
+dependency array.  
+react-hooks/exhaustive-deps
+286:5  Error: Unexpected var, use let 
+or const instead.  no-var
+291:5  Error: Unexpected var, use let 
+or const instead.  no-var
+
+./src/components/ui/infinite-moving-ca
+rds.tsx
+6:8  Error: 'Link' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+33:8  Warning: React Hook useEffect 
+has a missing dependency: 
+'addAnimation'. Either include it or 
+remove the dependency array.  
+react-hooks/exhaustive-deps
+
+./src/components/ui/input.tsx
+4:18  Error: An interface declaring 
+no members is equivalent to its 
+supertype.  @typescript-eslint/no-empt
+y-object-type
+
+./src/components/ui/label.tsx
+8:18  Error: An interface declaring 
+no members is equivalent to its 
+supertype.  @typescript-eslint/no-empt
+y-object-type
+
+./src/components/ui/textarea.tsx
+4:18  Error: An interface declaring 
+no members is equivalent to its 
+supertype.  @typescript-eslint/no-empt
+y-object-type
+
+./src/lib/actions/admin-requests.ts
+121:21  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/lib/actions/cart.ts
+30:11  Error: 'cartService' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+33:11  Error: 'productId' is assigned 
+a value but never used.  
+@typescript-eslint/no-unused-vars
+34:11  Error: 'quantity' is assigned 
+a value but never used.  
+@typescript-eslint/no-unused-vars
+35:11  Error: 'kitSelections' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+106:46  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./src/services/auth/access-control.ts
+2:10  Error: 'cookies' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/services/auth/pocketbase-auth.ts
+4:10  Error: 'cookies' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/services/cart/cart-service.ts
+46:14  Error: 'e' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+140:9  Error: 'cartId' is never 
+reassigned. Use 'const' instead.  
+prefer-const
+
+./src/services/email/resend-service.ts
+20:3  Error: 'formatDateForEmail' is 
+defined but never used.  
+@typescript-eslint/no-unused-vars
+21:3  Error: 'calculateRentalDays' is 
+defined but never used.  
+@typescript-eslint/no-unused-vars
+
+./src/services/products/pocketbase-ser
+vice.ts
+159:29  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+209:26  Error: 'e' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+
+./src/services/quotes/pocketbase-servi
+ce.ts
+22:7  Error: 'POCKETBASE_URL' is 
+assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+64:32  Error: Unexpected any. Specify 
+a different type.  
+@typescript-eslint/no-explicit-any
+121:21  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+175:22  Error: Unexpected any. 
+Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint 
+rules? Learn more here: https://nextjs
+.org/docs/app/api-reference/config/esl
+int#disabling-rules

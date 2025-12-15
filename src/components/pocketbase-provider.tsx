@@ -26,30 +26,17 @@ export function PocketBaseProvider({
   children?: React.ReactNode;
 }) {
   const clientRef = useRef<TypedPocketBase>(createBrowserClient());
-  clientRef.current.authStore.save(initialToken, initialUser);
 
+  // Hydrate the store with the user model, but NO token (to prevent XSS leakage).
+  // The token is safely stored in an HttpOnly cookie and used by Server Actions.
+  if (initialToken !== clientRef.current.authStore.token || initialUser?.id !== clientRef.current.authStore.model?.id) {
+    clientRef.current.authStore.save('', initialUser);
+  }
+
+  // Effect to keep the store in sync if props change (though typically Layout only renders once per navigation)
   useEffect(() => {
-    async function authRefresh() {
-      if (clientRef.current.authStore.isValid) {
-        try {
-          await clientRef.current.collection("users").authRefresh();
-        } catch {
-          clientRef.current.authStore.clear();
-        }
-      }
-    }
-
-    authRefresh();
-  }, [initialToken, initialUser]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      clientRef.current.authStore.loadFromCookie(document.cookie);
-      clientRef.current.authStore.onChange(() => {
-        document.cookie = clientRef.current.authStore.exportToCookie({ httpOnly: false });
-      });
-    }
-  }, []);
+    clientRef.current.authStore.save('', initialUser);
+  }, [initialUser]);
 
   return (
     <PocketBaseContext.Provider value={clientRef.current}>

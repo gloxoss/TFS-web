@@ -18,7 +18,7 @@ const wordVariants = {
         opacity: 1,
         y: 0,
         filter: "blur(0px)",
-        transition: { duration: 0.8, ease: "easeOut" }
+        transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }
     }
 };
 
@@ -39,12 +39,9 @@ export default function HeroImpact() {
     const { scrollY } = useScroll();
 
     // 1. Velocity-Based Blur (Motion Blur)
-    // Blur depends on how fast user scrolls, not where they are.
     const scrollVelocity = useVelocity(scrollY);
     const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
     const velocityBlur = useTransform(smoothVelocity, [0, 1000], [0, 10]);
-    // We map 0->1000 velocity to 0->10px blur. 
-    // We need to take absolute value because scrolling up (negative velocity) should also blur.
     const blurPx = useTransform(smoothVelocity, (latest) => `blur(${Math.min(Math.abs(latest / 50), 8)}px)`);
 
     // 2. Parallax Position
@@ -79,7 +76,17 @@ export default function HeroImpact() {
     );
 
     return (
-        <div ref={containerRef} className="relative h-screen min-h-[900px] w-full bg-black overflow-hidden font-sans selection:bg-red-600 selection:text-white">
+        /* 
+          ══════════════════════════════════════════════════════════════════
+          RESPONSIVE HEIGHT SETTINGS:
+          - Mobile:  h-[80vh] min-h-[600px] (shorter on small screens)
+          - Tablet:  sm:min-h-[700px] 
+          - Desktop: lg:min-h-[1100px] lg:h-screen
+          
+          To adjust: Change the values in square brackets. Smaller number = shorter height.
+          ══════════════════════════════════════════════════════════════════
+        */
+        <div ref={containerRef} className="relative h-[80vh] min-h-[600px] sm:min-h-[700px] lg:h-screen lg:min-h-[1100px] w-full isolation-isolate overflow-hidden font-sans selection:bg-red-600 selection:text-white">
 
             {/* 1. Background Slideshow + Scroll Zoom */}
             <div className="absolute inset-0 z-0 overflow-hidden">
@@ -90,21 +97,30 @@ export default function HeroImpact() {
                             className="absolute inset-0 bg-cover bg-center"
                             style={{ backgroundImage: `url(${HERO_IMAGES[currentSlide]})` }}
                             initial={{ opacity: 0, scale: 1.1 }}
-                            animate={{ opacity: 0.6, scale: 1 }}
+                            animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1.5 }}
                         />
                     </AnimatePresence>
                 </motion.div>
-            </div>
+            </div >
 
             {/* 2. Gradient Overlays */}
-            {/* Bottom Gradient: Strong but clipped height to allow blend mode on upper text */}
-            <div className="absolute bottom-0 left-0 w-full h-[40%] z-10 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            {/* INSPIRATION: Cinematic Multi-Layer Gradients (Purple/Blue/Black) */}
+            {/* Note: Keeping opacity low to allow mix-blend-difference on text to work (needs bright background) */}
 
-            {/* Top Gradient: Re-added for Text Visibility (Top-Right) */}
-            <div className="absolute top-0 right-0 w-[60%] h-[60%] z-10 bg-gradient-to-bl from-black/80 via-transparent to-transparent pointer-events-none" />
+            {/* Layer 1: Strong Bottom Fade (70% height) - Main darkened area */}
+            <div className="absolute bottom-0 left-0 w-full h-[70%] z-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
 
+            {/* Layer 2: Deep Base (50% height) - Adds density */}
+            <div className="absolute bottom-0 left-0 w-full h-[50%] z-10 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+
+            {/* Layer 3: Grounding (Bottom 30%) */}
+            <div className="absolute bottom-0 left-0 w-full h-[30%] z-10 bg-gradient-to-t from-black via-black/0 to-transparent pointer-events-none" />
+
+            {/* Top Gradient: Protects the 'Building Visuals' text from bright backgrounds */}
+            <div className="absolute top-0 right-0 w-[50%] h-full z-10 bg-gradient-to-l from-black/60 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-32 z-10 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
 
             {/* 4. Main Content - Top Right Alignment */}
             <div className="relative z-20 h-full w-full max-w-[1440px] mx-auto px-6 md:px-12 pt-32 flex justify-end items-start">
@@ -139,29 +155,39 @@ export default function HeroImpact() {
             </div>
 
             {/* 5. MEGA TEXT (Bottom Split) */}
-            {/* z-30 ensures it' above the gradient (z-10) for blend mode to work where not black */}
-            <div className="absolute -bottom-4 left-0 w-full z-30 flex flex-col items-center justify-end pointer-events-none select-none">
+            {/* z-50 to ensure it sits above gradients. mix-blend-difference applied to CONTAINER. */}
+            {/*
+              ══════════════════════════════════════════════════════════════════
+              MEGA TEXT SIZE SETTINGS:
+              - Mobile:  text-[22vw] (bigger text for small screens)
+              - Desktop: md:text-[15vw] (normal size for larger screens)
+              
+              To adjust: Change the vw values. Larger number = bigger text.
+              Examples: text-[20vw], text-[25vw], text-[18vw]
+              ══════════════════════════════════════════════════════════════════
+            */}
+            <div className="absolute -bottom-0 left-0 w-full z-50 flex flex-col items-center justify-end pointer-events-none select-none mix-blend-difference text-white">
                 <motion.h1
-                    initial={{ y: 50, opacity: 0, filter: "blur(10px)" }}
-                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="font-display font-bold text-[15vw] leading-[0.85] text-center text-white mix-blend-difference tracking-tight uppercase"
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase"
                     style={{ x: xLeft, filter: blurPx }}
                 >
                     TV - FILM
                 </motion.h1>
 
                 <motion.h1
-                    initial={{ y: 50, opacity: 0, filter: "blur(10px)" }}
-                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                    transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
-                    className="font-display font-bold text-[15vw] leading-[0.75] text-center text-white mix-blend-difference tracking-tight uppercase mt-[1vw]"
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 1.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw]"
                     style={{ x: xRight, filter: blurPx }}
                 >
                     SOLUTIONS
                 </motion.h1>
             </div>
 
-        </div>
+        </div >
     )
 }

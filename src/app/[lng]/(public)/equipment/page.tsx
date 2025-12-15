@@ -10,10 +10,10 @@ import { EquipmentCatalogClient } from './equipment-client'
 
 interface EquipmentPageProps {
   params: Promise<{ lng: string }>
-  searchParams: Promise<{ 
+  searchParams: Promise<{
     category?: string
     search?: string
-    page?: string 
+    page?: string
   }>
 }
 
@@ -24,7 +24,7 @@ export default async function EquipmentPage({ params, searchParams }: EquipmentP
   // Fetch initial data server-side
   const [productsResult, categories] = await Promise.all([
     productService().getProducts(
-      { 
+      {
         categorySlug: category || undefined,
         search: search || undefined,
       },
@@ -52,12 +52,12 @@ export default async function EquipmentPage({ params, searchParams }: EquipmentP
 
 export async function generateMetadata({ params }: EquipmentPageProps) {
   const { lng } = await params
-  
+
   const titles: Record<string, string> = {
     en: 'Equipment Catalog | TFS Cinema Rental',
     fr: 'Catalogue d\'équipement | TFS Location Cinéma',
   }
-  
+
   const descriptions: Record<string, string> = {
     en: 'Browse our professional cinema equipment catalog. Cameras, lenses, lighting, and more available for rent.',
     fr: 'Parcourez notre catalogue d\'équipement cinéma professionnel. Caméras, objectifs, éclairage et plus disponibles à la location.',

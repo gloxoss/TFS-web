@@ -45,7 +45,7 @@ const AppearanceSetting = React.forwardRef<HTMLDivElement, AppearanceSettingCard
                 </div>
                 <Select className="max-w-[200px]" defaultSelectedKeys={["large"]}>
                     {fontSizeOptions.map((fontSizeOption) => (
-                        <SelectItem key={fontSizeOption.value} value={fontSizeOption.value}>
+                        <SelectItem key={fontSizeOption.value}>
                             {fontSizeOption.label}
                         </SelectItem>
                     ))}

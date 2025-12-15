@@ -47,6 +47,7 @@ export interface CartState {
   updateItemDates: (itemId: string, dates: CartItemDates) => void
   updateKitSelections: (itemId: string, kitSelections: { [slotId: string]: string[] }) => void
   setGlobalDates: (dates: CartItemDates | null) => void
+  setItems: (items: CartItem[]) => void // NEW: For syncing with DB
   clearCart: () => void
   
   // Computed helpers
@@ -146,6 +147,10 @@ export const useCartStore = create<CartState>()(
 
       setGlobalDates: (dates) => {
         set({ globalDates: dates })
+      },
+
+      setItems: (items) => {
+        set({ items })
       },
 
       clearCart: () => {

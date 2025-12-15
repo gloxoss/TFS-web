@@ -7,8 +7,8 @@ const PB_URL = process.env.NEXT_PUBLIC_PB_URL || 'http://127.0.0.1:8090';
 export class CartService {
   private pb: PocketBase;
 
-  constructor(pbClient?: PocketBase) {
-    this.pb = pbClient || new PocketBase(PB_URL);
+  constructor(pbClient: PocketBase) {
+    this.pb = pbClient;
   }
 
   // 1. THE TRIGGER: Check if product forces a bundle
@@ -137,7 +137,7 @@ export class CartService {
   // 2. THE ACTION: Add a "Smart Group" to cart
   async addBundleToCart(userId: string, selections: { productId: string; quantity: number }[], dates: { start: Date; end: Date }) {
     // A. Get or Create Cart
-    let cartId = await this.getOrCreateCartId(userId);
+    const cartId = await this.getOrCreateCartId(userId);
 
     // B. Generate a Unique Group ID (UUID)
     const groupId = crypto.randomUUID();

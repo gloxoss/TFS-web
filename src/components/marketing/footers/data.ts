@@ -1,36 +1,34 @@
-import { Facebook, Instagram, Twitter, Github, Youtube } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
 
 export const footerNavigation = {
     services: [
-        { name: "Branding", href: "#" },
-        { name: "Data Analysis", href: "#" },
-        { name: "E-commerce Solutions", href: "#" },
-        { name: "Market Research", href: "#" },
+        { name: "Camera Rentals", href: "/equipment/cameras" },
+        { name: "Lighting Equipment", href: "/equipment/lighting" },
+        { name: "Audio Gear", href: "/equipment/audio" },
+        { name: "Grip & Support", href: "/equipment/grip" },
     ],
     supportOptions: [
-        { name: "Pricing Plans", href: "#" },
-        { name: "User Guides", href: "#" },
-        { name: "Tutorials", href: "#" },
-        { name: "Service Status", href: "#" },
+        { name: "Rental Guide", href: "/guide" },
+        { name: "Equipment Care", href: "/care" },
+        { name: "Technical Support", href: "/support" },
+        { name: "Contact Us", href: "/contact" },
     ],
     aboutUs: [
-        { name: "Our Story", href: "#" },
-        { name: "Latest News", href: "#" },
-        { name: "Career Opportunities", href: "#" },
-        { name: "Media Enquiries", href: "#" },
-        { name: "Collaborations", href: "#" },
+        { name: "Our Story", href: "/about" },
+        { name: "Equipment Fleet", href: "/fleet" },
+        { name: "Production Services", href: "/services" },
+        { name: "Client Testimonials", href: "/testimonials" },
     ],
     legal: [
-        { name: "Claim", href: "#" },
-        { name: "Privacy", href: "#" },
-        { name: "Terms", href: "#" },
-        { name: "User Agreement", href: "#" },
+        { name: "Terms of Service", href: "/terms" },
+        { name: "Privacy Policy", href: "/privacy" },
+        { name: "Rental Agreement", href: "/agreement" },
+        { name: "Insurance Info", href: "/insurance" },
     ],
     social: [
         { name: "Facebook", href: "#", icon: Facebook },
         { name: "Instagram", href: "#", icon: Instagram },
-        { name: "Twitter", href: "#", icon: Twitter },
-        { name: "GitHub", href: "#", icon: Github },
-        { name: "YouTube", href: "#", icon: Youtube },
+        { name: "LinkedIn", href: "#", icon: Linkedin },
+        { name: "Email", href: "mailto:info@tvfilmsolution.com", icon: Mail },
     ],
 };

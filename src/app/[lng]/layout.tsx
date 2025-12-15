@@ -1,7 +1,6 @@
-import { Navbar } from "@/components/ui/navbar";
-import { Footer } from "@/components/ui/footer";
+
 import { PocketBaseProvider } from "@/components/pocketbase-provider";
-import { createServerClient } from "@/lib/pocketbase/server";
+import { createServerClient, getCurrentUser } from "@/lib/pocketbase/server";
 import { cn } from "@/lib/utils";
 import { dir } from 'i18next';
 import { languages } from '../i18n/settings';
@@ -10,11 +9,10 @@ import type { Metadata } from "next";
 import { I18nProvider } from '@/components/providers/i18n-client-provider'
 import "../globals.css";
 import { Providers } from "@/app/providers";
-import SmoothScroll from "@/components/ui/SmoothScroll";
-import CustomCursor from "@/components/ui/CustomCursor";
-import ProgressiveBlur from "@/components/ui/ProgressiveBlur";
-import { EffectsLayer } from "@/components/ui/effects-layer";
 import { CartDrawerWrapper } from "@/components/cart/CartDrawerWrapper";
+import AuthListener from "@/components/auth/auth-listener";
+import { CartMergeHandler } from "@/components/cart/cart-merge-handler";
+import { ChatWidget } from "@/components/chat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +53,7 @@ export default async function RootLayout({
 }: RootLayoutProps) {
   const { lng } = await params
   const client = await createServerClient()
+  const user = await getCurrentUser()
 
   return (
     <html
@@ -71,24 +70,18 @@ export default async function RootLayout({
       <head>
         <meta name="darkreader-lock" />
       </head>
-      <body className="min-h-screen flex flex-col cursor-none md:cursor-none" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <I18nProvider lng={lng} namespaces={['common']}>
           <PocketBaseProvider
             initialToken={client.authStore.token}
             initialUser={client.authStore.record}
           >
             <Providers>
-              <SmoothScroll>
-                <CustomCursor />
-                <ProgressiveBlur />
-                <EffectsLayer />
-                <Navbar lng={lng} />
-                <main className="grow">
-                  {children}
-                </main>
-                <Footer lng={lng} />
-                <CartDrawerWrapper lng={lng} />
-              </SmoothScroll>
+              <AuthListener initialUser={user} />
+              <CartMergeHandler />
+              {children}
+              <CartDrawerWrapper lng={lng} />
+              <ChatWidget />
             </Providers>
           </PocketBaseProvider>
         </I18nProvider>

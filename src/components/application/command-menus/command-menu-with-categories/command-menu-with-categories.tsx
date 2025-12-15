@@ -202,7 +202,7 @@ function flattenSearchData() {
 }
 
 function groupedSearchData(data: SearchResultItem[]) {
-    let categoryGroupMap = {
+    const categoryGroupMap = {
         [CategoryEnum.AI]: [] as SearchResultItem[],
         [CategoryEnum.APPLICATION]: [] as SearchResultItem[],
         [CategoryEnum.MARKETING]: [] as SearchResultItem[],
@@ -315,7 +315,7 @@ export default function CommandMenuWithCategories() {
     );
 
     const categoryGroups = useMemo(() => {
-        let categoryGroups: {
+        const categoryGroups: {
             [key: string]: SearchResultItem[];
         } = {};
 

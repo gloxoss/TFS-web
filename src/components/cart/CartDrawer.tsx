@@ -16,9 +16,33 @@ import { useCartStore, useUIStore } from '@/stores'
 import { CartItemComponent } from './CartItem'
 import { CartSummary } from './CartSummary'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores'
+import { getUserCart } from '@/lib/actions/cart'
+import { useEffect } from 'react'
 
 interface CartDrawerProps {
   lng: string
+}
+
+// CartSynchronizer: Syncs DB cart with Zustand for logged-in users
+function CartSynchronizer() {
+  const user = useAuthStore((state) => state.user)
+  const setItems = useCartStore((state) => state.setItems)
+
+  useEffect(() => {
+    if (user) {
+      // User is logged in, fetch their DB cart and sync with Zustand
+      getUserCart().then((result) => {
+        if (result.success && result.items) {
+          setItems(result.items)
+        }
+      }).catch((error) => {
+        console.error('Failed to sync cart:', error)
+      })
+    }
+  }, [user, setItems])
+
+  return null // This component doesn't render anything
 }
 
 export function CartDrawer({ lng }: CartDrawerProps) {
@@ -31,8 +55,10 @@ export function CartDrawer({ lng }: CartDrawerProps) {
   const isEmpty = items.length === 0
 
   return (
-    <Transition show={isOpen} as={Fragment}>
-      <Dialog onClose={closeDrawer} className="relative z-50">
+    <>
+      <CartSynchronizer />
+      <Transition show={isOpen} as={Fragment}>
+        <Dialog onClose={closeDrawer} className="relative z-50">
         {/* Backdrop */}
         <TransitionChild
           as={Fragment}
@@ -161,5 +187,6 @@ export function CartDrawer({ lng }: CartDrawerProps) {
         </div>
       </Dialog>
     </Transition>
-  )
+  </>
+)
 }

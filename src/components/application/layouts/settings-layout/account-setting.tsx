@@ -60,7 +60,7 @@ const AccountSetting = React.forwardRef<HTMLDivElement, AccountSettingCardProps>
                 </div>
                 <Select className="mt-2" defaultSelectedKeys={["utc-3"]}>
                     {timeZoneOptions.map((timeZoneOption) => (
-                        <SelectItem key={timeZoneOption.value} value={timeZoneOption.value}>
+                        <SelectItem key={timeZoneOption.value}>
                             {timeZoneOption.label}
                         </SelectItem>
                     ))}

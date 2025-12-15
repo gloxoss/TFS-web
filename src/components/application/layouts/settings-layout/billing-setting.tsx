@@ -132,7 +132,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
                 <div className="flex items-center gap-2">
                     <Select defaultSelectedKeys={["buenos-aires"]}>
                         {addressOptions.map((addressOption) => (
-                            <SelectItem key={addressOption.value} value={addressOption.value}>
+                            <SelectItem key={addressOption.value}>
                                 {addressOption.label}
                             </SelectItem>
                         ))}
@@ -141,7 +141,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
                 </div>
                 <Select defaultSelectedKeys={["ar"]}>
                     {countryOptions.map((countryOption) => (
-                        <SelectItem key={countryOption.value} value={countryOption.value}>
+                        <SelectItem key={countryOption.value}>
                             {countryOption.label}
                         </SelectItem>
                     ))}

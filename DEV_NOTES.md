@@ -1,3 +1,169 @@
+## [2025-01-13] - Footer Component Upgrade to HeroUI
+* **Type:** feature
+* **Action:** Replaced custom footer with HeroUI FooterWithColumns component and updated navigation data for cinema equipment rental business.
+* **Logic:** Enhanced footer with modern HeroUI design system, proper cinema equipment categories (Camera Rentals, Lighting Equipment, Audio Gear, Grip & Support), company branding (Tv - film - solution), streamlined social links (Facebook, Instagram, LinkedIn, Email), and improved spacing with additional bottom padding. Maintained internationalization support and responsive layout.
+* **Files:** `src/components/marketing/footers/data.ts`, `src/components/marketing/footers/FooterWithColumns.tsx`, `src/app/[lng]/(public)/layout.tsx`
+
+---
+
+## [2025-12-12] - Fixed pdf_generated Boolean Field Issue
+* **Type:** fix
+* **Action:** Removed pdf_generated from quote creation payload to use database default.
+* **Logic:** Boolean field was marked as required in schema but sending false was treated as invalid. Removed from payload so database uses default value (false).
+* **Files:** `src/services/quotes/pocketbase-service.ts`
+
+---
+
+## [2025-12-13] - Cart Merge Handler Implementation
+* **Type:** feature
+* **Action:** Implemented CartMergeHandler component to automatically merge guest cart with user cart after login.
+* **Logic:** Created client component that detects login events and triggers server action to merge localStorage cart items into DB cart, preventing data loss during guest-to-user transitions. Includes error handling and user feedback via toasts.
+* **Files:** `src/components/cart/cart-merge-handler.tsx`, `src/app/[lng]/layout.tsx`
+
+---
+
+## [2025-12-13] - Hybrid State Management Implementation
+* **Action:** Implemented seamless cart synchronization between Guests (LocalStorage) and Users (Database).
+* **Logic:**
+    * **CartSynchronizer Component:** Added to CartDrawer - fetches DB cart on mount for logged-in users and syncs with Zustand.
+    * **Hybrid Checkout:** Modified `submitQuote` to accept `guestCartItems` for unauthenticated users, while authenticated users use DB cart.
+    * **Store Enhancement:** Added `setItems` method to Zustand cart store for DB synchronization.
+    * **UI Cleanup:** Quote page now passes `guestCartItems` when user is not logged in.
+* **Files Modified:** `src/components/cart/CartDrawer.tsx`, `src/lib/actions/cart.ts`, `src/lib/actions/quote.ts`, `src/stores/useCartStore.ts`, `src/app/[lng]/(public)/quote/page.tsx`
+* **Next Steps:** Test the hybrid cart flow and implement comprehensive error handling.
+
+---
+
+## [2025-12-12] - Auth Reconstruction: Step 3 (Auth State Hydration)
+* **Action:** Implemented Zustand-based auth state hydration pattern.
+* **Logic:**
+    * **Client Store:** Created read-only Zustand store for public user profile.
+    * **Server Hydration:** Added AuthListener component to sync server session with client store.
+    * **UI Updates:** Replaced direct PocketBase authStore access with Zustand store.
+* **Files Modified:** `src/stores/auth-store.ts`, `src/components/auth/auth-listener.tsx`, `src/lib/pocketbase/server.ts`, `src/app/[lng]/layout.tsx`, `src/components/dashboard/dashboard-sidebar.tsx`
+* **Next Steps:** Step 4: Implement comprehensive testing for auth system.
+
+---
+
+## [2025-12-12] - Auth Reconstruction: Step 2 (HttpOnly Cookies)
+* **Action:** Implemented HttpOnly Cookie Authentication using Server Actions.
+* **Logic:**
+    * **Security:** Moved authentication to server-side only, preventing client-side cookie manipulation.
+    * **Cookies:** Set httpOnly, Secure, SameSite=Lax cookies that browser JS cannot access.
+    * **Actions:** Created dedicated session actions for login/logout with proper error handling.
+* **Files Modified:** `src/lib/actions/session.ts`, `src/app/[lng]/(auth)/login/page.tsx`, `src/app/[lng]/(auth)/login/login-form.tsx`, `src/app/[lng]/(auth)/dashboard/page-client-new.tsx`
+* **Next Steps:** Step 3: Implement useAuthStore with Zustand for client-side auth state.
+
+---
+
+## [2025-12-12] - Auth Reconstruction: Step 1 (Roles)
+* **Action:** Standardized User Roles to 'admin' and 'customer'.
+* **Logic:**
+    * **Consistency:** Eliminated the 'user' vs 'customer' ambiguity that threatened authorization logic.
+    * **Migration:** Backfilled existing users to the new standard.
+* **Files Modified:** `src/types/auth.ts`, `pb_migrations/1734000400_standardize_roles.js`, `src/services/auth/access-control.ts`, `src/middleware.ts`
+* **Next Steps:** Step 2: Implement HttpOnly Cookie Session Management.
+
+---
+
+## [2025-12-13] - User Dashboard Implementation
+* **Type:** feature
+* **Action:** 
+  * Created complete User Dashboard with cinema-grade dark theme styling
+  * Added `getQuotesByEmail` method to IQuoteService for email-based quote lookup
+  * Created dashboard server actions (`src/lib/actions/dashboard.ts`):
+    - `getUserDashboardQuotes()` - fetches quotes by authenticated user's email
+    - `getDashboardStats()` - calculates totalQuotes, pending, confirmed, activeRentals
+  * Created `UserQuotesList` component (`src/components/dashboard/user-quotes-list.tsx`):
+    - Quote cards with status badges (Pending, Reviewing, Confirmed, Declined)
+    - Rental period display with day count
+    - Equipment preview with images
+    - Estimated price display for confirmed quotes
+    - Empty state with CTA to browse equipment
+    - Framer Motion staggered animations
+  * Created `DashboardPageClient` component with:
+    - Stats row: Total Requests, Pending, Confirmed, Active Rentals
+    - Profile sidebar: User info, member since, sign out
+    - Responsive grid layout with sticky sidebar
+  * Redesigned dashboard page to use new components
+* **Logic:** 
+  * Per AI_ARCHITECT_RULES Section 6.3: User Dashboard must show list of past/current rental requests with status badges
+  * Quotes are linked by email (client_email field) rather than user ID for flexibility
+  * Users who submit quotes while logged out can still see them after logging in with same email
+* **Files:** 
+  * `src/services/quotes/interface.ts` (added getQuotesByEmail)
+  * `src/services/quotes/pocketbase-service.ts` (implemented getQuotesByEmail)
+  * `src/lib/actions/dashboard.ts` (new)
+  * `src/components/dashboard/user-quotes-list.tsx` (new)
+  * `src/app/[lng]/(auth)/dashboard/page-client-new.tsx` (new)
+  * `src/app/[lng]/(auth)/dashboard/page.tsx` (redesigned)
+* **Spec Compliance:** AI_ARCHITECT_RULES Section 6.3, cinema-roadmap.md Phase 5
+
+---
+
+## [2025-12-13] - Critical Fix: Rental Dates in Quote Flow
+* **Type:** fix
+* **Action:** 
+  * Added "Rental Dates" as the FIRST step in the quote form flow
+  * Created `DateRangePicker` component (`src/components/ui/date-range-picker.tsx`):
+    - Native HTML date inputs styled for dark cinema theme
+    - Quick select buttons (1 Day, 3 Days, 1 Week, 2 Weeks)
+    - Duration display showing selected range and day count
+    - Validation: end date >= start date
+  * Updated quote page flow:
+    - 4 steps now: Dates → Contact → Project → Review
+    - Dates are required before proceeding
+    - Rental period prominently displayed in Review step
+    - "Back to Cart" link on first step
+  * Synced dates with cart store via `setGlobalDates`
+* **Logic:** 
+  * CRITICAL BUG: Quote requests were being submitted without rental dates
+  * Without dates, Admin cannot check availability or calculate pricing
+  * A rental request without duration is useless for business operations
+* **Files:** 
+  * `src/components/ui/date-range-picker.tsx` (new)
+  * `src/app/[lng]/(public)/quote/page.tsx` (modified)
+* **Next Steps:** 
+  * User Dashboard (Priority 1) - now we have complete data to display
+  * Admin Dashboard (Priority 2)
+
+---
+
+## [2025-12-13] - Email Service & Quote Flow Completion
+* **Type:** feature
+* **Action:** 
+  * Created `IEmailService` interface for backend-agnostic email handling
+  * Implemented `ResendEmailService` with Resend API integration
+  * Created `ConsoleEmailService` for development without API key
+  * Built HTML email templates:
+    - Customer confirmation email with cinema-dark styling
+    - Admin notification email with quote details
+  * Enhanced quote success page with:
+    - Cinematic animations (animated icon, staggered reveals)
+    - Email confirmation notice
+    - "What happens next?" timeline
+    - Ambient glow background effect
+  * Updated `submitQuote` action to send emails on success
+  * Email sending is non-blocking (quote succeeds even if email fails)
+* **Logic:** 
+  * Per cinema-roadmap.md: Quote flow completion requires email notifications
+  * Backend-agnostic design allows switching from Resend to SMTP/SendGrid
+  * Non-blocking emails ensure user experience isn't affected by email failures
+  * Enhanced success page improves customer confidence post-submission
+* **Files:** 
+  * `src/services/email/interface.ts` (IEmailService, email types)
+  * `src/services/email/resend-service.ts` (Resend implementation + templates)
+  * `src/services/index.ts` (email service factory)
+  * `src/lib/actions/quote.ts` (wired email sending)
+  * `src/app/[lng]/(public)/quote/page.tsx` (enhanced success state)
+* **Environment Variables Required:**
+  * `RESEND_API_KEY` - Resend API key
+  * `EMAIL_FROM` - Sender email (e.g., "Cinema Rentals <noreply@site.com>")
+  * `ADMIN_EMAIL` - Admin notification recipient
+* **Spec Compliance:** cinema-roadmap.md Phase 4, cinema-qa-checklist.md email requirements
+
+---
+
 ## [2025-12-12] - Equipment Manifest Grid Layout with Images & Search
 * **Type:** feature
 * **Action:** 

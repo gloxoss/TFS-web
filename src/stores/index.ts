@@ -10,3 +10,6 @@ export type { CartItem, CartItemDates, CartState } from './useCartStore'
 
 export { useUIStore, useSuccessToast, useErrorToast } from './useUIStore'
 export type { Toast, ToastType, UIState } from './useUIStore'
+
+export { useAuthStore } from './auth-store'
+export type { User } from '@/types/auth'

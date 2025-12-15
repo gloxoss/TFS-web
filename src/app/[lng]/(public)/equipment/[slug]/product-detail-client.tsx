@@ -20,7 +20,7 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -31,7 +31,6 @@ import {
   AlertCircle, 
   Package, 
   Camera,
-  ChevronRight,
   Layers,
   Edit3,
   Plus,
@@ -41,13 +40,10 @@ import {
   List
 } from 'lucide-react'
 import { Product } from '@/services/products/types'
-import { ResolvedKit, ResolvedKitSlot } from '@/types/commerce'
+import { ResolvedKit } from '@/types/commerce'
 import { useCartStore, useUIStore } from '@/stores'
 import { cn } from '@/lib/utils'
-import { CartService } from '@/services/cart/cart-service'
-import { KitBuilder, KitSelections } from '@/components/products/KitBuilder'
-import { usePocketBase } from '@/components/pocketbase-provider'
-import PocketBase from 'pocketbase'
+import { resolveKit } from '@/lib/actions/cart'
 
 // ============================================================================
 // ANIMATION VARIANTS - Staggered fade-in with blur
@@ -173,20 +169,34 @@ function isCameraProduct(product: Product): boolean {
   const categoryName = product.category?.name?.toLowerCase() || ''
   const productName = product.name.toLowerCase()
   
-  return (
-    categorySlug.includes('camera') ||
-    categoryName.includes('camera') ||
-    productName.includes('camera') ||
-    productName.includes('fx6') ||
-    productName.includes('fx3') ||
-    productName.includes('komodo') ||
-    productName.includes('red ') ||
-    productName.includes('arri') ||
-    productName.includes('alexa') ||
-    productName.includes('c70') ||
-    productName.includes('c300') ||
-    productName.includes('bmpcc')
+  // Exclude non-camera categories explicitly
+  const excludedCategories = ['lighting', 'light', 'grip', 'audio', 'accessories', 'support', 'monitor']
+  const isExcludedCategory = excludedCategories.some(cat => 
+    categorySlug.includes(cat) || categoryName.includes(cat)
   )
+  
+  if (isExcludedCategory) {
+    return false
+  }
+  
+  // Check for camera-specific terms
+  const isCameraCategory = categorySlug.includes('camera') || categoryName.includes('camera')
+  
+  // Check for specific camera model names (more precise matching)
+  const cameraModelPatterns = [
+    'camera',
+    'fx6', 'fx3', 'fx30', 'fx9',  // Sony FX series
+    'komodo', 'red v-raptor', 'red ranger', 'red dsmc',  // RED cameras (not just "red")
+    'alexa', 'amira', 'arri 35', 'arriflex',  // ARRI cameras (not ARRI lights like M18, SkyPanel)
+    'c70', 'c300', 'c500', 'c200',  // Canon Cinema EOS
+    'bmpcc', 'blackmagic pocket', 'ursa',  // Blackmagic cameras
+    'varicam', 'eva1',  // Panasonic cinema cameras
+    'venice',  // Sony Venice
+  ]
+  
+  const matchesCameraModel = cameraModelPatterns.some(pattern => productName.includes(pattern))
+  
+  return isCameraCategory || matchesCameraModel
 }
 
 // ============================================================================
@@ -306,7 +316,6 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
 // ============================================================================
 
 export function ProductDetailClient({ product, lng }: ProductDetailClientProps) {
-  const pbContext = usePocketBase()
   const addItem = useCartStore((state) => state.addItem)
   const openCartDrawer = useUIStore((state) => state.openCartDrawer)
   const addToast = useUIStore((state) => state.addToast)
@@ -333,24 +342,19 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   // View mode state (grid or list)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   
-  // Determine if this is a camera (for loading skeleton)
-  const isCameraType = useMemo(() => isCameraProduct(product), [product])
-
   // Check for kit on mount
   useEffect(() => {
     async function loadKit() {
-      const pb = pbContext || new PocketBase(process.env.NEXT_PUBLIC_PB_URL || 'http://127.0.0.1:8090')
-      
       try {
-        const cartService = new CartService(pb)
-        const kit = await cartService.resolveKit(product.id)
-        
-        if (kit && kit.slots.length > 0) {
-          setResolvedKit(kit)
+        // Use server action for kit resolution
+        const result = await resolveKit(product.id)
+
+        if (result.success && result.kit && result.kit.slots.length > 0) {
+          setResolvedKit(result.kit)
           // Initialize default selections from resolved kit
           const defaultSelections: KitSelections = {}
-          for (const slot of kit.slots) {
-            defaultSelections[slot.slotName] = slot.defaultItems.map(item => 
+          for (const slot of result.kit.slots) {
+            defaultSelections[slot.slotName] = slot.defaultItems.map(item =>
               typeof item === 'string' ? item : item.id
             )
           }
@@ -382,7 +386,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
       }
     }
     loadKit()
-  }, [pbContext, product.id, product])
+  }, [product.id, product])
 
   // Handle add to cart - dates will be set at checkout
   const handleAddToCart = useCallback(async () => {
@@ -670,7 +674,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                 animate="visible"
                 className="space-y-6"
               >
-                {slotData.map((slot, index) => (
+                {slotData.map((slot) => (
                   <motion.div
                     key={slot.slotName}
                     variants={fadeInBlurFast}
@@ -1291,7 +1295,7 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
           {filteredItems.length === 0 ? (
             <div className="text-center py-12">
               <Search className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-              <p className="text-zinc-500">No items match "{searchQuery}"</p>
+              <p className="text-zinc-500">No items match &quot;{searchQuery}&quot;</p>
             </div>
           ) : modalViewMode === 'grid' ? (
             /* Grid View */

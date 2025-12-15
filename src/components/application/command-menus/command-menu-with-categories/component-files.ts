@@ -10,7 +10,7 @@ export type SandpackFiles = {
 
 export function updateImportPaths(code: string): string {
     return code.replace(IMPORT_REGEX, (match, p1, p2) => {
-        let newImport = p2?.split("/").pop();
+        const newImport = p2?.split("/").pop();
 
         return match.replace(`${p1}${p2}`, `./${newImport}`);
     });

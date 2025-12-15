@@ -33,6 +33,8 @@ const config: Config = {
         shimmer: "shimmer 2s linear infinite",
         "scrolling-banner": "scrolling-banner var(--duration) linear infinite",
         "scrolling-banner-vertical": "scrolling-banner-vertical var(--duration) linear infinite",
+        aurora: "aurora 60s linear infinite",
+        scroll: "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
       },
       keyframes: {
         shimmer: {
@@ -51,11 +53,25 @@ const config: Config = {
           from: { transform: "translateY(0)" },
           to: { transform: "translateY(calc(-50% - var(--gap)/2))" },
         },
+        aurora: {
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
+        scroll: {
+          to: {
+            transform: "translate(calc(-50% - 0.5rem))",
+          },
+        },
       },
     },
   },
   plugins: [
     heroui(), // HeroUI Plugin
+    require('@tailwindcss/typography'),
     addVariablesForColors, // Aceternity Helper
   ],
 };

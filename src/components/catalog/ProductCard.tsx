@@ -10,11 +10,14 @@
  */
 'use client'
 
+import { useState, MouseEvent } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Plus, Minus, ShoppingCart } from 'lucide-react'
 import { Product } from '@/services/products/types'
 import { cn } from '@/lib/utils'
+import { useCartStore, useUIStore } from '@/stores'
 
 interface ProductCardProps {
   product: Product
@@ -31,7 +34,44 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
     isAvailable,
   } = product
 
+  const [quantity, setQuantity] = useState(1)
+  const addItem = useCartStore((state) => state.addItem)
+  const openCart = useUIStore((state) => state.openCartDrawer)
+  const globalDates = useCartStore((state) => state.globalDates)
+
   const productUrl = `/${lng}/equipment/${slug}`
+
+  // Best-effort check for "Camera" since category relation might be missing
+  const isCamera =
+    category?.slug === 'cameras' ||
+    category?.name?.toLowerCase().includes('camera') ||
+    name.toLowerCase().includes('camera') ||
+    slug.toLowerCase().includes('camera')
+
+  // Show Quick Add for non-cameras (lights, grip, lenses, etc.)
+  const showQuickAdd = !isCamera && isAvailable
+
+  const handleQuantityChange = (e: MouseEvent, delta: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const newQty = Math.max(1, quantity + delta)
+    setQuantity(newQty)
+  }
+
+  const handleQuickAdd = (e: MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Use global dates if set, otherwise default to today + 3 days
+    const dates = globalDates || {
+      start: new Date().toISOString(),
+      end: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+    }
+
+    addItem(product, quantity, dates)
+    openCart()
+    setQuantity(1)
+  }
 
   return (
     <motion.article
@@ -49,7 +89,7 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
       {/* Image Container */}
       <Link href={productUrl} className="relative aspect-[4/3] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 via-transparent to-transparent z-10" />
-        
+
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -76,7 +116,7 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
           </div>
         )}
 
-        {/* Category Badge */}
+        {/* Category Badge - Only shows if category data present */}
         {category && (
           <span className="absolute top-3 left-3 z-20 px-2.5 py-1 text-xs font-medium bg-zinc-900/80 backdrop-blur-sm text-zinc-300 rounded-md border border-zinc-700/50">
             {category.name}
@@ -105,21 +145,52 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
         </Link>
 
         {/* Blind Quote: No stock numbers or prices shown */}
-        <p className="mt-1 text-xs text-zinc-500">
+        <p className="mt-1 text-xs text-zinc-500 mb-4">
           Request a quote for pricing
         </p>
 
-        <div className="mt-auto pt-3 flex items-center justify-end">
-          <Link
-            href={productUrl}
-            className={cn(
-              'px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200',
-              'bg-white text-zinc-900 hover:bg-zinc-200',
-              'border border-zinc-200'
-            )}
-          >
-            View Details
-          </Link>
+        <div className="mt-auto flex items-end justify-between gap-3">
+          {/* Quick Add Actions */}
+          {showQuickAdd ? (
+            <div className="flex items-center gap-2 w-full bg-zinc-800/50 p-1 rounded-lg border border-zinc-800">
+              {/* Quantity Control */}
+              <div className="flex items-center bg-zinc-900 rounded-md border border-zinc-800">
+                <button
+                  onClick={(e) => handleQuantityChange(e, -1)}
+                  className="p-1.5 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="w-8 text-center text-sm font-medium text-white">{quantity}</span>
+                <button
+                  onClick={(e) => handleQuantityChange(e, 1)}
+                  className="p-1.5 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Add Button */}
+              <button
+                onClick={handleQuickAdd}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 bg-white text-zinc-950 text-sm font-medium rounded-md hover:bg-zinc-200 transition-colors"
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Add</span>
+              </button>
+            </div>
+          ) : (
+            <Link
+              href={productUrl}
+              className={cn(
+                'ml-auto px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200',
+                'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white',
+                'border border-zinc-700'
+              )}
+            >
+              View Details
+            </Link>
+          )}
         </div>
       </div>
     </motion.article>

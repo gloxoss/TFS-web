@@ -25,21 +25,7 @@
   }
 }
 
-/* Custom cursor - hide default on desktop only */
-@media (min-width: 768px) {
-  body {
-    cursor: none;
-  }
 
-  a,
-  button,
-  [role="button"],
-  input,
-  textarea,
-  select {
-    cursor: none;
-  }
-}
 
 /* Lenis smooth scroll */
 html.lenis,
@@ -232,5 +218,29 @@ html.lenis body {
 
   100% {
     transform: translate(5%, 0);
+  }
+}
+
+/* Global Static Noise Overlay (Requested by User) */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+  /* Above regular content but below modals/nav if handled appropriately, or use blend mode on body */
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity: 0.2;
+  /* Matches previous section */
+  filter: brightness(100%) contrast(150%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* Ensure body dark mode background is the deep black requested */
+@layer base {
+  body {
+    @apply bg-black text-foreground;
+    /* Using bg-black as the primary dark background */
   }
 }

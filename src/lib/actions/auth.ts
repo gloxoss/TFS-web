@@ -12,7 +12,7 @@ interface AuthResult {
 }
 
 export async function login(formData: FormData) {
-  const client = await createServerClient();
+  const client = await createServerClient(true);
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -30,7 +30,7 @@ export async function login(formData: FormData) {
 }
 
 export async function register(formData: FormData): Promise<AuthResult> {
-  const client = await createServerClient();
+  const client = await createServerClient(true);
 
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
@@ -78,11 +78,6 @@ export async function register(formData: FormData): Promise<AuthResult> {
     // Login after registration and ensure the auth store is updated
     await client.collection("users").authWithPassword(email, password);
 
-    // Make sure the auth is saved in cookies
-    if (typeof document !== "undefined") {
-      document.cookie = client.authStore.exportToCookie({ httpOnly: false });
-    }
-
     // Add a small delay to ensure auth state propagation
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -117,7 +112,7 @@ export async function register(formData: FormData): Promise<AuthResult> {
 }
 
 export async function logout() {
-  const client = await createServerClient();
+  const client = await createServerClient(true);
   await client.authStore.clear();
   revalidatePath("/", "layout");
   return { redirect: "/login" };

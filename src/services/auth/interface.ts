@@ -1,4 +1,4 @@
-import { User } from "@/types/user"; // We will define this type below
+import { User } from "@/types/auth";
 
 export interface IAuthService {
   login(email: string, pass: string): Promise<{ user: User; token: string }>;

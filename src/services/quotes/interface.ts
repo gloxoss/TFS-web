@@ -6,6 +6,7 @@
  */
 
 import type { CartItem } from '@/stores/useCartStore'
+import type { PaginatedResult } from '@/services/products/interface'
 
 // ============================================================================
 // Domain Types (Backend-agnostic)
@@ -14,7 +15,7 @@ import type { CartItem } from '@/stores/useCartStore'
 /**
  * Quote status options per TDD cinema-tdd.md
  */
-export type QuoteStatus = 'pending' | 'reviewing' | 'confirmed' | 'rejected'
+export type QuoteStatus = 'pending' | 'reviewing' | 'quoted' | 'confirmed' | 'rejected'
 
 /**
  * Quote creation payload - matches form data structure
@@ -25,21 +26,23 @@ export interface CreateQuotePayload {
   clientEmail: string
   clientPhone: string
   clientCompany?: string
-  
+
   // Rental items (TDD: items_json)
   items: QuoteItemPayload[]
-  
+
   // Dates (TDD: rental_start_date, rental_end_date)
   rentalStartDate: string
   rentalEndDate: string
-  
-  // Project details (TDD: project_description, location, special_requests)
+
+  // Project details (TDD: project_description, special_requests)
   projectDescription?: string
-  location?: string
   specialRequests?: string
-  
+
   // Language preference (for follow-up communications)
   language?: string
+
+  // Link to registered user (if authenticated)
+  userId?: string
 }
 
 /**
@@ -65,6 +68,7 @@ export interface QuoteItemPayload {
  */
 export interface Quote {
   id: string
+  accessToken?: string
   clientName: string
   clientEmail: string
   clientPhone: string
@@ -73,15 +77,27 @@ export interface Quote {
   rentalStartDate: string
   rentalEndDate: string
   projectDescription?: string
-  location?: string
   specialRequests?: string
   status: QuoteStatus
+  confirmationNumber?: string
+  language?: string
   internalNotes?: string
   estimatedPrice?: number
   pdfGenerated: boolean
+  pdfFileUrl?: string
+  pdfFileName?: string
+  isLocked?: boolean
   followUpDate?: string
+  quotedAt?: string  // Timestamp when quote was sent (for grace period editing)
   created: string
   updated: string
+  // Optional expanded fields
+  expand?: {
+    user?: {
+      email: string
+      name?: string
+    }
+  }
 }
 
 /**
@@ -92,7 +108,8 @@ export interface QuoteResult {
   data?: {
     quoteId: string
     confirmationNumber: string
-  }
+    accessToken?: string
+  } | Quote
   error?: string
 }
 
@@ -105,31 +122,46 @@ export interface IQuoteService {
    * Create a new quote request
    */
   createQuote(payload: CreateQuotePayload): Promise<QuoteResult>
-  
+
+  /**
+   * Get quotes with pagination and optional filtering
+   * Used for Admin Dashboard
+   */
+  getQuotes(page?: number, perPage?: number, status?: QuoteStatus): Promise<PaginatedResult<Quote>>
+
   /**
    * Get quotes for authenticated user (customer view)
    */
   getUserQuotes(userId: string): Promise<Quote[]>
-  
+
+  /**
+   * Get quotes by email address
+   * Used when quotes are linked by client_email rather than user relation
+   */
+  getQuotesByEmail(email: string): Promise<Quote[]>
+
+  /**
+   * Get quote by ID
+   */
   /**
    * Get quote by ID
    */
   getQuoteById(quoteId: string): Promise<Quote | null>
-  
+
   /**
-   * Admin: Get all quotes with optional status filter
+   * Admin: Upload a PDF quote and lock the record
    */
-  getAllQuotes(status?: QuoteStatus): Promise<Quote[]>
-  
+  uploadQuote(id: string, file: File, price: number): Promise<QuoteResult>
+
   /**
    * Admin: Update quote status
    */
   updateQuoteStatus(
-    quoteId: string, 
-    status: QuoteStatus, 
+    quoteId: string,
+    status: QuoteStatus,
     internalNotes?: string
   ): Promise<Quote>
-  
+
   /**
    * Admin: Set estimated price
    */

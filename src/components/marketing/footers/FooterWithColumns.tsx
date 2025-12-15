@@ -2,12 +2,16 @@
 
 import React from "react";
 import { Divider, Link } from "@heroui/react";
-import { AcmeIcon } from "@/components/marketing/hero-centered/Icons";
 import { footerNavigation } from "./data";
-// Placeholder for ThemeSwitch
-import { Moon, Sun } from "lucide-react";
+import { useTranslation } from "@/app/i18n/client";
 
-export default function FooterWithColumns() {
+interface FooterWithColumnsProps {
+    lng: string;
+}
+
+export default function FooterWithColumns({ lng }: FooterWithColumnsProps) {
+    const { t } = useTranslation(lng, 'common');
+
     const renderList = React.useCallback(
         ({ title, items }: { title: string; items: { name: string; href: string }[] }) => (
             <div>
@@ -15,7 +19,7 @@ export default function FooterWithColumns() {
                 <ul className="mt-6 space-y-4">
                     {items.map((item) => (
                         <li key={item.name}>
-                            <Link className="text-default-400" href={item.href} size="sm">
+                            <Link className="text-default-400" href={`/${lng}${item.href}`} size="sm">
                                 {item.name}
                             </Link>
                         </li>
@@ -23,20 +27,22 @@ export default function FooterWithColumns() {
                 </ul>
             </div>
         ),
-        [],
+        [lng],
     );
 
     return (
-        <footer className="flex w-full flex-col">
+        <footer className="flex w-full flex-col bg-background pb-12">
             <div className="max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
                 <div className="xl:grid xl:grid-cols-3 xl:gap-8">
                     <div className="space-y-8 md:pr-8">
                         <div className="flex items-center justify-start">
-                            <AcmeIcon />
-                            <span className="text-medium font-medium ml-2">ACME</span>
+                            <span className="text-2xl font-bold font-display tracking-tight text-foreground">
+                                Tv - film - solution
+                            </span>
                         </div>
                         <p className="text-small text-default-500">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique
+                            Professional cinema equipment rental for filmmakers, production companies, and content creators.
+                            Access the latest cameras, lighting, audio gear, and grip equipment for your next project.
                         </p>
                         <div className="flex space-x-6">
                             {footerNavigation.social.map((item) => (
@@ -64,11 +70,9 @@ export default function FooterWithColumns() {
                 </div>
                 <Divider className="mt-16 sm:mt-20 lg:mt-24" />
                 <div className="flex flex-wrap justify-between gap-2 pt-8">
-                    <p className="text-small text-default-400">&copy; 2024 Acme Inc. All rights reserved.</p>
-                    <div className="flex items-center gap-2 border p-1 rounded-full">
-                        <Sun className="w-4 h-4 text-default-500" />
-                        <Moon className="w-4 h-4 text-default-500" />
-                    </div>
+                    <p className="text-small text-default-400">
+                        &copy; 2024 Tv - film - solution. All rights reserved.
+                    </p>
                 </div>
             </div>
         </footer>
