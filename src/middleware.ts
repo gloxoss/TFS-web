@@ -14,7 +14,7 @@ export const config = {
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
-  const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   // -----------------------------------------------------------------------
   // 1. I18n Redirection Logic
