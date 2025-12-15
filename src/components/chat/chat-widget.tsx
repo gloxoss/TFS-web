@@ -9,7 +9,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Card, CardBody, CardHeader, CardFooter, Chip } from '@heroui/react'
