@@ -148,11 +148,7 @@ html.lenis body {
   }
 }
 
-@media screen and (max-width: 479px) {
-  .progressive-blur_wrap {
-    display: block;
-  }
-}
+
 
 /* TV Noise Animation */
 .noise-wrapper {

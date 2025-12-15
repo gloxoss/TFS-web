@@ -9,10 +9,9 @@ import type { Metadata } from "next";
 import { I18nProvider } from '@/components/providers/i18n-client-provider'
 import "../globals.css";
 import { Providers } from "@/app/providers";
-import { CartDrawerWrapper } from "@/components/cart/CartDrawerWrapper";
+import { LazyComponents } from "@/components/lazy-components";
 import AuthListener from "@/components/auth/auth-listener";
 import { CartMergeHandler } from "@/components/cart/cart-merge-handler";
-import { ChatWidget } from "@/components/chat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,8 +79,7 @@ export default async function RootLayout({
               <AuthListener initialUser={user} />
               <CartMergeHandler />
               {children}
-              <CartDrawerWrapper lng={lng} />
-              <ChatWidget />
+              <LazyComponents lng={lng} />
             </Providers>
           </PocketBaseProvider>
         </I18nProvider>

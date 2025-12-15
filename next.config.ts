@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+    optimizePackageImports: [
+      'lucide-react',
+      'date-fns',
+      'lodash',
+      '@heroui/react',
+      'framer-motion',
+    ],
   },
 
   typescript: {
