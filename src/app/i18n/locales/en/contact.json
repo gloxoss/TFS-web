@@ -1,0 +1,33 @@
+{
+    "hero": {
+        "title": "Get in Touch",
+        "subtitle": "Ready to bring your vision to life? Contact our global team for rentals, production support, and technical inquiries."
+    },
+    "form": {
+        "title": "Send a Message",
+        "name": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "subject": "Subject",
+        "message": "Message",
+        "submit": "Send Message",
+        "success": "Message sent successfully!",
+        "error": "Something went wrong. Please try again."
+    },
+    "info": {
+        "title": "Our Offices",
+        "subtitle": "Find us in major production hubs worldwide.",
+        "morocco": {
+            "city": "Marrakech, Morocco",
+            "address": "123 Film City Blvd, Ouarzazate Road",
+            "phone": "+212 5 24 00 00 00",
+            "email": "morocco@tfs.com"
+        },
+        "uae": {
+            "city": "Dubai, UAE",
+            "address": "Studio City, Building 4",
+            "phone": "+971 4 000 0000",
+            "email": "dubai@tfs.com"
+        }
+    }
+}

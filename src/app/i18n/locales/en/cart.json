@@ -1,0 +1,35 @@
+{
+  "title": "Your Quote Request",
+  "description": "Review your equipment selection and proceed to request a quote.",
+  "continueShopping": "Continue Shopping",
+  "empty": {
+    "title": "Your cart is empty",
+    "description": "Browse our professional cinema equipment catalog and add items to your quote request.",
+    "browseEquipment": "Browse Equipment"
+  },
+  "items": {
+    "title": "Items",
+    "clearAll": "Clear All",
+    "remove": "Remove",
+    "rentalDates": "Rental Dates",
+    "quantity": "Qty",
+    "perDay": "/day",
+    "days": "days",
+    "lineTotal": "Subtotal"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "discount": "Duration Discount",
+    "discountNote": "({{percent}}% off for {{days}}+ days)",
+    "total": "Estimated Total",
+    "proceedToQuote": "Request Quote",
+    "note": "Final pricing will be confirmed after review by our team."
+  },
+  "drawer": {
+    "title": "Your Quote",
+    "viewCart": "View Full Cart",
+    "checkout": "Request Quote",
+    "empty": "No items yet"
+  }
+}

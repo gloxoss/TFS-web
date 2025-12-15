@@ -1,0 +1,106 @@
+{
+    "hero": {
+        "title": "Building Visuals",
+        "subtitle": "Launch custom headless e-commerce storefronts with the most advanced gear."
+    },
+    "bento": {
+        "platform": {
+            "title": "The Ecosystem",
+            "subtitle": "Built for Production",
+            "description": "We provide the most advanced cinema equipment and production support for studios, rental houses, and independent creators."
+        },
+        "cards": {
+            "logistics": {
+                "title": "Global Logistics",
+                "description": "Seamless shipping to 200+ countries. We handle the carnets and customs so you can focus on the shoot."
+            },
+            "kits": {
+                "title": "Smart Kit Intelligence",
+                "description": "Our systems verify lens coverage, mount compatibility, and power requirements in real-time."
+            },
+            "manifest": {
+                "title": "Visual Manifest",
+                "description": "No more spreadsheets. See every cable, battery, and lens in your package before it leaves the warehouse."
+            },
+            "quotes": {
+                "title": "Blind Quote Protection",
+                "description": "Your budgets are your business. Our blind quote system ensures your competitive pricing remains confidential.",
+                "stat": ""
+            },
+            "support": {
+                "title": "24/7 Production Support",
+                "description": "Our team of camera technicians is on standby 24/7 to solve on-set emergencies."
+            }
+        }
+    },
+    "cta": {
+        "title": "Ready to Start Production?",
+        "subtitle": "Get a quote for your custom camera package today.",
+        "button": "Configure Kit"
+    },
+    "news": {
+        "title": "LATEST FROM THE STUDIO",
+        "items": [
+            {
+                "category": "TECH",
+                "title": "The New ARRI Alexa 35: Standardizing Color Science",
+                "image": "https://images.unsplash.com/photo-1542204165-6b8c9a807d96?q=80&w=2670&auto=format&fit=crop"
+            },
+            {
+                "category": "ON SET",
+                "title": "Behind the Scenes: Filming 'The Last Horizon' in Iceland",
+                "image": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2671&auto=format&fit=crop"
+            },
+            {
+                "category": "UPDATE",
+                "title": "Firmware 2.0: Unlocking New Frame Rates for RED V-Raptor",
+                "image": "https://images.unsplash.com/photo-1533750516457-a7f992034fec?q=80&w=2676&auto=format&fit=crop"
+            },
+            {
+                "category": "INSIGHT",
+                "title": "Why we switched to Custom Lenses for the latest commercial",
+                "image": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2670&auto=format&fit=crop"
+            }
+        ]
+    },
+    "categories": {
+        "title": "Services & Solutions",
+        "subtitle": "Everything you need for your next project.",
+        "items": [
+            {
+                "id": "camera",
+                "title": "Camera & Optics",
+                "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop"
+            },
+            {
+                "id": "machinery",
+                "title": "Machinery",
+                "image": "https://images.unsplash.com/photo-1540655037529-a2987c2bec93?q=80&w=2752&auto=format&fit=crop"
+            },
+            {
+                "id": "lighting",
+                "title": "Lighting",
+                "image": "https://images.unsplash.com/photo-1588693850125-964205f242aa?q=80&w=2672&auto=format&fit=crop"
+            },
+            {
+                "id": "filters",
+                "title": "Filters",
+                "image": "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=2674&auto=format&fit=crop"
+            },
+            {
+                "id": "studios",
+                "title": "Studios",
+                "image": "https://images.unsplash.com/photo-1527011046414-4781f1f94f8c?q=80&w=2576&auto=format&fit=crop"
+            },
+            {
+                "id": "post",
+                "title": "Post-Production",
+                "image": "https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?q=80&w=2664&auto=format&fit=crop"
+            }
+        ]
+    },
+    "featured": {
+        "title": "Featured Equipment",
+        "subtitle": "Discover our most popular rentals, available for your next production."
+    }
+}

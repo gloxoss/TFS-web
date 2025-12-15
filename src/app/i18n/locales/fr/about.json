@@ -1,0 +1,39 @@
+{
+    "hero": {
+        "title": "Nous Propulsons la Créativité",
+        "subtitle": "né sur le plateau, construit pour la production."
+    },
+    "story": {
+        "title": "Notre Histoire",
+        "p1": "Fondé en 2014 par un groupe de directeurs de la photographie et d'ingénieurs, TFS a débuté avec une mission simple : combler le fossé entre la technologie complexe et l'expression créative pure.",
+        "p2": "Aujourd'hui, nous sommes la norme de l'industrie pour le support de production, offrant un écosystème de location, de logistique et d'expertise technique qui permet aux cinéastes de repousser les limites sans compromis."
+    },
+    "values": {
+        "title": "Nos Valeurs Fondamentales",
+        "subtitle": "Les principes qui guident chaque préparation.",
+        "items": {
+            "reliability": {
+                "title": "Fiabilité Inégalée",
+                "description": "Du matériel qui fonctionne. À chaque fois. Notre processus de QA est le plus rigoureux de l'industrie."
+            },
+            "speed": {
+                "title": "Vitesse de Production",
+                "description": "Nous savons que le temps, c'est de l'argent. Notre réseau logistique assure que votre kit arrive avant vous."
+            },
+            "innovation": {
+                "title": "Innovation Technique",
+                "description": "Nous ne louons pas seulement du matériel ; nous le modifions et l'améliorons pour l'adapter aux flux de travail modernes."
+            }
+        }
+    },
+    "stats": {
+        "years": "Années d'Expérience",
+        "projects": "Projets Soutenus",
+        "countries": "Pays Servis"
+    },
+    "cta": {
+        "title": "Rejoignez la Famille",
+        "subtitle": "Découvrez la différence sur votre prochaine production.",
+        "button": "Contactez-nous"
+    }
+}

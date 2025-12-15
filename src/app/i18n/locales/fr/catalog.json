@@ -1,0 +1,58 @@
+{
+  "title": "Catalogue d'équipement",
+  "description": "Parcourez notre équipement cinéma professionnel disponible à la location",
+  "search": {
+    "placeholder": "Rechercher un équipement...",
+    "noResults": "Aucun équipement trouvé",
+    "noResultsHint": "Essayez d'ajuster vos filtres ou votre recherche"
+  },
+  "filters": {
+    "allCategories": "Toutes les catégories",
+    "clearFilters": "Effacer les filtres"
+  },
+  "product": {
+    "dailyRate": "Tarif journalier",
+    "perDay": "/jour",
+    "viewDetails": "Voir les détails",
+    "addToQuote": "Ajouter au devis",
+    "outOfStock": "Actuellement indisponible",
+    "featured": "En vedette",
+    "inStock": "En stock",
+    "limited": "Disponibilité limitée"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page",
+    "of": "sur",
+    "showing": "Affichage de",
+    "results": "résultats"
+  },
+  "categories": {
+    "camera": "Caméras",
+    "lens": "Objectifs",
+    "light": "Éclairage",
+    "audio": "Audio",
+    "grip": "Machinerie & Support",
+    "misc": "Accessoires"
+  },
+  "detail": {
+    "backToCatalog": "Retour au catalogue",
+    "specifications": "Spécifications",
+    "description": "Description",
+    "rentalPeriod": "Période de location",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "quantity": "Quantité",
+    "addToCart": "Ajouter au devis",
+    "addedToCart": "Ajouté au devis !",
+    "selectDates": "Veuillez sélectionner les dates de location",
+    "estimatedTotal": "Total estimé",
+    "days": "jours",
+    "relatedProducts": "Vous pourriez aussi aimer"
+  },
+  "meta": {
+    "title": "Catalogue d'équipement | TFS Location Cinéma",
+    "description": "Parcourez notre catalogue d'équipement cinéma professionnel. Caméras, objectifs, éclairage et plus disponibles à la location."
+  }
+}

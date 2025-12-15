@@ -1,0 +1,106 @@
+{
+    "hero": {
+        "title": "Création Visuelle",
+        "subtitle": "Lancez des boutiques e-commerce headless personnalisées avec le matériel le plus avancé."
+    },
+    "bento": {
+        "platform": {
+            "title": "L'Écosystème",
+            "subtitle": "Conçu pour la Production",
+            "description": "Nous fournissons le matériel cinématographique et le support de production les plus avancés pour les studios et les créateurs."
+        },
+        "cards": {
+            "logistics": {
+                "title": "Logistique Mondiale",
+                "description": "Expédition fluide vers plus de 200 pays. Nous gérons les carnets et les douanes pour que vous puissiez vous concentrer sur le tournage."
+            },
+            "kits": {
+                "title": "Intelligence des Kits",
+                "description": "Nos systèmes vérifient la couverture des objectifs, la compatibilité des montures et les besoins en énergie en temps réel."
+            },
+            "manifest": {
+                "title": "Manifeste Visuel",
+                "description": "Fini les tableurs. Visualisez chaque câble, batterie et objectif de votre paquetage avant qu'il ne quitte l'entrepôt."
+            },
+            "quotes": {
+                "title": "Protection des Devis",
+                "description": "Vos budgets vous appartiennent. Notre système de devis aveugle garantit la confidentialité de vos tarifs compétitifs.",
+                "stat": "Sécurisé"
+            },
+            "support": {
+                "title": "Support 24/7",
+                "description": "Notre équipe de techniciens caméra est en veille 24h/24 pour résoudre les urgences sur le plateau."
+            }
+        }
+    },
+    "cta": {
+        "title": "Prêt à Démarrer la Production ?",
+        "subtitle": "Obtenez un devis pour votre kit caméra personnalisé dès aujourd'hui.",
+        "button": "Configurer le Kit"
+    },
+    "news": {
+        "title": "DERNIÈRES NOUVELLES DU STUDIO",
+        "items": [
+            {
+                "category": "TECH",
+                "title": "La Nouvelle ARRI Alexa 35 : Standardisation de la Science des Couleurs",
+                "image": "https://images.unsplash.com/photo-1542204165-6b8c9a807d96?q=80&w=2670&auto=format&fit=crop"
+            },
+            {
+                "category": "TOURNAGE",
+                "title": "Dans les Coulisses : Tournage de 'The Last Horizon' en Islande",
+                "image": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2671&auto=format&fit=crop"
+            },
+            {
+                "category": "MISE À JOUR",
+                "title": "Firmware 2.0 : Nouvelles Fréquences d'Images pour la RED V-Raptor",
+                "image": "https://images.unsplash.com/photo-1533750516457-a7f992034fec?q=80&w=2676&auto=format&fit=crop"
+            },
+            {
+                "category": "APERÇU",
+                "title": "Pourquoi nous sommes passés aux objectifs personnalisés",
+                "image": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2670&auto=format&fit=crop"
+            }
+        ]
+    },
+    "categories": {
+        "title": "Services et Solutions",
+        "subtitle": "Des services et des solutions pour tous vos projets.",
+        "items": [
+            {
+                "id": "camera",
+                "title": "Caméra et Optique",
+                "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop"
+            },
+            {
+                "id": "machinery",
+                "title": "Machinerie",
+                "image": "https://images.unsplash.com/photo-1540655037529-a2987c2bec93?q=80&w=2752&auto=format&fit=crop"
+            },
+            {
+                "id": "lighting",
+                "title": "Lumière",
+                "image": "https://images.unsplash.com/photo-1588693850125-964205f242aa?q=80&w=2672&auto=format&fit=crop"
+            },
+            {
+                "id": "filters",
+                "title": "Filtres",
+                "image": "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=2674&auto=format&fit=crop"
+            },
+            {
+                "id": "studios",
+                "title": "Studios",
+                "image": "https://images.unsplash.com/photo-1527011046414-4781f1f94f8c?q=80&w=2576&auto=format&fit=crop"
+            },
+            {
+                "id": "post",
+                "title": "Post-production",
+                "image": "https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?q=80&w=2664&auto=format&fit=crop"
+            }
+        ]
+    },
+    "featured": {
+        "title": "Matériel en Vedette",
+        "subtitle": "Découvrez nos locations les plus populaires, disponibles pour votre prochaine production."
+    }
+}

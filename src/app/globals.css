@@ -1,0 +1,246 @@
+@import 'tailwindcss';
+
+@config '../../tailwind.config.ts';
+
+@plugin "daisyui" {
+  themes: lofi --default, dark --prefersdark;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Progressive Blur Effect - Exact implementation with layered masks */
+.progressive-blur_wrap {
+  z-index: 99;
+  pointer-events: none;
+  width: 100%;
+  height: 6rem;
+  position: fixed;
+  inset: auto 0% 0%;
+  overflow: clip;
+  transform: rotate(180deg);
+}
+
+.progressive-blur_panel {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  position: absolute;
+  -webkit-mask: linear-gradient(#0000 10%, #000 20% 40%, #0000 50%);
+  mask: linear-gradient(#0000 10%, #000 20% 40%, #0000 50%);
+}
+
+.progressive-blur_panel.is-1 {
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  -webkit-mask: linear-gradient(#000 0% 10%, #0000 30%);
+  mask: linear-gradient(#000 0% 10%, #0000 30%);
+}
+
+.progressive-blur_panel.is-2 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / var(--ratio)));
+  backdrop-filter: blur(calc(var(--blur) / var(--ratio)));
+  -webkit-mask: linear-gradient(#0000 0%, #000 10% 20%, #0000 40%);
+  mask: linear-gradient(#0000 0%, #000 10% 20%, #0000 40%);
+}
+
+.progressive-blur_panel.is-3 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 0%, #000 20% 30%, #0000 50%);
+  mask: linear-gradient(#0000 0%, #000 20% 30%, #0000 50%);
+}
+
+.progressive-blur_panel.is-4 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 10%, #000 30% 40%, #0000 60%);
+  mask: linear-gradient(#0000 10%, #000 30% 40%, #0000 60%);
+}
+
+.progressive-blur_panel.is-5 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 20%, #000 40% 50%, #0000 70%);
+  mask: linear-gradient(#0000 20%, #000 40% 50%, #0000 70%);
+}
+
+.progressive-blur_panel.is-6 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 30%, #000 50% 60%, #0000 80%);
+  mask: linear-gradient(#0000 30%, #000 50% 60%, #0000 80%);
+}
+
+.progressive-blur_panel.is-7 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 40%, #000 60% 70%, #0000 90%);
+  mask: linear-gradient(#0000 40%, #000 60% 70%, #0000 90%);
+}
+
+.progressive-blur_panel.is-8 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 50%, #000 70% 80%, #0000 100%);
+  mask: linear-gradient(#0000 50%, #000 70% 80%, #0000 100%);
+}
+
+.progressive-blur_panel.is-9 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 60%, #000 80% 90%, #0000 100%);
+  mask: linear-gradient(#0000 60%, #000 80% 90%, #0000 100%);
+}
+
+.progressive-blur_panel.is-10 {
+  -webkit-backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  backdrop-filter: blur(calc(var(--blur) / (var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio) * var(--ratio))));
+  -webkit-mask: linear-gradient(#0000 70%, #000 90%, #0000 100%);
+  mask: linear-gradient(#0000 70%, #000 90%, #0000 100%);
+}
+
+@media screen and (max-width: 767px) {
+  .progressive-blur_wrap {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .progressive-blur_wrap {
+    display: block;
+  }
+}
+
+/* TV Noise Animation */
+.noise-wrapper {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 40;
+
+  /* --- CUSTOMIZE HERE --- */
+  opacity: 0.05;
+  /* 1. VISIBILITY: Lower = subtle, Higher = strong (0.05 - 0.15 recommended) */
+  background-size: 150px 150px;
+  /* 2. GRAIN SIZE: Lower px = Finer/Smaller grain. (e.g. 50px = Tiny, 200px = Chunky) */
+  /* --------------------- */
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: noise 0.2s steps(3) infinite;
+}
+
+@keyframes noise {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-5%, -5%);
+  }
+
+  20% {
+    transform: translate(-10%, 5%);
+  }
+
+  30% {
+    transform: translate(5%, -10%);
+  }
+
+  40% {
+    transform: translate(-5%, 15%);
+  }
+
+  50% {
+    transform: translate(-10%, 5%);
+  }
+
+  60% {
+    transform: translate(15%, 0);
+  }
+
+  70% {
+    transform: translate(0, 10%);
+  }
+
+  80% {
+    transform: translate(-15%, 0);
+  }
+
+  90% {
+    transform: translate(10%, 5%);
+  }
+
+  100% {
+    transform: translate(5%, 0);
+  }
+}
+
+/* Global Static Noise Overlay (Requested by User) */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+  /* Above regular content but below modals/nav if handled appropriately, or use blend mode on body */
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity: 0.2;
+  /* Matches previous section */
+  filter: brightness(100%) contrast(150%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* Ensure body dark mode background is the deep black requested */
+@layer base {
+  body {
+    @apply bg-black text-foreground;
+    /* Using bg-black as the primary dark background */
+  }
+}
