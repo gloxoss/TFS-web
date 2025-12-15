@@ -5,11 +5,8 @@ import { createServerClient } from '@/lib/pocketbase/server';
 import { getQuoteService } from '@/services';
 import type { Quote, QuoteStatus } from '@/services';
 
-export type { Quote, QuoteStatus }; // Re-export for component consumption if needed (or prefer importing from services)
-export type RentalRequest = Quote; // Alias for backward compatibility if needed
-
 export interface GetRequestsResponse {
-    items: RentalRequest[];
+    items: Quote[];
     totalItems: number;
     totalPages: number;
     page: number;
