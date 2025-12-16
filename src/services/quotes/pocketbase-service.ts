@@ -49,7 +49,7 @@ export class PocketBaseQuoteService implements IQuoteService {
       rentalEndDate: record.rental_end_date as string,
       projectDescription: record.project_description as string | undefined,
       specialRequests: record.special_requests as string | undefined,
-      status: (record.status as QuoteStatus) || 'pending',
+      status: (Array.isArray(record.status) ? record.status[0] : record.status) as QuoteStatus || 'pending',
       internalNotes: record.internal_notes as string | undefined,
       estimatedPrice: record.estimated_price as number | undefined,
       pdfGenerated: (record.pdf_generated as boolean) || false,
@@ -172,7 +172,7 @@ export class PocketBaseQuoteService implements IQuoteService {
 
   async getQuotes(page = 1, perPage = 20, status?: QuoteStatus): Promise<PaginatedResult<Quote>> {
     try {
-      const filterString = status ? `status = "${status}"` : ''
+      const filterString = status ? `status ~ "${status}"` : ''
       const options: any = {
         // sort: '-created', // TEMP: Disable to see if this is the cause
         expand: 'user',

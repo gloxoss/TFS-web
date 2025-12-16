@@ -8,7 +8,7 @@
  */
 
 import { verifyAdminAccess } from '@/services/auth/access-control'
-import { createServerClient } from '@/lib/pocketbase/server'
+import { createAdminClient } from '@/lib/pocketbase/server'
 
 export interface AdminDashboardStats {
     totalEquipment: number
@@ -47,7 +47,7 @@ export async function getAdminDashboardStats(): Promise<{
     error?: string
 }> {
     try {
-        // Verify admin access
+        // Verify admin access (Web Layer Security)
         const isAdmin = await verifyAdminAccess()
         if (!isAdmin) {
             return {
@@ -57,28 +57,64 @@ export async function getAdminDashboardStats(): Promise<{
             }
         }
 
-        const client = await createServerClient(false)
+        // Use Admin Client for Data Fetching (Bypass API Rules)
+        const client = await createAdminClient()
 
-        // Fetch counts in parallel
-        const [
-            equipmentResult,
-            usersResult,
-            quotesResult
-        ] = await Promise.all([
-            client.collection('equipment').getList(1, 1),
-            client.collection('users').getList(1, 1),
-            client.collection('quotes').getFullList({
-                sort: '-created'
-            })
-        ])
+        // Debug log
+        console.log('[AdminDashboard] Using Admin Client for stats fetch')
+        console.log('[AdminDashboard] Connected to:', client.baseUrl)
+
+        // Debug auth state
+        // console.log('[AdminDashboard] Auth State:', {
+        //     isValid: client.authStore.isValid,
+        //     modelId: client.authStore.model?.id,
+        //     role: client.authStore.model?.role
+        // });
+
+        // Initialize defaults
+        let totalEquipment = 0;
+        let totalUsers = 0;
+        let quotesResult: any[] = [];
+
+        // 1. Fetch Equipment Count
+        try {
+            const result = await client.collection('equipment').getList(1, 1);
+            totalEquipment = result.totalItems;
+        } catch (e) {
+            console.error('[AdminDashboard] Failed to fetch equipment count:', e);
+        }
+
+        // 2. Fetch Users Count
+        try {
+            const result = await client.collection('users').getList(1, 1);
+            totalUsers = result.totalItems;
+        } catch (e) {
+            console.error('[AdminDashboard] Failed to fetch users count:', e);
+        }
+
+        // 3. Fetch Quotes (Use getList instead of getFullList to be safer)
+        try {
+            console.log('[AdminDashboard] Fetching quotes...');
+            const result = await client.collection('quotes').getList(1, 100);
+            console.log(`[AdminDashboard] Fetched ${result.items.length} quotes (Total: ${result.totalItems})`);
+            quotesResult = result.items;
+        } catch (e: any) {
+            console.error('[AdminDashboard] Failed to fetch quotes:', e);
+            if (e.response) {
+                console.error('[AdminDashboard] Error details:', JSON.stringify(e.response, null, 2));
+            }
+        }
 
         // Calculate quote stats
-        const pendingQuotes = quotesResult.filter(
-            (q) => q.status === 'pending' || q.status === 'reviewing'
-        ).length
-        const confirmedQuotes = quotesResult.filter(
-            (q) => q.status === 'confirmed' || q.status === 'quoted'
-        ).length
+        const pendingQuotes = quotesResult.filter((q) => {
+            const status = Array.isArray(q.status) ? q.status[0] : q.status;
+            return status === 'pending' || status === 'reviewing';
+        }).length
+
+        const confirmedQuotes = quotesResult.filter((q) => {
+            const status = Array.isArray(q.status) ? q.status[0] : q.status;
+            return status === 'confirmed' || status === 'quoted';
+        }).length
 
         // Get recent activity (last 5 quotes)
         const recentActivity: ActivityItem[] = quotesResult.slice(0, 5).map((quote) => ({
@@ -88,7 +124,7 @@ export async function getAdminDashboardStats(): Promise<{
             description: `${quote.client_name} submitted a rental request`,
             timestamp: quote.created,
             metadata: {
-                status: quote.status,
+                status: Array.isArray(quote.status) ? quote.status[0] : quote.status,
                 email: quote.client_email
             }
         }))
@@ -96,8 +132,8 @@ export async function getAdminDashboardStats(): Promise<{
         return {
             success: true,
             stats: {
-                totalEquipment: equipmentResult.totalItems,
-                totalUsers: usersResult.totalItems,
+                totalEquipment,
+                totalUsers,
                 pendingQuotes,
                 confirmedQuotes,
                 totalQuotes: quotesResult.length,
@@ -105,10 +141,7 @@ export async function getAdminDashboardStats(): Promise<{
             }
         }
     } catch (error) {
-        console.error('[AdminDashboard] Error fetching stats:', error)
-        if ((error as any)?.response) {
-            console.error('[AdminDashboard] Error Details:', JSON.stringify((error as any).response, null, 2))
-        }
+        console.error('[AdminDashboard] Fatal error fetching stats:', error)
         return {
             success: false,
             stats: null,
@@ -131,10 +164,11 @@ export async function getRecentQuotes(limit: number = 5): Promise<{
             return { success: false, quotes: [], error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
-        const result = await client.collection('quotes').getList(1, limit, {
-            sort: '-created'
-        })
+        // Use Admin Client for Data Fetching
+        const client = await createAdminClient()
+        console.log('[AdminDashboard] Requesting recent quotes...')
+        const result = await client.collection('quotes').getList(1, limit)
+        console.log(`[AdminDashboard] Found ${result.items.length} recent quotes`)
 
         const quotes: QuoteOverview[] = result.items.map((q) => {
             let itemCount = 0
@@ -147,7 +181,7 @@ export async function getRecentQuotes(limit: number = 5): Promise<{
                 id: q.id,
                 clientName: q.client_name,
                 clientEmail: q.client_email,
-                status: q.status,
+                status: Array.isArray(q.status) ? q.status[0] : q.status,
                 itemCount,
                 rentalStartDate: q.rental_start_date,
                 created: q.created

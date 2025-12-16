@@ -106,7 +106,6 @@ export async function getEquipmentList(
         const filter = filterParts.length > 0 ? filterParts.join(' && ') : undefined
 
         const result = await client.collection('equipment').getList(page, limit, {
-            sort: '-created',
             filter
         })
 

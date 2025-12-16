@@ -1,6 +1,6 @@
 'use server'
 
-import { createServerClient } from "@/lib/pocketbase/server"
+import { createServerClient, createAdminClient } from "@/lib/pocketbase/server"
 import { revalidatePath } from "next/cache"
 import { slugify } from "@/lib/utils/slugify"
 
@@ -16,7 +16,7 @@ export type BlogActionResult = {
  */
 export async function createPost(formData: FormData): Promise<BlogActionResult> {
     try {
-        const pb = await createServerClient()
+        const pb = await createAdminClient()
 
         // Basic validation
         const titleEn = formData.get('title_en') || formData.get('title')
@@ -86,7 +86,7 @@ export async function createPost(formData: FormData): Promise<BlogActionResult> 
  */
 export async function updatePost(formData: FormData): Promise<BlogActionResult> {
     try {
-        const pb = await createServerClient()
+        const pb = await createAdminClient()
         const id = formData.get('id')?.toString()
 
         if (!id) {
@@ -188,7 +188,7 @@ export async function getPost(id: string): Promise<{
  */
 export async function deletePost(id: string): Promise<BlogActionResult> {
     try {
-        const pb = await createServerClient()
+        const pb = await createAdminClient()
         await pb.collection('posts').delete(id)
 
         revalidatePath('/[lng]/admin/admin/blog', 'page')

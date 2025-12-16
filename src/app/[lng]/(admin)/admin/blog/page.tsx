@@ -30,9 +30,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
         const client = await createServerClient(false)
         const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
 
-        const result = await client.collection('posts').getFullList({
-            sort: '-created'
-        })
+        const result = await client.collection('posts').getFullList()
 
         return result.map(post => ({
             id: post.id,
