@@ -7,7 +7,7 @@
  */
 
 import { verifyAdminAccess } from '@/services/auth/access-control'
-import { createServerClient } from '@/lib/pocketbase/server'
+import { createServerClient, createAdminClient } from '@/lib/pocketbase/server'
 import { revalidatePath } from 'next/cache'
 
 export interface EquipmentItem {
@@ -88,7 +88,7 @@ export async function getEquipmentList(
             return { success: false, items: [], totalItems: 0, totalPages: 0, page, error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
         const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
 
         // Build filter
@@ -145,7 +145,7 @@ export async function getEquipmentById(id: string): Promise<{
             return { success: false, item: null, error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
         const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
         const record = await client.collection('equipment').getOne(id)
 
@@ -177,7 +177,7 @@ export async function createEquipment(formData: FormData): Promise<{
             return { success: false, error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
 
         // Prepare data
         const data = new FormData()
@@ -230,7 +230,7 @@ export async function updateEquipment(id: string, formData: FormData): Promise<{
             return { success: false, error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
 
         // Prepare data
         const data = new FormData()
@@ -284,7 +284,7 @@ export async function deleteEquipment(id: string): Promise<{
             return { success: false, error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
         await client.collection('equipment').delete(id)
 
         revalidatePath('/[lng]/admin/inventory')
@@ -314,7 +314,7 @@ export async function toggleEquipmentVisibility(id: string): Promise<{
             return { success: false, error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
         const current = await client.collection('equipment').getOne(id)
         const newVisibility = !current.visibility
 
@@ -347,7 +347,7 @@ export async function getEquipmentCategories(): Promise<{
             return { success: false, categories: [], error: 'Unauthorized' }
         }
 
-        const client = await createServerClient(false)
+        const client = await createAdminClient()
         const result = await client.collection('categories').getFullList({
             sort: 'name'
         })
