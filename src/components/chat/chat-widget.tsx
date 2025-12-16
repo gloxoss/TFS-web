@@ -2,7 +2,7 @@
  * Chat Widget
  * 
  * Floating AI chatbot interface for equipment recommendations.
- * Uses Vercel AI SDK v4 useChat hook for streaming.
+ * Uses Vercel AI SDK v5 useChat hook with DefaultChatTransport for streaming.
  * Styled with HeroUI components for consistency.
  */
 
@@ -10,6 +10,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Card, CardBody, CardHeader, CardFooter, Chip } from '@heroui/react'
@@ -39,24 +40,30 @@ const STARTER_CHIPS = [
 export function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false)
     const [hasInteracted, setHasInteracted] = useState(false)
+    const [input, setInput] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const params = useParams()
     const lng = (params?.lng as string) || 'en'
 
-    // AI SDK v4 useChat hook
+    // AI SDK v5 useChat hook with transport-based architecture
     const {
         messages,
-        input,
-        setInput,
-        handleSubmit,
-        isLoading,
-        append,
+        sendMessage,
+        status,
         error,
     } = useChat({
-        api: '/api/chat',
+        transport: new DefaultChatTransport({
+            api: '/api/chat',
+        }),
         id: 'rental-concierge',
+        onError: (error) => {
+            console.error('Chat error:', error)
+        },
     })
+
+    // Derive loading state from status
+    const isLoading = status === 'streaming' || status === 'submitted'
 
     // Auto-scroll to bottom on new messages
     useEffect(() => {
@@ -72,13 +79,28 @@ export function ChatWidget() {
 
     const handleStarterClick = (query: string) => {
         setHasInteracted(true)
-        append({ role: 'user', content: query })
+        sendMessage({ text: query })
     }
 
     const onSubmit = () => {
         if (!input.trim()) return
         setHasInteracted(true)
-        handleSubmit(new Event('submit') as unknown as React.FormEvent<HTMLFormElement>)
+        sendMessage({ text: input })
+        setInput('')
+    }
+
+    // Helper to extract text from message parts
+    const getMessageText = (message: typeof messages[0]): string => {
+        if ('content' in message && typeof message.content === 'string') {
+            return message.content
+        }
+        if ('parts' in message && Array.isArray(message.parts)) {
+            return message.parts
+                .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
+                .map(part => part.text)
+                .join('')
+        }
+        return ''
     }
 
     return (
@@ -187,8 +209,8 @@ export function ChatWidget() {
 
                                 {/* Message Thread */}
                                 {messages.map((message) => {
-                                    // Skip rendering empty assistant messages (happens during tool calls)
-                                    const hasContent: boolean = Boolean(message.content && message.content.trim().length > 0);
+                                    const messageText = getMessageText(message)
+                                    const hasContent: boolean = Boolean(messageText && messageText.trim().length > 0);
                                     const isAssistant = message.role === 'assistant';
 
                                     return (
@@ -197,20 +219,21 @@ export function ChatWidget() {
                                             {(hasContent || !isAssistant) && (
                                                 <MessageCard
                                                     role={message.role as 'user' | 'assistant'}
-                                                    message={message.content}
+                                                    message={messageText}
                                                     showFeedback={isAssistant && Boolean(hasContent)}
                                                 />
                                             )}
 
                                             {/* Tool invocations - Generative UI */}
-                                            {message.role === 'assistant' && message.toolInvocations?.map((tool) => {
-                                                if (tool.state === 'result') {
+                                            {message.role === 'assistant' && 'parts' in message && Array.isArray(message.parts) && message.parts.map((part, partIndex) => {
+                                                if (part.type === 'tool-invocation' && part.toolInvocation?.state === 'result') {
+                                                    const tool = part.toolInvocation
                                                     // Handle equipment lookup
                                                     if (tool.toolName === 'lookup_equipment') {
                                                         const result = tool.result as { equipment?: Array<{ id: string; name: string; slug: string; category?: string; description?: string; imageUrl?: string; isAvailable?: boolean }> }
                                                         if (result.equipment && result.equipment.length > 0) {
                                                             return (
-                                                                <div key={tool.toolCallId} className="ml-11">
+                                                                <div key={`${message.id}-${partIndex}`} className="ml-11">
                                                                     <ChatProductCarousel
                                                                         products={result.equipment}
                                                                         lng={lng}
@@ -223,7 +246,7 @@ export function ChatWidget() {
                                                     if (tool.toolName === 'get_store_info') {
                                                         const result = tool.result as StoreInfoData
                                                         return (
-                                                            <div key={tool.toolCallId} className="ml-11">
+                                                            <div key={`${message.id}-${partIndex}`} className="ml-11">
                                                                 <StoreInfoCard data={result} />
                                                             </div>
                                                         )
@@ -232,7 +255,7 @@ export function ChatWidget() {
                                                     if (tool.toolName === 'navigate_site') {
                                                         const result = tool.result as NavigationCardData
                                                         return (
-                                                            <div key={tool.toolCallId} className="ml-11">
+                                                            <div key={`${message.id}-${partIndex}`} className="ml-11">
                                                                 <NavigationCard data={result} />
                                                             </div>
                                                         )

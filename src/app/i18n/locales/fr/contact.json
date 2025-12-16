@@ -1,33 +1,33 @@
 {
     "hero": {
-        "title": "Contactez-nous",
-        "subtitle": "Prêt à donner vie à votre vision ? Contactez notre équipe mondiale pour la location, le support de production et les demandes techniques."
+        "title": "Contactez-Nous",
+        "subtitle": "Prêt à équiper votre prochaine production ? Contactez-nous pour les locations, devis et support technique."
     },
     "form": {
-        "title": "Envoyer un message",
-        "name": "Nom complet",
-        "email": "Adresse e-mail",
-        "phone": "Numéro de téléphone",
+        "title": "Envoyez un Message",
+        "name": "Votre Nom",
+        "email": "Adresse Email",
+        "phone": "Numéro de Téléphone",
         "subject": "Sujet",
-        "message": "Message",
-        "submit": "Envoyer le message",
-        "success": "Message envoyé avec succès !",
-        "error": "Une erreur s'est produite. Veuillez réessayer."
+        "message": "Votre Message",
+        "submit": "Envoyer",
+        "success": "Message envoyé ! Nous vous répondrons bientôt.",
+        "error": "Une erreur est survenue. Veuillez réessayer."
     },
     "info": {
-        "title": "Nos Bureaux",
-        "subtitle": "Retrouvez-nous dans les principaux centres de production mondiaux.",
-        "morocco": {
-            "city": "Marrakech, Maroc",
-            "address": "123 Boulevard Film City, Route de Ouarzazate",
-            "phone": "+212 5 24 00 00 00",
-            "email": "morocco@tfs.com"
-        },
-        "uae": {
-            "city": "Dubaï, EAU",
-            "address": "Cité Studio, Bâtiment 4",
-            "phone": "+971 4 000 0000",
-            "email": "dubai@tfs.com"
+        "title": "Visitez-Nous",
+        "subtitle": "Notre showroom d'équipement à Casablanca.",
+        "casablanca": {
+            "city": "Casablanca, Maroc",
+            "address": "55-57, Rue Souleimane el Farissi, 20330",
+            "phone": "0522 246 372",
+            "email": "contact@tfs.ma"
         }
+    },
+    "hours": {
+        "title": "Heures d'Ouverture",
+        "weekdays": "Lundi - Vendredi: 9h00 - 18h00",
+        "saturday": "Samedi: 10h00 - 14h00",
+        "sunday": "Dimanche: Fermé"
     }
 }

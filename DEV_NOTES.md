@@ -1,3 +1,19 @@
+## [2025-12-16] - Fixed PocketBase Migration Seed Data
+* **Type:** fix
+* **Action:** Corrected the seed data migration to properly handle PocketBase record creation, ID validation, and relation mapping for categories and equipment.
+* **Logic:** Fixed issues with setId method (non-existent), invalid ID formats (underscores, length), and relation field requirements by using proper PocketBase APIs and mapping auto-generated category IDs to equipment relations.
+* **Files:** `pb_migrations/1766000001_seed_data.js`
+
+---
+
+## [2025-12-15] - Fly.io Deployment Configuration Update
+* **Type:** chore
+* **Action:** Added PB_HTTP_ADDR environment variable to fly.toml and deployed PocketBase to Fly.io.
+* **Logic:** Ensures PocketBase binds to all interfaces on port 8090 for proper operation in the Fly.io environment.
+* **Files:** `fly.toml`
+
+---
+
 ## [2025-01-13] - Footer Component Upgrade to HeroUI
 * **Type:** feature
 * **Action:** Replaced custom footer with HeroUI FooterWithColumns component and updated navigation data for cinema equipment rental business.

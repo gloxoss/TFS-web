@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/ui/SmoothScroll";
 import CustomCursor from "@/components/ui/CustomCursor";
 import ProgressiveBlur from "@/components/ui/ProgressiveBlur";
 import { EffectsLayer } from "@/components/ui/effects-layer";
+import { LazyComponents } from "@/components/lazy-components";
 
 interface PublicLayoutProps {
     children: React.ReactNode;
@@ -33,6 +34,7 @@ export default async function PublicLayout({
                 </main>
                 <FooterWithColumns lng={lng} />
             </div>
+            <LazyComponents lng={lng} />
         </SmoothScroll>
     );
 }

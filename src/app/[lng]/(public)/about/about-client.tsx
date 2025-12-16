@@ -105,7 +105,7 @@ export function AboutClient({ lng }: { lng: string }) {
       </section>
 
       {/* 3. Global Operations (Bento Grid with Globe) */}
-      <GlobalOperationsGrid />
+      <GlobalOperationsGrid lng={lng} />
 
       {/* 5. CTA */}
       <CTASection
