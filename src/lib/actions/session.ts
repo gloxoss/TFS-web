@@ -48,7 +48,7 @@ export async function login(prevState: AuthResult | undefined, formData: FormDat
 
     cookieStore.set("pb_auth", cookiePayload, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_POCKETBASE_URL?.startsWith("https"),
       sameSite: "lax",
       path: "/",
       expires: expires,
