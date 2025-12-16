@@ -42,7 +42,7 @@ export async function createServerClient(writable: boolean = false) {
 
           cookieStore.set(COOKIE_NAME, serializedPayload, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_POCKETBASE_URL?.startsWith("https"),
             sameSite: "lax",
             path: "/",
             expires: expires,
