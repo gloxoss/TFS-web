@@ -12,6 +12,7 @@
  */
 
 import { createServerClient } from '@/lib/pocketbase/server'
+import PocketBase from 'pocketbase'
 import Link from 'next/link'
 import {
   Clock,
@@ -46,10 +47,16 @@ const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
 
 async function getQuoteByIdAndToken(quoteId: string, token: string): Promise<QuoteViewData | null> {
   try {
-    const pb = await createServerClient()
+    // Use Admin Auth to fetch quote + access_token securely
+    // Public clients likely have 'access_token' hidden or view rule restricted
+    const contentPb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+    await contentPb.collection('_superusers').authWithPassword(
+      process.env.PB_ADMIN_EMAIL || '',
+      process.env.PB_ADMIN_PASSWORD || ''
+    )
 
-    // Fetch quote by ID
-    const record = await pb.collection('quotes').getOne(quoteId)
+    // Fetch quote by ID using admin client
+    const record = await contentPb.collection('quotes').getOne(quoteId)
 
     // Verify token matches
     if (record.access_token !== token) {
