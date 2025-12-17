@@ -2,10 +2,13 @@
 
 import { Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
-import { company, footer as footerContent, t } from "@/data/site-content";
+import { t } from "@/data/site-content"; // Keep 't' helper, but data comes from hook
 import { ClientWrapper } from "./client-wrapper";
+import { useSiteSettings } from "@/components/providers/site-settings-provider";
 
 export function Footer({ lng }: { lng: string }) {
+  const { company, footer: footerContent } = useSiteSettings();
+
   const navigation = {
     services: [
       { name: t({ en: "Camera Rentals", fr: "Location Caméras" }, lng), href: `/${lng}/equipment?category=cameras` },
@@ -42,7 +45,7 @@ export function Footer({ lng }: { lng: string }) {
                 </span>
               </Link>
               <p className="text-sm leading-6">
-                {t(footerContent.tagline, lng)}
+                {t(company.tagline, lng)}
               </p>
 
               {/* Contact Info */}
@@ -53,8 +56,8 @@ export function Footer({ lng }: { lng: string }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-primary" />
-                  <a href={`tel:${company.phone}`} className="hover:text-white transition-colors">
-                    {company.phoneDisplay}
+                  <a href={`tel:${company.phone.link}`} className="hover:text-white transition-colors">
+                    {company.phone.display}
                   </a>
                 </div>
                 <div className="flex items-center gap-2">

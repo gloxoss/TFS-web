@@ -8,8 +8,11 @@ interface ContactInfoProps {
     lng: string;
 }
 
+import { useSiteSettings } from "@/components/providers/site-settings-provider";
+
 export default function ContactInfo({ lng }: ContactInfoProps) {
     const { t } = useTranslation(lng, "contact");
+    const { company } = useSiteSettings();
 
     return (
         <div className="space-y-12">
@@ -41,18 +44,21 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                     <div className="space-y-2 text-zinc-400">
                         <p className="flex items-start gap-3">
                             <MapPin className="w-4 h-4 mt-1 shrink-0 text-zinc-500" />
-                            {t("info.casablanca.address")}
+                            <span>
+                                {company.address.street}<br />
+                                {company.address.city}, {company.address.postalCode}
+                            </span>
                         </p>
                         <p className="flex items-center gap-3">
                             <Phone className="w-4 h-4 shrink-0 text-zinc-500" />
-                            <a href="tel:+212522246372" className="hover:text-white transition-colors">
-                                {t("info.casablanca.phone")}
+                            <a href={`tel:${company.phone.link}`} className="hover:text-white transition-colors">
+                                {company.phone.display}
                             </a>
                         </p>
                         <p className="flex items-center gap-3">
                             <Mail className="w-4 h-4 shrink-0 text-zinc-500" />
-                            <a href="mailto:contact@tfs.ma" className="hover:text-white transition-colors">
-                                {t("info.casablanca.email")}
+                            <a href={`mailto:${company.email}`} className="hover:text-white transition-colors">
+                                {company.email}
                             </a>
                         </p>
                     </div>

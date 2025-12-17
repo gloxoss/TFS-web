@@ -38,6 +38,8 @@ export interface Product {
   /** Public availability flag - hides actual stock numbers */
   isAvailable: boolean
   visibility?: boolean
+  /** Daily rate (exposed only if show_prices is true, or always exposed but hidden by UI) */
+  price?: number
 }
 
 /**

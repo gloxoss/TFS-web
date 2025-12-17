@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useCartStore, useUIStore } from "@/stores";
 import { motion, AnimatePresence } from "framer-motion";
 import { languages } from "@/app/i18n/settings";
+import { useSiteSettings } from "@/components/providers/site-settings-provider";
 
 // Language labels for display
 const languageLabels: Record<string, string> = {
@@ -40,6 +41,7 @@ export function Navbar({ lng }: { lng: string }) {
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation(lng, 'common');
+  const { company } = useSiteSettings();
 
   // Cart state
   const cartItems = useCartStore((state) => state.items);
@@ -106,7 +108,7 @@ export function Navbar({ lng }: { lng: string }) {
         {/* Logo */}
         <Link href={`/${lng}`} className="flex items-center gap-1 group">
           <span className="text-2xl font-display font-bold tracking-tighter text-white mix-blend-difference">
-            TFS<span className="text-red-600">.</span>
+            {company.name}<span className="text-red-600">.</span>
           </span>
         </Link>
 

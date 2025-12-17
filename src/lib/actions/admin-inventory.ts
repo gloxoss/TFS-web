@@ -184,12 +184,36 @@ export async function createEquipment(formData: FormData): Promise<{
         data.append('name_en', formData.get('name_en') as string)
         data.append('name_fr', formData.get('name_fr') as string || formData.get('name_en') as string)
         data.append('slug', formData.get('slug') as string)
-        data.append('category', formData.get('category') as string)
+
+        // Handle Category
+        let category = formData.get('category') as string
+        console.log('[AdminInventory] Raw category input:', category)
+        if (category) {
+            try {
+                // If it looks like a slug (not length 15 record ID), try to find it
+                if (category.length !== 15) {
+                    const catRecord = await client.collection('categories').getFirstListItem(`slug="${category}" || name="${category}"`)
+                    category = catRecord.id
+                    console.log('[AdminInventory] Resolved category slug to ID:', category)
+                }
+            } catch (err) {
+                console.error('[AdminInventory] Failed to resolve category slug:', err)
+            }
+        }
+        data.append('category', category)
+
         data.append('brand', formData.get('brand') as string || '')
         data.append('description_en', formData.get('description_en') as string || '')
         data.append('description_fr', formData.get('description_fr') as string || '')
-        data.append('daily_rate', formData.get('daily_rate') as string || '0')
-        data.append('stock', formData.get('stock') as string || '1')
+
+        // Handle Numbers (with explicit defaults)
+        const dailyRate = formData.get('daily_rate')
+        const stock = formData.get('stock')
+
+        data.append('daily_rate', dailyRate ? dailyRate.toString() : '1')
+        data.append('stock', stock ? stock.toString() : '1')
+        data.append('stock_available', stock ? stock.toString() : '1')
+
         data.append('visibility', formData.get('visibility') as string || 'true')
         data.append('featured', formData.get('featured') as string || 'false')
         data.append('availability_status', formData.get('availability_status') as string || 'available')
@@ -202,6 +226,8 @@ export async function createEquipment(formData: FormData): Promise<{
             }
         })
 
+
+
         const record = await client.collection('equipment').create(data)
 
         revalidatePath('/[lng]/admin/inventory')
@@ -210,6 +236,7 @@ export async function createEquipment(formData: FormData): Promise<{
         return { success: true, id: record.id }
     } catch (error) {
         console.error('[AdminInventory] Error creating equipment:', error)
+
         return {
             success: false,
             error: error instanceof Error ? error.message : 'Failed to create equipment'

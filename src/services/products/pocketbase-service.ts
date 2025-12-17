@@ -87,8 +87,8 @@ function mapRecordToProduct(record: RecordModel, lang: string = 'en'): Product {
         isFeatured: record.featured || record.is_featured || false,
         isAvailable,
         visibility: record.visibility !== false,
-        // NOTE: dailyRate, stockTotal, stockAvailable are INTENTIONALLY OMITTED
-        // They are only available via ProductInternal for admin use
+        // Expose daily_rate as price for UI to handle conditionally
+        price: record.daily_rate
     }
 }
 

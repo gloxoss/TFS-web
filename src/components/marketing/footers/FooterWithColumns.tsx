@@ -3,13 +3,15 @@
 import React from "react";
 import { Divider, Link } from "@heroui/react";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
-import { company, footer, t } from "@/data/site-content";
+import { t } from "@/data/site-content";
+import { useSiteSettings } from "@/components/providers/site-settings-provider";
 
 interface FooterWithColumnsProps {
     lng: string;
 }
 
 export default function FooterWithColumns({ lng }: FooterWithColumnsProps) {
+    const { company, footer } = useSiteSettings();
 
     const renderList = React.useCallback(
         ({ title, items }: { title: string; items: { href: string; label: { en: string; fr: string } }[] }) => (
