@@ -11,7 +11,8 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 
-export const FEATURED_PRODUCTS_MOCK: Product[] = [
+// Fallback mock data for when no products exist in DB
+const FEATURED_PRODUCTS_MOCK: Product[] = [
     {
         id: "p1",
         nameEn: "ARRI Alexa 35",
@@ -50,25 +51,13 @@ export const FEATURED_PRODUCTS_MOCK: Product[] = [
     },
     {
         id: "p4",
-        nameEn: "Angenieux Optimo Ultra 12x",
-        nameFr: "Angenieux Optimo Ultra 12x",
-        name: "Angenieux Optimo Ultra 12x",
-        slug: "angenieux-optimo-ultra",
-        categoryId: "lens",
-        category: { id: "lens", name: "Lenses", slug: "lenses" },
-        imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop",
-        isAvailable: true,
-        isFeatured: true
-    },
-    {
-        id: "p5",
         nameEn: "ARRI SkyPanel S60-C",
         nameFr: "ARRI SkyPanel S60-C",
         name: "ARRI SkyPanel S60-C",
         slug: "arri-skypanel-s60",
         categoryId: "light",
         category: { id: "light", name: "Lighting", slug: "lighting" },
-        imageUrl: "https://images.unsplash.com/photo-1588693850125-964205f242aa?q=80&w=2672&auto=format&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=2070",
         isAvailable: true,
         isFeatured: true
     }
@@ -77,19 +66,19 @@ export const FEATURED_PRODUCTS_MOCK: Product[] = [
 interface FeaturedProductsProps {
     title: string;
     subtitle: string;
-    lng: string; // Needed for links
+    lng: string;
+    products?: Product[]; // Optional - falls back to mock if not provided
 }
 
-export default function FeaturedProducts({ title, subtitle, lng }: FeaturedProductsProps) {
+export default function FeaturedProducts({ title, subtitle, lng, products }: FeaturedProductsProps) {
+    // Use provided products or fall back to mock
+    const displayProducts = products && products.length > 0 ? products : FEATURED_PRODUCTS_MOCK;
+
     return (
         <section className="py-24 bg-black relative overflow-hidden">
-            {/* Background Decoration: INTENSIFIED RED GLOW */}
-            {/* Center Glow */}
+            {/* Background Decoration */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[1000px] h-[500px] bg-[#D00000]/10 rounded-full blur-[120px] pointer-events-none" />
-
-            {/* Secondary Accent Glow (Bottom Right) */}
             <div className="absolute bottom-0 right-[-20%] w-[600px] h-[600px] bg-[#D00000]/10 rounded-full blur-[100px] pointer-events-none" />
-
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 pointer-events-none mix-blend-overlay"></div>
 
             <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
@@ -102,7 +91,6 @@ export default function FeaturedProducts({ title, subtitle, lng }: FeaturedProdu
                             {subtitle}
                         </p>
                     </div>
-                    {/* Could add a 'View All' link here */}
                 </div>
 
                 <Carousel
@@ -113,8 +101,7 @@ export default function FeaturedProducts({ title, subtitle, lng }: FeaturedProdu
                     className="w-full"
                 >
                     <CarouselContent className="-ml-4">
-                        {/* Mobile: basis-[75%] shows ~1.3 cards to indicate scrollable content */}
-                        {FEATURED_PRODUCTS_MOCK.map((product) => (
+                        {displayProducts.map((product) => (
                             <CarouselItem key={product.id} className="pl-4 basis-[75%] sm:basis-[60%] md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                                 <ProductCard
                                     product={product}
@@ -130,6 +117,6 @@ export default function FeaturedProducts({ title, subtitle, lng }: FeaturedProdu
                     </div>
                 </Carousel>
             </div>
-        </section >
+        </section>
     );
 }

@@ -4,20 +4,23 @@ import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 
 interface NewsSectionProps {
     title: string;
+    lng?: string;
     items: {
         category: string;
         title: string;
+        slug?: string;
         image?: string;
     }[];
 }
 
-export default function NewsSection({ title, items }: NewsSectionProps) {
+export default function NewsSection({ title, items, lng = 'en' }: NewsSectionProps) {
     // Map items to the format expected by InfiniteMovingCards
     const cardItems = items.map(item => ({
         quote: item.title,
         name: item.category,
         title: "Read More",
         image: item.image,
+        href: item.slug ? `/${lng}/blog/${item.slug}` : undefined,
     }));
 
     return (

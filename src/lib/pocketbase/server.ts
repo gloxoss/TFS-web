@@ -40,9 +40,18 @@ export async function createServerClient(writable: boolean = false) {
           const expires = new Date();
           expires.setFullYear(expires.getFullYear() + 1); // 1 year expiration
 
+          const isSecure = process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_POCKETBASE_URL?.startsWith("https");
+
+          console.log('[ServerClient] Setting Auth Cookie:', {
+            isProduction: process.env.NODE_ENV === "production",
+            pbUrl: process.env.NEXT_PUBLIC_POCKETBASE_URL,
+            secure: isSecure,
+            expires: expires
+          });
+
           cookieStore.set(COOKIE_NAME, serializedPayload, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: isSecure,
             sameSite: "lax",
             path: "/",
             expires: expires,

@@ -10,6 +10,7 @@ import { PocketBaseProductService } from './products/pocketbase-service'
 import { PocketBaseQuoteService } from './quotes/pocketbase-service'
 import { CartService } from './cart/cart-service'
 import { ResendEmailService, ConsoleEmailService } from './email/resend-service'
+import { BlogService } from './blog/service'
 import type { IProductService } from './products/interface'
 import type { IQuoteService } from './quotes/interface'
 import type { IEmailService } from './email/interface'
@@ -33,6 +34,7 @@ export type {
   AdminQuoteNotificationPayload,
   QuoteEmailItem,
 } from './email/interface'
+export type { BlogPost, BlogFilters } from './blog/types'
 
 // ============================================================================
 // Service Factory
@@ -106,3 +108,21 @@ export function getEmailService(): IEmailService {
 export function emailService(): IEmailService {
   return getEmailService()
 }
+
+/**
+ * Creates a blog service instance.
+ * Requires PocketBase client for authentication.
+ */
+export function getBlogService(pbClient: PocketBase) {
+  return new BlogService(pbClient)
+}
+
+/**
+ * Gets a blog service instance with anonymous client.
+ * Blog posts use listRule/viewRule for public access.
+ */
+export function blogService() {
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+  return new BlogService(pb)
+}
+

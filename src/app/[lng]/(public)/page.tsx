@@ -6,18 +6,55 @@ import BentoFeatures from "@/components/marketing/bento-features";
 import { useTranslation } from "@/app/i18n";
 import SocialProof from "@/components/marketing/social-proof";
 import CTASection from "@/components/marketing/cta-section";
-
-
 import NewsSection from "@/components/marketing/news-section";
 import CategorySection from "@/components/marketing/category-section";
 import FeaturedProducts from "@/components/marketing/featured-products";
+import { getProductService, getBlogService } from "@/services";
+
+const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
 
 export default async function Page({ params }: { params: Promise<{ lng: string }> }) {
   const { lng } = await params;
   const client = await createServerClient();
   const { t } = await useTranslation(lng, 'home');
 
-  // Dynamic Section Data
+  // Initialize services with PocketBase client
+  const productService = getProductService(client);
+  const blogService = getBlogService(client);
+
+  // Fetch real data from PocketBase
+  const [categoriesData, featuredProducts, blogPosts] = await Promise.all([
+    productService.getCategories(),
+    productService.getFeaturedProducts(),
+    blogService.getLatestPosts(4, lng),
+  ]);
+
+  // Map categories to component format with DB images
+  const CATEGORY_ITEMS = categoriesData.map((cat) => ({
+    id: cat.slug,
+    title: lng === 'fr' ? (cat.name || cat.slug) : (cat.name || cat.slug),
+    image: cat.thumbnail
+      ? `${PB_URL}/api/files/categories/${cat.id}/${cat.thumbnail}`
+      : 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop',
+  }));
+
+  // Map blog posts to NewsSection format
+  const NEWS_ITEMS = blogPosts.length > 0
+    ? blogPosts.map((post) => ({
+      category: post.category || 'news',
+      title: post.title,
+      slug: post.slug,
+      image: post.coverImage,
+    }))
+    : [
+      // Fallback static data if no posts exist yet
+      { category: t('news.items.0.category'), title: t('news.items.0.title'), image: t('news.items.0.image') },
+      { category: t('news.items.1.category'), title: t('news.items.1.title'), image: t('news.items.1.image') },
+      { category: t('news.items.2.category'), title: t('news.items.2.title'), image: t('news.items.2.image') },
+      { category: t('news.items.3.category'), title: t('news.items.3.title'), image: t('news.items.3.image') },
+    ];
+
+  // Dynamic Section Data (still using translations for UI text)
   const BENTO_ITEMS = [
     {
       title: t('bento.cards.logistics.title'),
@@ -53,26 +90,10 @@ export default async function Page({ params }: { params: Promise<{ lng: string }
     },
   ];
 
-  const NEWS_ITEMS = [
-    { category: t('news.items.0.category'), title: t('news.items.0.title'), image: t('news.items.0.image') },
-    { category: t('news.items.1.category'), title: t('news.items.1.title'), image: t('news.items.1.image') },
-    { category: t('news.items.2.category'), title: t('news.items.2.title'), image: t('news.items.2.image') },
-    { category: t('news.items.3.category'), title: t('news.items.3.title'), image: t('news.items.3.image') },
-  ];
-
-  const CATEGORY_ITEMS = [
-    { id: 'camera', title: t('categories.items.0.title'), image: t('categories.items.0.image') },
-    { id: 'machinery', title: t('categories.items.1.title'), image: t('categories.items.1.image') },
-    { id: 'lighting', title: t('categories.items.2.title'), image: t('categories.items.2.image') },
-    { id: 'filters', title: t('categories.items.3.title'), image: t('categories.items.3.image') },
-    { id: 'studios', title: t('categories.items.4.title'), image: t('categories.items.4.image') },
-    { id: 'post', title: t('categories.items.5.title'), image: t('categories.items.5.image') },
-  ];
-
   return (
     <main className="min-h-screen bg-black">
       {/* Hero Section - Full Screen */}
-      <HeroImpact />
+      <HeroImpact lng={lng} />
 
       {/* Social Proof - Infinite Marquee (Between Hero and Bento) */}
       <SocialProof />
@@ -85,24 +106,30 @@ export default async function Page({ params }: { params: Promise<{ lng: string }
         items={BENTO_ITEMS}
       />
 
-      {/* Categories Section (Expanding Strips) */}
+      {/* Categories Section - Real Data from DB */}
       <CategorySection
         title={t('categories.title')}
         subtitle={t('categories.subtitle')}
-        items={CATEGORY_ITEMS}
+        items={CATEGORY_ITEMS.length > 0 ? CATEGORY_ITEMS : [
+          { id: 'cameras', title: 'Cameras', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop' },
+          { id: 'lighting', title: 'Lighting', image: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=2070' },
+          { id: 'audio', title: 'Audio', image: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=2670&auto=format&fit=crop' },
+        ]}
       />
 
-      {/* Featured Products (Carousel) */}
+      {/* Featured Products - Real Data from DB */}
       <FeaturedProducts
         title={t('featured.title')}
         subtitle={t('featured.subtitle')}
         lng={lng}
+        products={featuredProducts}
       />
 
-      {/* News / Blog Section */}
+      {/* News / Blog Section - Real Data from DB */}
       <NewsSection
         title={t('news.title')}
         items={NEWS_ITEMS}
+        lng={lng}
       />
 
       {/* Final CTA with Aurora Background */}
@@ -111,7 +138,6 @@ export default async function Page({ params }: { params: Promise<{ lng: string }
         subtitle={t('cta.subtitle')}
         buttonText={t('cta.button')}
       />
-
 
     </main>
   );

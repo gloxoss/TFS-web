@@ -18,6 +18,7 @@ import { Plus, Minus, ShoppingCart } from 'lucide-react'
 import { Product } from '@/services/products/types'
 import { cn } from '@/lib/utils'
 import { useCartStore, useUIStore } from '@/stores'
+import { useSiteSettings } from '@/components/providers/site-settings-provider'
 
 interface ProductCardProps {
   product: Product
@@ -34,6 +35,7 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
     isAvailable,
   } = product
 
+  const { settings } = useSiteSettings();
   const [quantity, setQuantity] = useState(1)
   const addItem = useCartStore((state) => state.addItem)
   const openCart = useUIStore((state) => state.openCartDrawer)
@@ -41,12 +43,33 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
 
   const productUrl = `/${lng}/equipment/${slug}`
 
+  // Show price if enabled in settings and price exists in product data
+  const showPrice = settings?.show_prices && product.price;
+
   // Best-effort check for "Camera" since category relation might be missing
+  // Enhanced camera detection to ensure all cinema cameras prompt for kit configuration using "View Details"
+  const cameraKeywords = [
+    'camera', 'caméra',
+    'arri', 'alexa', 'amira',
+    'red', 'raptor', 'komodo', 'ranger', 'v-raptor',
+    'sony fx', 'sony a7', 'sony venice', 'burano',
+    'blackmagic', 'ursa', 'bmpcc', 'pocket cinema',
+    'canon c', 'c70', 'c300', 'c500',
+    'panasonic', 'varicam', 'eva1'
+  ];
+
+  const lowerName = name.toLowerCase();
+  const lowerSlug = slug.toLowerCase();
+  const lowerCatName = category?.name?.toLowerCase() || '';
+  const lowerCatSlug = category?.slug?.toLowerCase() || '';
+
   const isCamera =
-    category?.slug === 'cameras' ||
-    category?.name?.toLowerCase().includes('camera') ||
-    name.toLowerCase().includes('camera') ||
-    slug.toLowerCase().includes('camera')
+    lowerCatSlug === 'cameras' ||
+    lowerCatName.includes('camera') ||
+    cameraKeywords.some(keyword =>
+      lowerName.includes(keyword) ||
+      lowerSlug.includes(keyword)
+    );
 
   // Show Quick Add for non-cameras (lights, grip, lenses, etc.)
   const showQuickAdd = !isCamera && isAvailable
@@ -144,10 +167,19 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
           </h3>
         </Link>
 
-        {/* Blind Quote: No stock numbers or prices shown */}
-        <p className="mt-1 text-xs text-zinc-500 mb-4">
-          Request a quote for pricing
-        </p>
+        {/* Pricing/Quote */}
+        <div className="mt-1 mb-4">
+          {showPrice ? (
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-[#D00000]">{product.price}</span>
+              <span className="text-sm text-zinc-400">MDH / {lng === 'fr' ? 'jour' : 'day'}</span>
+            </div>
+          ) : (
+            <p className="text-xs text-zinc-500">
+              Request a quote for pricing
+            </p>
+          )}
+        </div>
 
         <div className="mt-auto flex items-end justify-between gap-3">
           {/* Quick Add Actions */}

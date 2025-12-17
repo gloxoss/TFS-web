@@ -24,12 +24,12 @@ import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { 
-  ArrowLeft, 
-  ShoppingCart, 
-  Check, 
-  AlertCircle, 
-  Package, 
+import {
+  ArrowLeft,
+  ShoppingCart,
+  Check,
+  AlertCircle,
+  Package,
   Camera,
   Layers,
   Edit3,
@@ -51,9 +51,9 @@ import { resolveKit } from '@/lib/actions/cart'
 
 const fadeInBlur = {
   hidden: { opacity: 0, filter: 'blur(10px)', y: 20 },
-  visible: { 
-    opacity: 1, 
-    filter: 'blur(0px)', 
+  visible: {
+    opacity: 1,
+    filter: 'blur(0px)',
     y: 0,
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }
   }
@@ -72,9 +72,9 @@ const staggerContainer = {
 
 const fadeInBlurFast = {
   hidden: { opacity: 0, filter: 'blur(8px)', y: 12 },
-  visible: { 
-    opacity: 1, 
-    filter: 'blur(0px)', 
+  visible: {
+    opacity: 1,
+    filter: 'blur(0px)',
     y: 0,
     transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const }
   }
@@ -168,20 +168,20 @@ function isCameraProduct(product: Product): boolean {
   const categorySlug = product.category?.slug?.toLowerCase() || ''
   const categoryName = product.category?.name?.toLowerCase() || ''
   const productName = product.name.toLowerCase()
-  
+
   // Exclude non-camera categories explicitly
   const excludedCategories = ['lighting', 'light', 'grip', 'audio', 'accessories', 'support', 'monitor']
-  const isExcludedCategory = excludedCategories.some(cat => 
+  const isExcludedCategory = excludedCategories.some(cat =>
     categorySlug.includes(cat) || categoryName.includes(cat)
   )
-  
+
   if (isExcludedCategory) {
     return false
   }
-  
+
   // Check for camera-specific terms
   const isCameraCategory = categorySlug.includes('camera') || categoryName.includes('camera')
-  
+
   // Check for specific camera model names (more precise matching)
   const cameraModelPatterns = [
     'camera',
@@ -193,9 +193,9 @@ function isCameraProduct(product: Product): boolean {
     'varicam', 'eva1',  // Panasonic cinema cameras
     'venice',  // Sony Venice
   ]
-  
+
   const matchesCameraModel = cameraModelPatterns.some(pattern => productName.includes(pattern))
-  
+
   return isCameraCategory || matchesCameraModel
 }
 
@@ -208,7 +208,7 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
     <div className="min-h-screen bg-zinc-950">
       {/* Animated gradient overlay */}
       <div className="fixed inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-zinc-900/50 pointer-events-none" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Back link skeleton */}
         <div className="h-5 w-32 bg-zinc-800/50 rounded animate-pulse" />
@@ -238,7 +238,7 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
               <div className="h-4 w-5/6 bg-zinc-800/30 rounded animate-pulse" />
               <div className="h-4 w-4/6 bg-zinc-800/30 rounded animate-pulse" />
             </div>
-            
+
             {isKit && (
               <div className="grid grid-cols-3 gap-4 mt-6">
                 {[1, 2, 3].map((i) => (
@@ -265,7 +265,7 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
               <div className="h-4 w-64 bg-zinc-800/30 rounded mt-1 animate-pulse" />
             </div>
           </div>
-          
+
           {/* Slot skeletons */}
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
@@ -331,17 +331,17 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   const [resolvedKit, setResolvedKit] = useState<ResolvedKit | null>(null)
   const [kitSelections, setKitSelections] = useState<KitSelections>({})
   const [isLoadingKit, setIsLoadingKit] = useState(true)
-  
+
   // Mock kit state (fallback for cameras)
   const [useMockKit, setUseMockKit] = useState(false)
   const [mockSelections, setMockSelections] = useState<Record<string, string[]>>({})
-  
+
   // Slot editing modal state
   const [editingSlot, setEditingSlot] = useState<string | null>(null)
-  
+
   // View mode state (grid or list)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  
+
   // Check for kit on mount
   useEffect(() => {
     async function loadKit() {
@@ -397,7 +397,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
 
     // Add item without dates - they'll be set at checkout
     const placeholderDates = { start: '', end: '' }
-    
+
     // Use real kit selections or mock selections
     const selectionsToUse = resolvedKit ? kitSelections : (useMockKit ? mockSelections : undefined)
     addItem(product, quantity, placeholderDates, selectionsToUse)
@@ -415,7 +415,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   // Determine which layout to use
   const hasKit = resolvedKit || useMockKit
   const isCamera = isCameraProduct(product)
-  
+
   // Unified slot data type
   type SlotDisplayItem = {
     id: string
@@ -423,14 +423,14 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
     category?: string
     imageUrl?: string
   }
-  
+
   type SlotDisplayData = {
     slotName: string
     selectionMode: 'single' | 'multi'
     items: SlotDisplayItem[]
     selectedIds: string[]
   }
-  
+
   // Get current slot data (either from real kit or mock)
   const getSlotData = useCallback((): SlotDisplayData[] => {
     if (resolvedKit) {
@@ -456,7 +456,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
     }
     return []
   }, [resolvedKit, useMockKit, kitSelections, mockSelections])
-  
+
   // Get item details by id
   const getItemDetails = useCallback((slotName: string, itemId: string): SlotDisplayItem | null => {
     const slots = getSlotData()
@@ -464,7 +464,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
     if (!slot) return null
     return slot.items.find((i) => i.id === itemId) || null
   }, [getSlotData])
-  
+
   // Handle slot selection update
   const handleSlotUpdate = useCallback((slotName: string, selectedIds: string[]) => {
     if (resolvedKit) {
@@ -478,25 +478,25 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   // ============================================================================
   // RENDER: KIT LAYOUT (Cameras / Complex Products)
   // ============================================================================
-  
+
   if (hasKit || isCamera) {
     const slotData = getSlotData()
-    
+
     // Show loading skeleton until page is ready
     if (!isPageReady) {
       return <ProductDetailSkeleton isKit={true} />
     }
-    
+
     return (
       <AnimatePresence mode="wait">
-        <motion.div 
+        <motion.div
           key="kit-layout"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="min-h-screen bg-zinc-950"
         >
           {/* Back Navigation */}
-          <motion.div 
+          <motion.div
             variants={fadeInBlur}
             initial="hidden"
             animate="visible"
@@ -563,379 +563,379 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                         ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
                         : 'bg-red-900/50 text-red-300 border border-red-700/50'
                     )}
+                  >
+                    {product.isAvailable ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Available
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="w-4 h-4" />
+                        Unavailable
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                {product.description && (
+                  <p className="text-zinc-400 leading-relaxed mb-6">
+                    {product.description}
+                  </p>
+                )}
+
+                {/* Quick Stats */}
+                <motion.div
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="visible"
+                  className="grid grid-cols-3 gap-4 mt-auto"
                 >
-                  {product.isAvailable ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Available
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className="w-4 h-4" />
-                      Unavailable
-                    </>
-                  )}
-                </span>
-              </div>
-
-              {product.description && (
-                <p className="text-zinc-400 leading-relaxed mb-6">
-                  {product.description}
-                </p>
-              )}
-
-              {/* Quick Stats */}
-              <motion.div 
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-3 gap-4 mt-auto"
-              >
-                <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
-                  <Layers className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white">{slotData.length}</div>
-                  <div className="text-xs text-zinc-500 uppercase tracking-wide">Categories</div>
-                </motion.div>
-                <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
-                  <Package className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white">
-                    {slotData.reduce((sum, s) => sum + s.selectedIds.length, 0)}
-                  </div>
-                  <div className="text-xs text-zinc-500 uppercase tracking-wide">Items Selected</div>
-                </motion.div>
-                <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
-                  <Camera className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white">1</div>
-                  <div className="text-xs text-zinc-500 uppercase tracking-wide">Camera Body</div>
+                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
+                    <Layers className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white">{slotData.length}</div>
+                    <div className="text-xs text-zinc-500 uppercase tracking-wide">Categories</div>
+                  </motion.div>
+                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
+                    <Package className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white">
+                      {slotData.reduce((sum, s) => sum + s.selectedIds.length, 0)}
+                    </div>
+                    <div className="text-xs text-zinc-500 uppercase tracking-wide">Items Selected</div>
+                  </motion.div>
+                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
+                    <Camera className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white">1</div>
+                    <div className="text-xs text-zinc-500 uppercase tracking-wide">Camera Body</div>
+                  </motion.div>
                 </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
+          </div>
 
-        {/* EQUIPMENT MANIFEST - Main Focus */}
-        <motion.div 
-          variants={fadeInBlur}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.3 }}
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-500/20 rounded-lg">
-                  <Layers className="w-6 h-6 text-amber-400" />
+          {/* EQUIPMENT MANIFEST - Main Focus */}
+          <motion.div
+            variants={fadeInBlur}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.3 }}
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-amber-500/20 rounded-lg">
+                    <Layers className="w-6 h-6 text-amber-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Equipment Manifest</h2>
+                    <p className="text-zinc-500 text-sm">Configure the components included with your kit</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">Equipment Manifest</h2>
-                  <p className="text-zinc-500 text-sm">Configure the components included with your kit</p>
-                </div>
-              </div>
-              
-              {/* View Toggle */}
-              <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1 border border-zinc-700/50">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={cn(
-                    'p-2 rounded-md transition-all',
-                    viewMode === 'grid' 
-                      ? 'bg-amber-500 text-zinc-900' 
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
-                  )}
-                  title="Grid view"
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={cn(
-                    'p-2 rounded-md transition-all',
-                    viewMode === 'list' 
-                      ? 'bg-amber-500 text-zinc-900' 
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
-                  )}
-                  title="List view"
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
 
-            {isLoadingKit ? (
-              <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center">
-                <div className="animate-spin w-8 h-8 border-2 border-zinc-600 border-t-amber-400 rounded-full mx-auto mb-4" />
-                <p className="text-zinc-400">Loading kit configuration...</p>
-              </div>
-            ) : (
-              <motion.div 
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-                className="space-y-6"
-              >
-                {slotData.map((slot) => (
-                  <motion.div
-                    key={slot.slotName}
-                    variants={fadeInBlurFast}
-                    className="bg-zinc-900/30 rounded-2xl border border-zinc-800 overflow-hidden"
+                {/* View Toggle */}
+                <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1 border border-zinc-700/50">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={cn(
+                      'p-2 rounded-md transition-all',
+                      viewMode === 'grid'
+                        ? 'bg-amber-500 text-zinc-900'
+                        : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
+                    )}
+                    title="Grid view"
                   >
-                    {/* Slot Header */}
-                    <div className="flex items-center justify-between px-6 py-4 bg-zinc-900/50 border-b border-zinc-800">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                        <div>
-                          <h3 className="font-semibold text-white">{slot.slotName}</h3>
-                          <span className="text-xs text-zinc-500">
-                            {slot.selectionMode === 'single' ? 'Select one' : 'Select multiple'} • {slot.selectedIds.length} selected
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setEditingSlot(slot.slotName)}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-600 rounded-lg text-sm font-medium text-zinc-200 transition-colors"
-                      >
-                        {slot.selectionMode === 'single' ? (
-                          <>
-                            <Edit3 className="w-4 h-4" />
-                            Swap
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="w-4 h-4" />
-                            Edit
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={cn(
+                      'p-2 rounded-md transition-all',
+                      viewMode === 'list'
+                        ? 'bg-amber-500 text-zinc-900'
+                        : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
+                    )}
+                    title="List view"
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
 
-                    {/* Selected Items - Grid or List View */}
-                    <div className="p-4">
-                      {slot.selectedIds.length > 0 ? (
-                        viewMode === 'grid' ? (
-                          /* Grid View */
-                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                            {slot.selectedIds.map(id => {
-                              const itemDetails = getItemDetails(slot.slotName, id)
-                              if (!itemDetails) return null
-                              return (
-                                <div
-                                  key={id}
-                                  className="group relative bg-zinc-800/50 rounded-xl border border-zinc-700/50 overflow-hidden"
-                                >
-                                  {/* Item Image */}
-                                  <div className="relative aspect-square bg-zinc-900">
-                                    {itemDetails.imageUrl ? (
-                                      <Image
-                                        src={itemDetails.imageUrl}
-                                        alt={itemDetails.name}
-                                        fill
-                                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                                        className="object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center">
-                                        <Package className="w-10 h-10 text-zinc-700" />
+              {isLoadingKit ? (
+                <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center">
+                  <div className="animate-spin w-8 h-8 border-2 border-zinc-600 border-t-amber-400 rounded-full mx-auto mb-4" />
+                  <p className="text-zinc-400">Loading kit configuration...</p>
+                </div>
+              ) : (
+                <motion.div
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="visible"
+                  className="space-y-6"
+                >
+                  {slotData.map((slot) => (
+                    <motion.div
+                      key={slot.slotName}
+                      variants={fadeInBlurFast}
+                      className="bg-zinc-900/30 rounded-2xl border border-zinc-800 overflow-hidden"
+                    >
+                      {/* Slot Header */}
+                      <div className="flex items-center justify-between px-6 py-4 bg-zinc-900/50 border-b border-zinc-800">
+                        <div className="flex items-center gap-3">
+                          <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                          <div>
+                            <h3 className="font-semibold text-white">{slot.slotName}</h3>
+                            <span className="text-xs text-zinc-500">
+                              {slot.selectionMode === 'single' ? 'Select one' : 'Select multiple'} • {slot.selectedIds.length} selected
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setEditingSlot(slot.slotName)}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-600 rounded-lg text-sm font-medium text-zinc-200 transition-colors"
+                        >
+                          {slot.selectionMode === 'single' ? (
+                            <>
+                              <Edit3 className="w-4 h-4" />
+                              Swap
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4" />
+                              Edit
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Selected Items - Grid or List View */}
+                      <div className="p-4">
+                        {slot.selectedIds.length > 0 ? (
+                          viewMode === 'grid' ? (
+                            /* Grid View */
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                              {slot.selectedIds.map(id => {
+                                const itemDetails = getItemDetails(slot.slotName, id)
+                                if (!itemDetails) return null
+                                return (
+                                  <div
+                                    key={id}
+                                    className="group relative bg-zinc-800/50 rounded-xl border border-zinc-700/50 overflow-hidden"
+                                  >
+                                    {/* Item Image */}
+                                    <div className="relative aspect-square bg-zinc-900">
+                                      {itemDetails.imageUrl ? (
+                                        <Image
+                                          src={itemDetails.imageUrl}
+                                          alt={itemDetails.name}
+                                          fill
+                                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                          className="object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                          <Package className="w-10 h-10 text-zinc-700" />
+                                        </div>
+                                      )}
+                                      {/* Selection Badge */}
+                                      <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <Check className="w-4 h-4 text-white" />
                                       </div>
-                                    )}
+                                    </div>
+                                    {/* Item Info */}
+                                    <div className="p-3">
+                                      <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight">
+                                        {itemDetails.name}
+                                      </p>
+                                      {itemDetails.category && (
+                                        <p className="text-xs text-zinc-500 mt-1">{itemDetails.category}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          ) : (
+                            /* List View */
+                            <div className="space-y-2">
+                              {slot.selectedIds.map(id => {
+                                const itemDetails = getItemDetails(slot.slotName, id)
+                                if (!itemDetails) return null
+                                return (
+                                  <div
+                                    key={id}
+                                    className="flex items-center gap-4 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50"
+                                  >
+                                    {/* Item Image */}
+                                    <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
+                                      {itemDetails.imageUrl ? (
+                                        <Image
+                                          src={itemDetails.imageUrl}
+                                          alt={itemDetails.name}
+                                          fill
+                                          sizes="64px"
+                                          className="object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                          <Package className="w-6 h-6 text-zinc-700" />
+                                        </div>
+                                      )}
+                                    </div>
+                                    {/* Item Info */}
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium text-zinc-200 truncate">
+                                        {itemDetails.name}
+                                      </p>
+                                      {itemDetails.category && (
+                                        <p className="text-xs text-zinc-500 mt-0.5">{itemDetails.category}</p>
+                                      )}
+                                    </div>
                                     {/* Selection Badge */}
-                                    <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                    <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
                                       <Check className="w-4 h-4 text-white" />
                                     </div>
                                   </div>
-                                  {/* Item Info */}
-                                  <div className="p-3">
-                                    <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight">
-                                      {itemDetails.name}
-                                    </p>
-                                    {itemDetails.category && (
-                                      <p className="text-xs text-zinc-500 mt-1">{itemDetails.category}</p>
-                                    )}
-                                  </div>
-                                </div>
-                              )
-                            })}
-                          </div>
+                                )
+                              })}
+                            </div>
+                          )
                         ) : (
-                          /* List View */
-                          <div className="space-y-2">
-                            {slot.selectedIds.map(id => {
-                              const itemDetails = getItemDetails(slot.slotName, id)
-                              if (!itemDetails) return null
-                              return (
-                                <div
-                                  key={id}
-                                  className="flex items-center gap-4 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50"
-                                >
-                                  {/* Item Image */}
-                                  <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
-                                    {itemDetails.imageUrl ? (
-                                      <Image
-                                        src={itemDetails.imageUrl}
-                                        alt={itemDetails.name}
-                                        fill
-                                        sizes="64px"
-                                        className="object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center">
-                                        <Package className="w-6 h-6 text-zinc-700" />
-                                      </div>
-                                    )}
-                                  </div>
-                                  {/* Item Info */}
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-zinc-200 truncate">
-                                      {itemDetails.name}
-                                    </p>
-                                    {itemDetails.category && (
-                                      <p className="text-xs text-zinc-500 mt-0.5">{itemDetails.category}</p>
-                                    )}
-                                  </div>
-                                  {/* Selection Badge */}
-                                  <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Check className="w-4 h-4 text-white" />
-                                  </div>
-                                </div>
-                              )
-                            })}
+                          <div className="text-center py-8">
+                            <Package className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
+                            <p className="text-zinc-500 text-sm">No items selected</p>
+                            <button
+                              onClick={() => setEditingSlot(slot.slotName)}
+                              className="mt-3 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
+                            >
+                              Add items →
+                            </button>
                           </div>
-                        )
-                      ) : (
-                        <div className="text-center py-8">
-                          <Package className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-                          <p className="text-zinc-500 text-sm">No items selected</p>
-                          <button
-                            onClick={() => setEditingSlot(slot.slotName)}
-                            className="mt-3 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
-                          >
-                            Add items →
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Add to Quote Section - Sticky Bottom on Mobile */}
-        <motion.div 
-          variants={fadeInBlur}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.5 }}
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16"
-        >
-          <div
-            className="bg-gradient-to-r from-zinc-900 to-zinc-900/50 rounded-2xl border border-zinc-800 p-6"
-          >
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              {/* Left: Summary */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-zinc-400" />
-                  Ready to Request Quote?
-                </h3>
-                <p className="text-zinc-400 text-sm">
-                  Rental dates & pricing will be provided after submission
-                </p>
-              </div>
-
-              {/* Center: Quantity */}
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-zinc-400">Quantity:</span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-9 h-9 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
-                  >
-                    −
-                  </button>
-                  <input
-                    type="number"
-                    value={quantity}
-                    min={1}
-                    max={99}
-                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-14 px-2 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-center text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                  />
-                  <button
-                    onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-                    className="w-9 h-9 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              {/* Right: Button */}
-              <button
-                onClick={handleAddToCart}
-                disabled={!product.isAvailable || isAdding}
-                className={cn(
-                  'px-8 py-3 flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200',
-                  product.isAvailable
-                    ? 'bg-amber-500 text-zinc-900 hover:bg-amber-400'
-                    : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                )}
-              >
-                {isAdding ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5" />
-                    Add Kit to Quote
-                  </>
-                )}
-              </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Slot Editing Modal */}
-        <AnimatePresence>
-          {editingSlot && (
-            <SlotEditModal
-              slotName={editingSlot}
-              slotData={getSlotData().find(s => s.slotName === editingSlot)!}
-              onClose={() => setEditingSlot(null)}
-              onSave={(selectedIds) => handleSlotUpdate(editingSlot, selectedIds)}
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </AnimatePresence>
+          {/* Add to Quote Section - Sticky Bottom on Mobile */}
+          <motion.div
+            variants={fadeInBlur}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.5 }}
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16"
+          >
+            <div
+              className="bg-gradient-to-r from-zinc-900 to-zinc-900/50 rounded-2xl border border-zinc-800 p-6"
+            >
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                {/* Left: Summary */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                    <ShoppingCart className="w-5 h-5 text-zinc-400" />
+                    Ready to Request Quote?
+                  </h3>
+                  <p className="text-zinc-400 text-sm">
+                    Rental dates & pricing will be provided after submission
+                  </p>
+                </div>
+
+                {/* Center: Quantity */}
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-zinc-400">Quantity:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="w-9 h-9 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      value={quantity}
+                      min={1}
+                      max={99}
+                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-14 px-2 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-center text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                    />
+                    <button
+                      onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                      className="w-9 h-9 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right: Button */}
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!product.isAvailable || isAdding}
+                  className={cn(
+                    'px-8 py-3 flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200',
+                    product.isAvailable
+                      ? 'bg-amber-500 text-zinc-900 hover:bg-amber-400'
+                      : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                  )}
+                >
+                  {isAdding ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5" />
+                      Add Kit to Quote
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Slot Editing Modal */}
+          <AnimatePresence>
+            {editingSlot && (
+              <SlotEditModal
+                slotName={editingSlot}
+                slotData={getSlotData().find(s => s.slotName === editingSlot)!}
+                onClose={() => setEditingSlot(null)}
+                onSave={(selectedIds) => handleSlotUpdate(editingSlot, selectedIds)}
+              />
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </AnimatePresence>
     )
   }
 
   // ============================================================================
   // RENDER: STANDARD LAYOUT (Simple Products)
   // ============================================================================
-  
+
   // Show loading skeleton until page is ready
   if (!isPageReady) {
     return <ProductDetailSkeleton isKit={false} />
   }
-  
+
   return (
     <AnimatePresence mode="wait">
-      <motion.div 
+      <motion.div
         key="standard-layout"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen bg-zinc-950"
       >
         {/* Back Navigation */}
-        <motion.div 
+        <motion.div
           variants={fadeInBlur}
           initial="hidden"
           animate="visible"
@@ -950,218 +950,218 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           </Link>
         </motion.div>
 
-      {/* Product Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <motion.div 
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="grid lg:grid-cols-2 gap-12"
-        >
-          {/* Image Gallery */}
-          <motion.div variants={fadeInBlur}>
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
-              {product.imageUrl ? (
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Package className="w-24 h-24 text-zinc-700" />
-                </div>
-              )}
-
-              {/* Category Badge */}
-              {product.category && (
-                <span className="absolute top-4 left-4 px-3 py-1.5 text-sm font-medium bg-zinc-900/80 backdrop-blur-sm text-zinc-300 rounded-lg border border-zinc-700/50">
-                  {product.category.name}
-                </span>
-              )}
-            </div>
-
-            {/* Thumbnail Strip (if multiple images) */}
-            {product.images && product.images.length > 1 && (
-              <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
-                {product.images.map((img, i) => (
-                  <button
-                    key={i}
-                    className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 border-zinc-700 hover:border-zinc-500 transition-colors"
-                  >
-                    <Image
-                      src={img}
-                      alt={`${product.name} - Image ${i + 1}`}
-                      fill
-                      sizes="80px"
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </motion.div>
-
-          {/* Product Info */}
+        {/* Product Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <motion.div
-            variants={fadeInBlur}
-            className="flex flex-col"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid lg:grid-cols-2 gap-12"
           >
-            {/* Title & Availability */}
-            <div className="mb-6">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                {product.name}
-              </h1>
+            {/* Image Gallery */}
+            <motion.div variants={fadeInBlur}>
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+                {product.imageUrl ? (
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Package className="w-24 h-24 text-zinc-700" />
+                  </div>
+                )}
 
-              <div className="flex items-center gap-4">
-                <span
-                  className={cn(
-                    'inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full',
-                    product.isAvailable
-                      ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
-                      : 'bg-red-900/50 text-red-300 border border-red-700/50'
-                  )}
-                >
-                  {product.isAvailable ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Available
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className="w-4 h-4" />
-                      Unavailable
-                    </>
-                  )}
-                </span>
+                {/* Category Badge */}
+                {product.category && (
+                  <span className="absolute top-4 left-4 px-3 py-1.5 text-sm font-medium bg-zinc-900/80 backdrop-blur-sm text-zinc-300 rounded-lg border border-zinc-700/50">
+                    {product.category.name}
+                  </span>
+                )}
               </div>
-            </div>
 
-            {/* Description */}
-            {product.description && (
-              <p className="text-zinc-400 leading-relaxed mb-8">
-                {product.description}
-              </p>
-            )}
-
-            {/* Specs */}
-            {product.specs && Object.keys(product.specs).length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-3">
-                  Specifications
-                </h3>
-                <dl className="grid grid-cols-2 gap-x-6 gap-y-2">
-                  {Object.entries(product.specs).map(([key, value]) => (
-                    <div key={key} className="flex justify-between py-2 border-b border-zinc-800">
-                      <dt className="text-zinc-500">{key}</dt>
-                      <dd className="text-zinc-300 font-medium">{String(value)}</dd>
-                    </div>
+              {/* Thumbnail Strip (if multiple images) */}
+              {product.images && product.images.length > 1 && (
+                <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                  {product.images.map((img, i) => (
+                    <button
+                      key={i}
+                      className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 border-zinc-700 hover:border-zinc-500 transition-colors"
+                    >
+                      <Image
+                        src={img}
+                        alt={`${product.name} - Image ${i + 1}`}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </button>
                   ))}
-                </dl>
-              </div>
-            )}
-
-            {/* Add to Quote */}
-            <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-6 mt-auto">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5 text-zinc-400" />
-                Add to Quote
-              </h3>
-
-              <div className="space-y-4">
-                {/* Quantity */}
-                <div>
-                  <label htmlFor="quantity" className="block text-sm text-zinc-400 mb-1.5">
-                    Quantity
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="w-10 h-10 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
-                    >
-                      −
-                    </button>
-                    <input
-                      type="number"
-                      id="quantity"
-                      value={quantity}
-                      min={1}
-                      max={99}
-                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-16 px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-center text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-600"
-                    />
-                    <button
-                      onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-                      className="w-10 h-10 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
                 </div>
+              )}
+            </motion.div>
 
-                {/* Quote Summary */}
-                <div className="pt-4 border-t border-zinc-700 space-y-2">
-                  {quantity > 1 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">Quantity</span>
-                      <span className="text-zinc-300">×{quantity}</span>
+            {/* Product Info */}
+            <motion.div
+              variants={fadeInBlur}
+              className="flex flex-col"
+            >
+              {/* Title & Availability */}
+              <div className="mb-6">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                  {product.name}
+                </h1>
+
+                <div className="flex items-center gap-4">
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full',
+                      product.isAvailable
+                        ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
+                        : 'bg-red-900/50 text-red-300 border border-red-700/50'
+                    )}
+                  >
+                    {product.isAvailable ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Available
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="w-4 h-4" />
+                        Unavailable
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              {product.description && (
+                <p className="text-zinc-400 leading-relaxed mb-8">
+                  {product.description}
+                </p>
+              )}
+
+              {/* Specs */}
+              {product.specs && Object.keys(product.specs).length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-3">
+                    Specifications
+                  </h3>
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-2">
+                    {Object.entries(product.specs).map(([key, value]) => (
+                      <div key={key} className="flex justify-between py-2 border-b border-zinc-800">
+                        <dt className="text-zinc-500">{key}</dt>
+                        <dd className="text-zinc-300 font-medium">{String(value)}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              )}
+
+              {/* Add to Quote */}
+              <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-6 mt-auto">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5 text-zinc-400" />
+                  Add to Quote
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Quantity */}
+                  <div>
+                    <label htmlFor="quantity" className="block text-sm text-zinc-400 mb-1.5">
+                      Quantity
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        className="w-10 h-10 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
+                      >
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        id="quantity"
+                        value={quantity}
+                        min={1}
+                        max={99}
+                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-16 px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-center text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-600"
+                      />
+                      <button
+                        onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                        className="w-10 h-10 flex items-center justify-center bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors"
+                      >
+                        +
+                      </button>
                     </div>
-                  )}
-                  <div className="bg-zinc-800/50 rounded-lg p-3 mt-2">
-                    <p className="text-sm text-zinc-300 text-center">
-                      Rental dates & pricing provided after quote submission
-                    </p>
                   </div>
-                </div>
 
-                {/* Add to Quote Button */}
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!product.isAvailable || isAdding}
-                  className={cn(
-                    'w-full py-3 px-4 flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-200',
-                    product.isAvailable
-                      ? 'bg-white text-zinc-900 hover:bg-zinc-200'
-                      : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                  )}
-                >
-                  {isAdding ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          fill="none"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                      Adding...
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="w-5 h-5" />
-                      Add to Quote Request
-                    </>
-                  )}
-                </button>
+                  {/* Quote Summary */}
+                  <div className="pt-4 border-t border-zinc-700 space-y-2">
+                    {quantity > 1 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-400">Quantity</span>
+                        <span className="text-zinc-300">×{quantity}</span>
+                      </div>
+                    )}
+                    <div className="bg-zinc-800/50 rounded-lg p-3 mt-2">
+                      <p className="text-sm text-zinc-300 text-center">
+                        Rental dates & pricing provided after quote submission
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Add to Quote Button */}
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={!product.isAvailable || isAdding}
+                    className={cn(
+                      'w-full py-3 px-4 flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-200',
+                      product.isAvailable
+                        ? 'bg-white text-zinc-900 hover:bg-zinc-200'
+                        : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                    )}
+                  >
+                    {isAdding ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          />
+                        </svg>
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-5 h-5" />
+                        Add to Quote Request
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      </div>
-    </motion.div>
-  </AnimatePresence>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   )
 }
 
@@ -1200,7 +1200,7 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
     if (slotData.selectionMode === 'single') {
       setLocalSelection([itemId])
     } else {
-      setLocalSelection(prev => 
+      setLocalSelection(prev =>
         prev.includes(itemId)
           ? prev.filter(id => id !== itemId)
           : [...prev, itemId]
@@ -1238,8 +1238,8 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
                 onClick={() => setModalViewMode('grid')}
                 className={cn(
                   'p-1.5 rounded-md transition-all',
-                  modalViewMode === 'grid' 
-                    ? 'bg-amber-500 text-zinc-900' 
+                  modalViewMode === 'grid'
+                    ? 'bg-amber-500 text-zinc-900'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
                 )}
                 title="Grid view"
@@ -1250,8 +1250,8 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
                 onClick={() => setModalViewMode('list')}
                 className={cn(
                   'p-1.5 rounded-md transition-all',
-                  modalViewMode === 'list' 
-                    ? 'bg-amber-500 text-zinc-900' 
+                  modalViewMode === 'list'
+                    ? 'bg-amber-500 text-zinc-900'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
                 )}
                 title="List view"
@@ -1331,7 +1331,7 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
                           <Package className="w-12 h-12 text-zinc-700" />
                         </div>
                       )}
-                      
+
                       {/* Selection Indicator */}
                       <div className={cn(
                         'absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center transition-all',

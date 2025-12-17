@@ -3,13 +3,13 @@
  * 
  * Supports multiple providers:
  * - Groq (free, fast, supports tools) - Default
- * - OpenRouter (many models, some free)
+ * - OpenRouter (many models, some free) - Uses official @openrouter/ai-sdk-provider
  * 
  * Switch providers via AI_PROVIDER env variable.
  */
 
 import { createGroq } from '@ai-sdk/groq'
-import { createOpenAI } from '@ai-sdk/openai'
+import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { COMPANY_CONTEXT } from './company-data'
 
 // Provider selection via env (default: openrouter until Groq key is fixed)
@@ -21,13 +21,9 @@ const groq = createGroq({
 })
 
 // ============ OPENROUTER PROVIDER ============
-const openrouter = createOpenAI({
-    baseURL: 'https://openrouter.ai/api/v1',
+// Using official @openrouter/ai-sdk-provider for proper AI SDK v5 compatibility
+const openrouter = createOpenRouter({
     apiKey: process.env.OPENROUTER_API_KEY || '',
-    headers: {
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-        'X-Title': 'TFS Film Equipment - Rental Concierge',
-    },
 })
 
 // Model configuration per provider

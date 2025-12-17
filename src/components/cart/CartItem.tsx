@@ -39,7 +39,7 @@ export const CartItemComponent = memo(function CartItemComponent({
   const removeItem = useCartStore((state) => state.removeItem)
 
   const { product, quantity, dates } = item
-  
+
   // Only show rental days if dates are actually set (not placeholder)
   const hasDates = dates.start && dates.end && dates.start !== '' && dates.end !== ''
   const rentalDays = hasDates ? calculateRentalDays(dates.start, dates.end) : 0

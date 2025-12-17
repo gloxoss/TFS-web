@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, ShoppingCart, Search, ArrowRight, Camera, Lightbulb, Film, Mic2, TrendingUp, Globe, Check } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/app/i18n/client";
 import { ClientWrapper } from "./client-wrapper";
 import { cn } from "@/lib/utils";
 import { useCartStore, useUIStore } from "@/stores";
 import { motion, AnimatePresence } from "framer-motion";
 import { languages } from "@/app/i18n/settings";
+import { useSiteSettings } from "@/components/providers/site-settings-provider";
 
 // Language labels for display
 const languageLabels: Record<string, string> = {
@@ -20,22 +21,15 @@ const languageLabels: Record<string, string> = {
   ru: "Русский",
 };
 
-// Search suggestions - categories and popular searches
-const searchSuggestions = {
-  categories: [
-    { icon: Camera, label: "Cameras", query: "camera" },
-    { icon: Film, label: "Lenses", query: "lens" },
-    { icon: Lightbulb, label: "Lighting", query: "lighting" },
-    { icon: Mic2, label: "Audio", query: "audio" },
-  ],
-  popular: [
-    "RED Komodo",
-    "ARRI Alexa",
-    "Sony FX6",
-    "Aputure 600d",
-    "Zeiss CP.3",
-    "DJI Ronin",
-  ],
+// Search suggestions now imported from site-content.ts
+import { searchConfig } from "@/data/site-content";
+
+// Map icon components to search categories
+const categoryIcons = {
+  camera: Camera,
+  lens: Film,
+  lighting: Lightbulb,
+  audio: Mic2,
 };
 
 export function Navbar({ lng }: { lng: string }) {
@@ -46,7 +40,8 @@ export function Navbar({ lng }: { lng: string }) {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const { t } = useTranslation();
+  const { t } = useTranslation(lng, 'common');
+  const { company } = useSiteSettings();
 
   // Cart state
   const cartItems = useCartStore((state) => state.items);
@@ -55,9 +50,9 @@ export function Navbar({ lng }: { lng: string }) {
 
   // Navigation links focused on rental business
   const navLinks = [
-    { href: "/equipment", label: "Equipment" },
+    { href: "/equipment", label: t("nav.equipment") || "Equipment" },
     { href: "/about", label: t("nav.about") || "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/contact", label: t("nav.contact") || "Contact" },
   ];
 
   // Focus search input when dialog opens
@@ -101,10 +96,10 @@ export function Navbar({ lng }: { lng: string }) {
 
   // Filter suggestions based on query
   const filteredPopular = searchQuery
-    ? searchSuggestions.popular.filter(item => 
-        item.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : searchSuggestions.popular;
+    ? searchConfig.popular.filter(item =>
+      item.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    : searchConfig.popular;
 
   return (
     <ClientWrapper>
@@ -113,7 +108,7 @@ export function Navbar({ lng }: { lng: string }) {
         {/* Logo */}
         <Link href={`/${lng}`} className="flex items-center gap-1 group">
           <span className="text-2xl font-display font-bold tracking-tighter text-white mix-blend-difference">
-            TFS<span className="text-red-600">.</span>
+            {company.name}<span className="text-red-600">.</span>
           </span>
         </Link>
 
@@ -159,14 +154,14 @@ export function Navbar({ lng }: { lng: string }) {
               <Globe className="w-4 h-4" />
               <span className="uppercase">{lng}</span>
             </button>
-            
+
             <AnimatePresence>
               {isLangOpen && (
                 <>
                   {/* Backdrop to close dropdown */}
-                  <div 
-                    className="fixed inset-0 z-40" 
-                    onClick={() => setIsLangOpen(false)} 
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsLangOpen(false)}
                   />
                   <motion.div
                     initial={{ opacity: 0, y: 8, scale: 0.95 }}
@@ -227,7 +222,7 @@ export function Navbar({ lng }: { lng: string }) {
                 : "border border-white/20 text-white hover:bg-white hover:text-black"
             )}
           >
-            {cartItemCount > 0 ? "Get Quote" : "Request Quote"}
+            {t("nav.requestQuote") || "Request Quote"}
           </Link>
 
           {/* Mobile Menu Toggle */}
@@ -263,8 +258,8 @@ export function Navbar({ lng }: { lng: string }) {
                   href={`/${lng}${link.href}`}
                   className={cn(
                     "p-3 rounded-xl font-medium transition-colors",
-                    isActive 
-                      ? "bg-white text-black" 
+                    isActive
+                      ? "bg-white text-black"
                       : "text-white hover:bg-white/10"
                   )}
                   onClick={() => setIsMenuOpen(false)}
@@ -273,7 +268,7 @@ export function Navbar({ lng }: { lng: string }) {
                 </Link>
               );
             })}
-            
+
             <div className="h-px bg-white/10 my-2" />
 
             {/* Language Selector - Mobile */}
@@ -303,11 +298,11 @@ export function Navbar({ lng }: { lng: string }) {
                 ))}
               </div>
             </div>
-            
+
             <div className="h-px bg-white/10 my-2" />
-            
+
             {/* Request Quote - Mobile CTA */}
-            <Link 
+            <Link
               href={`/${lng}/quote`}
               className={cn(
                 "p-3 rounded-xl font-semibold text-center transition-colors",
@@ -381,18 +376,21 @@ export function Navbar({ lng }: { lng: string }) {
                       Browse Categories
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {searchSuggestions.categories.map((cat) => (
-                        <button
-                          key={cat.query}
-                          onClick={() => handleSearch(cat.query)}
-                          className="group flex flex-col items-center gap-3 p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-white/10 transition-all"
-                        >
-                          <div className="p-3 bg-white/10 rounded-xl group-hover:bg-white/20 transition-colors">
-                            <cat.icon className="w-5 h-5 text-white" />
-                          </div>
-                          <span className="text-sm font-medium text-white">{cat.label}</span>
-                        </button>
-                      ))}
+                      {searchConfig.categories.map((cat) => {
+                        const IconComponent = categoryIcons[cat.key as keyof typeof categoryIcons];
+                        return (
+                          <button
+                            key={cat.query}
+                            onClick={() => handleSearch(cat.query)}
+                            className="group flex flex-col items-center gap-3 p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-white/10 transition-all"
+                          >
+                            <div className="p-3 bg-white/10 rounded-xl group-hover:bg-white/20 transition-colors">
+                              <IconComponent className="w-5 h-5 text-white" />
+                            </div>
+                            <span className="text-sm font-medium text-white">{cat.label.en}</span>
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
 

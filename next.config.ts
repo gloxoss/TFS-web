@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8090',
+      },
+      {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
@@ -21,10 +26,26 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+    optimizePackageImports: [
+      'lucide-react',
+      'date-fns',
+      'lodash',
+      '@heroui/react',
+      'framer-motion',
+    ],
   },
 
   typescript: {
     ignoreBuildErrors: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/en',
+        permanent: true,
+      },
+    ];
   },
 };
 

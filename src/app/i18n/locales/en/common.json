@@ -1,11 +1,14 @@
 {
   "nav": {
     "home": "Home",
+    "equipment": "Equipment",
+    "about": "About",
+    "contact": "Contact",
     "dashboard": "Dashboard",
     "login": "Login",
     "register": "Register",
     "logout": "Log out",
-    "about": "About"
+    "requestQuote": "Request Quote"
   },
   "auth": {
     "register": "Register",
@@ -44,12 +47,12 @@
     "activity": "Activity"
   },
   "footer": {
-    "about": "About Us",
-    "description": "A modern authentication system built with Next.js and PocketBase. Secure, fast, and easy to use.",
+    "about": "About TFS",
+    "description": "Professional cinema equipment rental for filmmakers and production companies in Morocco.",
     "quickLinks": "Quick Links",
     "resources": "Resources",
     "connect": "Connect With Us",
     "emailUs": "Email Us",
-    "copyright": "© {{year}} PB-Next. All rights reserved."
+    "copyright": "© {{year}} TFS - TV Film Solutions. All rights reserved."
   }
 }

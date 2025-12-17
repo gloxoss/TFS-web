@@ -1,39 +1,39 @@
 {
   "hero": {
-    "title": "We Power Creativity",
-    "subtitle": "born on set, built for production."
+    "title": "Our Story",
+    "subtitle": "Empowering filmmakers across Morocco since 2010."
   },
   "story": {
-    "title": "Our Story",
-    "p1": "Founded in 2014 by a group of cinematographers and engineers, TFS began with a simple mission: to bridge the gap between complex technology and pure creative expression.",
-    "p2": "Today, we are the industry standard for production support, offering an ecosystem of rentals, logistics, and technical expertise that empowers filmmakers to push boundaries without compromise."
+    "title": "From Casablanca to Set",
+    "p1": "TFS - TV Film Solutions was founded in Casablanca with a simple mission: to provide filmmakers in Morocco with access to world-class cinema equipment. What started as a small collection of cameras and lights has grown into one of the region's most trusted equipment rental houses.",
+    "p2": "We understand that great stories deserve great tools. That's why we've invested in premium equipment from RED, ARRI, Sony, and other industry leaders. Our experienced team provides the knowledge and support to help you get the most from every piece of gear."
   },
   "values": {
-    "title": "Our Core Values",
-    "subtitle": "The principles that drive every prep.",
+    "title": "Our Values",
+    "subtitle": "What drives us every day.",
     "items": {
       "reliability": {
-        "title": "Unmatched Reliability",
-        "description": "Gear that works. Every time. Our QA process is the most rigorous in the industry."
+        "title": "Quality First",
+        "description": "We maintain our equipment to the highest standards because your production depends on it."
       },
       "speed": {
-        "title": "Production Speed",
-        "description": "We know time is money. Our logistics network ensures your kit arrives before you do."
+        "title": "Client Partnership",
+        "description": "Your success is our success. We work alongside you from quote to wrap."
       },
       "innovation": {
-        "title": "Technical Innovation",
-        "description": "We don't just rent gear; we modify and improve it to suit modern workflows."
+        "title": "Industry Expertise",
+        "description": "Our team includes working professionals who understand the demands of film production."
       }
     }
   },
   "stats": {
-    "years": "Years of Experience",
-    "projects": "Projects Supported",
-    "countries": "Countries Served"
+    "years": "Years Experience",
+    "projects": "Productions Served",
+    "countries": "Cities in Morocco"
   },
   "cta": {
-    "title": "Join the Family",
-    "subtitle": "Experience the difference on your next production.",
+    "title": "Ready to Start?",
+    "subtitle": "Let's equip your next production with the best gear.",
     "button": "Contact Us"
   }
 }

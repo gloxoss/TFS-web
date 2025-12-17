@@ -1,39 +1,39 @@
 {
     "hero": {
-        "title": "Nous Propulsons la Créativité",
-        "subtitle": "né sur le plateau, construit pour la production."
+        "title": "Notre Histoire",
+        "subtitle": "Au service des cinéastes au Maroc depuis 2010."
     },
     "story": {
-        "title": "Notre Histoire",
-        "p1": "Fondé en 2014 par un groupe de directeurs de la photographie et d'ingénieurs, TFS a débuté avec une mission simple : combler le fossé entre la technologie complexe et l'expression créative pure.",
-        "p2": "Aujourd'hui, nous sommes la norme de l'industrie pour le support de production, offrant un écosystème de location, de logistique et d'expertise technique qui permet aux cinéastes de repousser les limites sans compromis."
+        "title": "De Casablanca au Plateau",
+        "p1": "TFS - TV Film Solutions a été fondée à Casablanca avec une mission simple : offrir aux cinéastes du Maroc un accès à un équipement cinéma de classe mondiale. Ce qui a commencé comme une petite collection de caméras et d'éclairages est devenu l'une des maisons de location les plus fiables de la région.",
+        "p2": "Nous comprenons que les grandes histoires méritent de grands outils. C'est pourquoi nous avons investi dans des équipements premium de RED, ARRI, Sony et d'autres leaders de l'industrie. Notre équipe expérimentée vous apporte les connaissances et le support pour tirer le meilleur parti de chaque équipement."
     },
     "values": {
-        "title": "Nos Valeurs Fondamentales",
-        "subtitle": "Les principes qui guident chaque préparation.",
+        "title": "Nos Valeurs",
+        "subtitle": "Ce qui nous anime chaque jour.",
         "items": {
             "reliability": {
-                "title": "Fiabilité Inégalée",
-                "description": "Du matériel qui fonctionne. À chaque fois. Notre processus de QA est le plus rigoureux de l'industrie."
+                "title": "Qualité Avant Tout",
+                "description": "Nous maintenons notre équipement aux plus hauts standards car votre production en dépend."
             },
             "speed": {
-                "title": "Vitesse de Production",
-                "description": "Nous savons que le temps, c'est de l'argent. Notre réseau logistique assure que votre kit arrive avant vous."
+                "title": "Partenariat Client",
+                "description": "Votre succès est notre succès. Nous travaillons à vos côtés du devis au bouclage."
             },
             "innovation": {
-                "title": "Innovation Technique",
-                "description": "Nous ne louons pas seulement du matériel ; nous le modifions et l'améliorons pour l'adapter aux flux de travail modernes."
+                "title": "Expertise du Secteur",
+                "description": "Notre équipe comprend des professionnels actifs qui comprennent les exigences de la production."
             }
         }
     },
     "stats": {
-        "years": "Années d'Expérience",
-        "projects": "Projets Soutenus",
-        "countries": "Pays Servis"
+        "years": "Ans d'Expérience",
+        "projects": "Productions Servies",
+        "countries": "Villes au Maroc"
     },
     "cta": {
-        "title": "Rejoignez la Famille",
-        "subtitle": "Découvrez la différence sur votre prochaine production.",
-        "button": "Contactez-nous"
+        "title": "Prêt à Commencer ?",
+        "subtitle": "Équipons votre prochaine production avec le meilleur matériel.",
+        "button": "Contactez-Nous"
     }
 }

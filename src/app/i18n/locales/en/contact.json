@@ -1,33 +1,33 @@
 {
     "hero": {
         "title": "Get in Touch",
-        "subtitle": "Ready to bring your vision to life? Contact our global team for rentals, production support, and technical inquiries."
+        "subtitle": "Ready to equip your next production? Contact us for rentals, quotes, and technical support."
     },
     "form": {
         "title": "Send a Message",
-        "name": "Full Name",
+        "name": "Your Name",
         "email": "Email Address",
         "phone": "Phone Number",
         "subject": "Subject",
-        "message": "Message",
+        "message": "Your Message",
         "submit": "Send Message",
-        "success": "Message sent successfully!",
+        "success": "Message sent! We'll get back to you soon.",
         "error": "Something went wrong. Please try again."
     },
     "info": {
-        "title": "Our Offices",
-        "subtitle": "Find us in major production hubs worldwide.",
-        "morocco": {
-            "city": "Marrakech, Morocco",
-            "address": "123 Film City Blvd, Ouarzazate Road",
-            "phone": "+212 5 24 00 00 00",
-            "email": "morocco@tfs.com"
-        },
-        "uae": {
-            "city": "Dubai, UAE",
-            "address": "Studio City, Building 4",
-            "phone": "+971 4 000 0000",
-            "email": "dubai@tfs.com"
+        "title": "Visit Us",
+        "subtitle": "Our equipment showroom in Casablanca.",
+        "casablanca": {
+            "city": "Casablanca, Morocco",
+            "address": "55-57, Rue Souleimane el Farissi, 20330",
+            "phone": "0522 246 372",
+            "email": "contact@tfs.ma"
         }
+    },
+    "hours": {
+        "title": "Opening Hours",
+        "weekdays": "Monday - Friday: 9:00 - 18:00",
+        "saturday": "Saturday: 10:00 - 14:00",
+        "sunday": "Sunday: Closed"
     }
 }

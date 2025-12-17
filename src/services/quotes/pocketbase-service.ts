@@ -49,7 +49,7 @@ export class PocketBaseQuoteService implements IQuoteService {
       rentalEndDate: record.rental_end_date as string,
       projectDescription: record.project_description as string | undefined,
       specialRequests: record.special_requests as string | undefined,
-      status: (record.status as QuoteStatus) || 'pending',
+      status: (Array.isArray(record.status) ? record.status[0] : record.status) as QuoteStatus || 'pending',
       internalNotes: record.internal_notes as string | undefined,
       estimatedPrice: record.estimated_price as number | undefined,
       pdfGenerated: (record.pdf_generated as boolean) || false,
@@ -172,7 +172,7 @@ export class PocketBaseQuoteService implements IQuoteService {
 
   async getQuotes(page = 1, perPage = 20, status?: QuoteStatus): Promise<PaginatedResult<Quote>> {
     try {
-      const filterString = status ? `status = "${status}"` : ''
+      const filterString = status ? `status ~ "${status}"` : ''
       const options: any = {
         // sort: '-created', // TEMP: Disable to see if this is the cause
         expand: 'user',
@@ -233,14 +233,28 @@ export class PocketBaseQuoteService implements IQuoteService {
       formData.append('quote_pdf', file)
       formData.append('estimated_price', price.toString())
       formData.append('status', 'quoted')
-      formData.append('locked', 'false')  // Changed: Allow editing during grace period
+      formData.append('is_locked', 'false')  // Fixed: Use correct field name from schema
       formData.append('quoted_at', new Date().toISOString())  // Set timestamp for grace period
+
+      console.log('[QuoteService] Uploading quote:', {
+        id,
+        fileName: file.name,
+        fileSize: file.size,
+        price,
+      })
 
       const record = await this.pb.collection('quotes').update(id, formData)
       return { success: true, data: this.mapRecordToQuote(record) }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading quote:', error)
-      return { success: false, error: 'Failed to upload quote and lock record.' }
+      // Log detailed PocketBase error response if available
+      if (error?.response?.data) {
+        console.error('PocketBase validation errors:', JSON.stringify(error.response.data, null, 2))
+      }
+      if (error?.response) {
+        console.error('PocketBase full response:', JSON.stringify(error.response, null, 2))
+      }
+      return { success: false, error: error?.message || 'Failed to upload quote and lock record.' }
     }
   }
 }

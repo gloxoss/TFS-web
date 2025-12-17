@@ -19,11 +19,12 @@ const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProps>(
         const handleKeyDown = (e: React.KeyboardEvent) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                if (value.trim() && !isLoading) {
+                if ((value || '').trim() && !isLoading) {
                     onSubmit();
                 }
             }
         };
+
 
         return (
             <div className={cn("flex w-full items-end gap-2", className)}>
@@ -53,9 +54,9 @@ const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProps>(
                                     isIconOnly
                                     className={cn(
                                         "min-w-8 h-8",
-                                        value.trim() ? "bg-primary text-primary-foreground" : "bg-default-100 text-default-400"
+                                        (value || '').trim() ? "bg-primary text-primary-foreground" : "bg-default-100 text-default-400"
                                     )}
-                                    isDisabled={!value.trim() || isLoading}
+                                    isDisabled={!(value || '').trim() || isLoading}
                                     isLoading={isLoading}
                                     radius="full"
                                     size="sm"

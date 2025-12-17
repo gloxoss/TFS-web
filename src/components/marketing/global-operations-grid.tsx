@@ -5,58 +5,57 @@ import createGlobe from "cobe";
 import { motion } from "framer-motion";
 import { Youtube, Search, Zap, Globe as GlobeIcon } from "lucide-react";
 import Image from "next/image";
+import { globalOperations, t } from "@/data/site-content";
 
-export default function GlobalOperationsGrid() {
+interface GlobalOperationsGridProps {
+    lng?: string;
+}
+
+export default function GlobalOperationsGrid({ lng = 'en' }: GlobalOperationsGridProps) {
+    const content = globalOperations;
+
     const features = [
         {
-            title: "Real-time Asset Tracking",
-            description:
-                "Track every lens, camera, and battery in your production package with our live dashboard.",
+            title: t(content.features[0].title, lng),
+            description: t(content.features[0].description, lng),
             skeleton: <SkeletonOne />,
-            className:
-                "col-span-1 lg:col-span-4 border-b lg:border-r border-white/10",
+            className: "col-span-1 lg:col-span-4 border-b lg:border-r border-white/10",
         },
         {
-            title: "Quality Controlled",
-            description:
-                "Every piece of gear is tested and verified before it leaves our warehouse.",
+            title: t(content.features[1].title, lng),
+            description: t(content.features[1].description, lng),
             skeleton: <SkeletonTwo />,
             className: "border-b col-span-1 lg:col-span-2 border-white/10",
         },
         {
-            title: "Expert Support",
-            description:
-                "Watch our masterclasses or get live support from our technicians.",
+            title: t(content.features[2].title, lng),
+            description: t(content.features[2].description, lng),
             skeleton: <SkeletonThree />,
-            className:
-                "col-span-1 lg:col-span-3 lg:border-r border-white/10",
+            className: "col-span-1 lg:col-span-3 lg:border-r border-white/10",
         },
         {
-            title: "International Partnerships",
-            description:
-                "We collaborate with world-class production companies across the globe.",
+            title: t(content.features[3].title, lng),
+            description: t(content.features[3].description, lng),
             skeleton: <SkeletonFour />,
             className: "col-span-1 lg:col-span-3 border-b lg:border-none border-white/10",
         },
     ];
+
     return (
         <div className="relative z-20 w-full overflow-hidden">
-            {/* Background Decoration: INTENSIFIED RED GLOW - FULL WIDTH */}
-            {/* Center Glow */}
+            {/* Background Decoration */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[1500px] h-[800px] bg-[#D00000]/10 rounded-full blur-[140px] pointer-events-none" />
-
-            {/* Secondary Accent Glow (Bottom Right) */}
             <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-[#D00000]/10 rounded-full blur-[120px] pointer-events-none" />
 
             {/* Content Container */}
             <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 relative z-10">
                 <div className="px-8 mb-12 relative z-10">
                     <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-bold font-display uppercase text-white">
-                        Operations Excellence
+                        {t(content.title, lng)}
                     </h4>
 
                     <p className="text-sm lg:text-xl max-w-2xl my-4 mx-auto text-zinc-400 text-center font-light">
-                        From local shoots to international blockbusters, our infrastructure scales with you.
+                        {t(content.subtitle, lng)}
                     </p>
                 </div>
 
@@ -193,7 +192,6 @@ export const SkeletonTwo = () => {
                     </motion.div>
                 ))}
             </div>
-            {/* Gradient Overlays */}
             <div className="absolute left-0 z-10 inset-y-0 w-20 bg-gradient-to-r from-zinc-950 to-transparent h-full pointer-events-none" />
             <div className="absolute right-0 z-10 inset-y-0 w-20 bg-gradient-to-l from-zinc-950 to-transparent h-full pointer-events-none" />
         </div>
@@ -227,15 +225,13 @@ export const Globe = ({ className }: { className?: string }) => {
             mapSamples: 16000,
             mapBrightness: 6,
             baseColor: [0.1, 0.1, 0.1],
-            markerColor: [0.6, 0.6, 0.6], // Gray markers as requested
+            markerColor: [0.6, 0.6, 0.6],
             glowColor: [0.2, 0.2, 0.2],
             markers: [
-                { location: [31.7917, -7.0926], size: 0.15 }, // Morocco (Bigger to take attention)
-                { location: [34.0522, -118.2437], size: 0.05 }, // LA
-                { location: [51.5072, -0.1276], size: 0.05 }, // London
-                { location: [35.6762, 139.6503], size: 0.05 }, // Tokyo
-                { location: [-33.8688, 151.2093], size: 0.05 }, // Sydney
-                { location: [25.2048, 55.2708], size: 0.05 }, // Dubai
+                { location: [33.5731, -7.5898], size: 0.15 }, // Casablanca (Main)
+                { location: [31.6295, -7.9811], size: 0.08 }, // Marrakech
+                { location: [34.0209, -6.8416], size: 0.08 }, // Rabat
+                { location: [30.9335, -6.9370], size: 0.06 }, // Ouarzazate
             ],
             onRender: (state) => {
                 state.phi = phi;

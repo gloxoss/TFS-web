@@ -1,7 +1,7 @@
 'use server';
 
 import { verifyAdminAccess } from '@/services/auth/access-control';
-import { createServerClient } from '@/lib/pocketbase/server';
+import { createServerClient, createAdminClient } from '@/lib/pocketbase/server';
 import { getQuoteService } from '@/services';
 import type { Quote, QuoteStatus } from '@/services';
 
@@ -24,8 +24,8 @@ export async function getAdminRentalRequests(
         throw new Error('Unauthorized Access');
     }
 
-    // 2. Fetch Data
-    const pb = await createServerClient(false);
+    // 2. Fetch Data (Use Admin Client to bypass API rules)
+    const pb = await createAdminClient();
     const service = getQuoteService(pb);
 
     // Use Service Layer (handles mapping, json parsing, expansion)
@@ -41,11 +41,11 @@ export async function getAdminRentalRequests(
 }
 
 
-export async function getRequestDetails(id: string): Promise<RentalRequest | null> {
+export async function getRequestDetails(id: string): Promise<Quote | null> {
     const canAccess = await verifyAdminAccess();
     if (!canAccess) return null;
 
-    const pb = await createServerClient(false);
+    const pb = await createAdminClient();
     const service = getQuoteService(pb);
 
     try {
@@ -72,7 +72,7 @@ export async function updateQuotePricing(
         return { success: false, error: 'Missing required fields' };
     }
 
-    const pb = await createServerClient(true);
+    const pb = await createAdminClient();
     const service = getQuoteService(pb);
 
     try {
@@ -134,7 +134,7 @@ export async function lockQuote(
     const canAccess = await verifyAdminAccess();
     if (!canAccess) return { success: false, error: 'Unauthorized' };
 
-    const pb = await createServerClient(true);
+    const pb = await createAdminClient();
 
     try {
         // Verify quote exists and has required data
@@ -174,7 +174,7 @@ export async function unlockQuote(
     const canAccess = await verifyAdminAccess();
     if (!canAccess) return { success: false, error: 'Unauthorized' };
 
-    const pb = await createServerClient(true);
+    const pb = await createAdminClient();
 
     try {
         // Verify quote exists and check status
@@ -227,7 +227,7 @@ export async function finalizeQuote(
         return { success: false, error: 'Missing quote ID or price' };
     }
 
-    const pb = await createServerClient(true);
+    const pb = await createAdminClient();
     const service = getQuoteService(pb);
 
     try {
@@ -287,5 +287,93 @@ export async function finalizeQuote(
     } catch (error: any) {
         console.error('Error finalizing quote:', error);
         return { success: false, error: error.message || 'Failed to finalize quote' };
+    }
+}
+
+/**
+ * Admin Confirm Quote - Manually mark a quote as confirmed
+ * 
+ * Use when client confirms via phone/email instead of magic link.
+ * Only works for quotes in 'quoted' status.
+ */
+export async function adminConfirmQuote(
+    quoteId: string,
+    note?: string
+): Promise<{ success: boolean; error?: string }> {
+    const canAccess = await verifyAdminAccess();
+    if (!canAccess) return { success: false, error: 'Unauthorized' };
+
+    const pb = await createAdminClient();
+
+    try {
+        const quote = await pb.collection('quotes').getOne(quoteId);
+
+        // Validate current status
+        if (quote.status === 'confirmed') {
+            return { success: false, error: 'Quote is already confirmed' };
+        }
+        if (quote.status === 'rejected') {
+            return { success: false, error: 'Cannot confirm a rejected quote' };
+        }
+        if (quote.status === 'pending' || quote.status === 'reviewing') {
+            return { success: false, error: 'Please finalize and send the quote first before confirming' };
+        }
+
+        // Update to confirmed
+        const internalNotes = quote.internal_notes || '';
+        const timestamp = new Date().toISOString();
+        const confirmNote = `[ADMIN CONFIRMED - ${timestamp}]${note ? `: ${note}` : ' (Manual confirmation)'}`;
+
+        await pb.collection('quotes').update(quoteId, {
+            status: 'confirmed',
+            internal_notes: `${internalNotes}\n\n${confirmNote}`.trim(),
+        });
+
+        console.log(`✅ Quote ${quoteId} manually confirmed by admin`);
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error confirming quote:', error);
+        return { success: false, error: error.message || 'Failed to confirm quote' };
+    }
+}
+
+/**
+ * Admin Reject Quote - Manually mark a quote as rejected
+ * 
+ * Use when admin needs to decline a quote (item unavailable, etc.)
+ */
+export async function adminRejectQuote(
+    quoteId: string,
+    reason?: string
+): Promise<{ success: boolean; error?: string }> {
+    const canAccess = await verifyAdminAccess();
+    if (!canAccess) return { success: false, error: 'Unauthorized' };
+
+    const pb = await createAdminClient();
+
+    try {
+        const quote = await pb.collection('quotes').getOne(quoteId);
+
+        if (quote.status === 'confirmed') {
+            return { success: false, error: 'Cannot reject a confirmed quote' };
+        }
+        if (quote.status === 'rejected') {
+            return { success: false, error: 'Quote is already rejected' };
+        }
+
+        const internalNotes = quote.internal_notes || '';
+        const timestamp = new Date().toISOString();
+        const rejectNote = `[ADMIN REJECTED - ${timestamp}]${reason ? `: ${reason}` : ''}`;
+
+        await pb.collection('quotes').update(quoteId, {
+            status: 'rejected',
+            internal_notes: `${internalNotes}\n\n${rejectNote}`.trim(),
+        });
+
+        console.log(`❌ Quote ${quoteId} rejected by admin`);
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error rejecting quote:', error);
+        return { success: false, error: error.message || 'Failed to reject quote' };
     }
 }
