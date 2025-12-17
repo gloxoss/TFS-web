@@ -65,22 +65,53 @@ export async function getSettings(): Promise<{ success: boolean, settings: AppSe
                     currency: record.currency
                 }
             }
-        } catch (e) {
-            // If no record found, create one
+        } catch (e: any) {
+            // Check if the collection doesn't exist (404)
+            if (e?.status === 404 && e?.message?.includes('collection')) {
+                console.log('[Settings] Settings collection not found, using defaults.')
+                return {
+                    success: true,
+                    settings: {
+                        id: 'default',
+                        ...DEFAULT_SETTINGS
+                    }
+                }
+            }
+
+            // If no record found (but collection exists), try to create one
             console.log('[Settings] No settings found, creating default.')
-            const record = await client.collection('settings').create(DEFAULT_SETTINGS)
-            return {
-                success: true,
-                settings: {
-                    id: record.id,
-                    ...DEFAULT_SETTINGS
+            try {
+                const record = await client.collection('settings').create(DEFAULT_SETTINGS)
+                return {
+                    success: true,
+                    settings: {
+                        id: record.id,
+                        ...DEFAULT_SETTINGS
+                    }
+                }
+            } catch (createError: any) {
+                // If creation also fails (e.g., collection doesn't exist), return defaults
+                console.log('[Settings] Could not create settings, using defaults.')
+                return {
+                    success: true,
+                    settings: {
+                        id: 'default',
+                        ...DEFAULT_SETTINGS
+                    }
                 }
             }
         }
 
     } catch (error) {
         console.error('[Settings] Error fetching settings:', error)
-        return { success: false, settings: null, error: 'Failed to load settings' }
+        // Return default settings even on error to prevent app crash
+        return {
+            success: true,
+            settings: {
+                id: 'default',
+                ...DEFAULT_SETTINGS
+            }
+        }
     }
 }
 

@@ -6,10 +6,11 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { homePage, t } from "@/data/site-content";
 
+// TFS Cinema Rental Hero Images - Local optimized images
 const HERO_IMAGES = [
-    "https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?auto=format&fit=crop&q=80&w=2070",
-    "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2910&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=2070",
+    "/images/hero/localize-uu-YGo9YVDw-unsplash-1-scaled.webp", // Already optimized webp
+    "/images/hero/20221115_124804.jpg", // Cinema gear shot
+    "/images/hero/xrabat-wall-sl.jpg.pagespeed.ic.16lhC1-Jv2.jpg", // Rabat wall shot
 ];
 
 // Word Stagger Animation Variants for Headline

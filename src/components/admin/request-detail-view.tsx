@@ -1,9 +1,9 @@
 'use client';
 
-import { updateQuotePricing, lockQuote, unlockQuote, finalizeQuote } from '@/lib/actions/admin-requests';
+import { updateQuotePricing, lockQuote, unlockQuote, finalizeQuote, adminConfirmQuote, adminRejectQuote } from '@/lib/actions/admin-requests';
 import { Quote } from '@/services';
 import { format } from 'date-fns';
-import { ArrowLeft, Send, AlertCircle, Lock, Unlock, CheckCircle, FileText } from 'lucide-react';
+import { ArrowLeft, Send, AlertCircle, Lock, Unlock, CheckCircle, FileText, XCircle, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
@@ -98,6 +98,30 @@ export default function RequestDetailView({ request, lng }: RequestDetailViewPro
                 router.refresh();
             } else {
                 setError(result.error || 'Failed to lock quote');
+            }
+        });
+    };
+
+    const handleAdminConfirm = async () => {
+        if (!confirm('Mark this quote as confirmed? Use this for phone/email confirmations.')) return;
+        startTransition(async () => {
+            const result = await adminConfirmQuote(request.id, 'Confirmed via admin panel');
+            if (result.success) {
+                router.refresh();
+            } else {
+                setError(result.error || 'Failed to confirm quote');
+            }
+        });
+    };
+
+    const handleAdminReject = async () => {
+        const reason = prompt('Rejection reason (optional):');
+        startTransition(async () => {
+            const result = await adminRejectQuote(request.id, reason || undefined);
+            if (result.success) {
+                router.refresh();
+            } else {
+                setError(result.error || 'Failed to reject quote');
             }
         });
     };
@@ -311,24 +335,51 @@ export default function RequestDetailView({ request, lng }: RequestDetailViewPro
                                 )}
 
                                 {/* Locked State: Show status and unlock button */}
-                                {isLocked && !isRejected && (
+                                {isLocked && !isRejected && request.status !== 'confirmed' && (
                                     <div className="space-y-3">
-                                        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
-                                            <p className="text-green-400 text-sm font-medium flex items-center justify-center gap-2">
-                                                <CheckCircle className="w-4 h-4" />
-                                                Quote Sent & Locked
+                                        <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg text-center">
+                                            <p className="text-purple-400 text-sm font-medium flex items-center justify-center gap-2">
+                                                <Send className="w-4 h-4" />
+                                                Quote Sent - Awaiting Response
                                             </p>
                                             <p className="text-zinc-500 text-xs mt-1">
-                                                Waiting for client response
+                                                Client can accept via magic link
                                             </p>
                                         </div>
+
+                                        {/* Admin Manual Actions */}
+                                        <div className="pt-2 border-t border-zinc-800">
+                                            <p className="text-zinc-500 text-xs mb-2 flex items-center gap-1">
+                                                <Phone className="w-3 h-3" />
+                                                Client confirmed via phone/email?
+                                            </p>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={handleAdminConfirm}
+                                                    disabled={isPending}
+                                                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-green-600 text-white text-sm font-medium hover:bg-green-500 transition-colors disabled:opacity-50"
+                                                >
+                                                    <CheckCircle className="w-4 h-4" />
+                                                    Confirm
+                                                </button>
+                                                <button
+                                                    onClick={handleAdminReject}
+                                                    disabled={isPending}
+                                                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-red-600/20 border border-red-600/50 text-red-400 text-sm font-medium hover:bg-red-600/30 transition-colors disabled:opacity-50"
+                                                >
+                                                    <XCircle className="w-4 h-4" />
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </div>
+
                                         <button
                                             onClick={handleUnlock}
                                             disabled={isPending}
                                             className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-300 font-medium hover:bg-zinc-700 transition-colors disabled:opacity-50"
                                         >
                                             {isPending ? (
-                                                <span className="animate-pulse">Unlocking...</span>
+                                                <span className="animate-pulse">Processing...</span>
                                             ) : (
                                                 <>
                                                     <Unlock className="w-4 h-4" />
@@ -336,6 +387,19 @@ export default function RequestDetailView({ request, lng }: RequestDetailViewPro
                                                 </>
                                             )}
                                         </button>
+                                    </div>
+                                )}
+
+                                {/* Confirmed State */}
+                                {request.status === 'confirmed' && (
+                                    <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
+                                        <p className="text-green-400 text-sm font-medium flex items-center justify-center gap-2">
+                                            <CheckCircle className="w-4 h-4" />
+                                            Quote Confirmed!
+                                        </p>
+                                        <p className="text-zinc-500 text-xs mt-1">
+                                            Rental booking confirmed
+                                        </p>
                                     </div>
                                 )}
 

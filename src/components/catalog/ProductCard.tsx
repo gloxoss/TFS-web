@@ -47,11 +47,29 @@ export function ProductCard({ product, lng, className }: ProductCardProps) {
   const showPrice = settings?.show_prices && product.price;
 
   // Best-effort check for "Camera" since category relation might be missing
+  // Enhanced camera detection to ensure all cinema cameras prompt for kit configuration using "View Details"
+  const cameraKeywords = [
+    'camera', 'caméra',
+    'arri', 'alexa', 'amira',
+    'red', 'raptor', 'komodo', 'ranger', 'v-raptor',
+    'sony fx', 'sony a7', 'sony venice', 'burano',
+    'blackmagic', 'ursa', 'bmpcc', 'pocket cinema',
+    'canon c', 'c70', 'c300', 'c500',
+    'panasonic', 'varicam', 'eva1'
+  ];
+
+  const lowerName = name.toLowerCase();
+  const lowerSlug = slug.toLowerCase();
+  const lowerCatName = category?.name?.toLowerCase() || '';
+  const lowerCatSlug = category?.slug?.toLowerCase() || '';
+
   const isCamera =
-    category?.slug === 'cameras' ||
-    category?.name?.toLowerCase().includes('camera') ||
-    name.toLowerCase().includes('camera') ||
-    slug.toLowerCase().includes('camera')
+    lowerCatSlug === 'cameras' ||
+    lowerCatName.includes('camera') ||
+    cameraKeywords.some(keyword =>
+      lowerName.includes(keyword) ||
+      lowerSlug.includes(keyword)
+    );
 
   // Show Quick Add for non-cameras (lights, grip, lenses, etc.)
   const showQuickAdd = !isCamera && isAvailable

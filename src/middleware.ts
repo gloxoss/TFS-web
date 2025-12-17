@@ -8,8 +8,8 @@ import { ROLES } from './types/auth';
 acceptLanguage.languages(languages);
 
 export const config = {
-  // Matcher ignoring `/_next/`, `/api/`, `..` etc
-  matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)'],
+  // Matcher ignoring `/_next/`, `/api/`, `/images/`, etc
+  matcher: ['/((?!api|_next/static|_next/image|images|assets|favicon.ico|sw.js).*)'],
 };
 
 export async function middleware(request: NextRequest) {

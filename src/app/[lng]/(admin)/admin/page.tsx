@@ -16,7 +16,8 @@ import {
     FileText,
     Settings,
     PlusCircle,
-    ArrowRight
+    ArrowRight,
+    Send
 } from 'lucide-react'
 
 // Stats Card Component
@@ -30,7 +31,7 @@ function StatsCard({
     title: string
     value: number | string
     icon: React.ElementType
-    color?: 'zinc' | 'red' | 'green' | 'yellow' | 'blue'
+    color?: 'zinc' | 'red' | 'green' | 'yellow' | 'blue' | 'purple'
     href?: string
 }) {
     const colorClasses = {
@@ -38,7 +39,8 @@ function StatsCard({
         red: 'border-red-900/50 text-red-500',
         green: 'border-green-900/50 text-green-500',
         yellow: 'border-yellow-900/50 text-yellow-500',
-        blue: 'border-blue-900/50 text-blue-500'
+        blue: 'border-blue-900/50 text-blue-500',
+        purple: 'border-purple-900/50 text-purple-500'
     }
 
     const content = (
@@ -176,7 +178,7 @@ async function DashboardContent({ lng }: { lng: string }) {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatsCard
                     title="Total Equipment"
                     value={stats?.totalEquipment ?? 0}
@@ -185,10 +187,17 @@ async function DashboardContent({ lng }: { lng: string }) {
                     href={`/${lng}/admin/inventory`}
                 />
                 <StatsCard
-                    title="Pending Quotes"
+                    title="Pending"
                     value={stats?.pendingQuotes ?? 0}
                     icon={Clock}
                     color="yellow"
+                    href={`/${lng}/admin/requests`}
+                />
+                <StatsCard
+                    title="Quoted"
+                    value={stats?.quotedQuotes ?? 0}
+                    icon={Send}
+                    color="purple"
                     href={`/${lng}/admin/requests`}
                 />
                 <StatsCard
@@ -199,7 +208,7 @@ async function DashboardContent({ lng }: { lng: string }) {
                     href={`/${lng}/admin/requests`}
                 />
                 <StatsCard
-                    title="Total Users"
+                    title="Users"
                     value={stats?.totalUsers ?? 0}
                     icon={Users}
                     color="zinc"

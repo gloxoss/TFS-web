@@ -3,12 +3,11 @@ import HeroBackground from "./HeroBackground";
 import HeroContent from "./HeroContent";
 import HeroNavbar from "./HeroNavbar";
 
-// TFS Cinema Rental Images - Replace with actual high-contrast cinema gear photos
-// Ideal: Dark studio shots with rim lighting on camera rigs, lens close-ups, BTS film sets
+// TFS Cinema Rental Hero Images - Local optimized images
 const HERO_IMAGES = [
-  "https://images.unsplash.com/photo-1585634917202-6f4f4e3c4c8a?w=1920&q=80", // Cinema camera
-  "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1920&q=80", // Film production
-  "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1920&q=80", // Camera gear
+  "/images/hero/localize-uu-YGo9YVDw-unsplash-1-scaled.webp", // Already optimized webp
+  "/images/hero/20221115_124804.jpg", // Cinema gear shot
+  "/images/hero/xrabat-wall-sl.jpg.pagespeed.ic.16lhC1-Jv2.jpg", // Rabat wall shot
 ];
 
 export default function HeroSection() {

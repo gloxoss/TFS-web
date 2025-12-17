@@ -14,6 +14,7 @@ export interface AdminDashboardStats {
     totalEquipment: number
     totalUsers: number
     pendingQuotes: number
+    quotedQuotes: number
     confirmedQuotes: number
     totalQuotes: number
     recentActivity: ActivityItem[]
@@ -111,9 +112,14 @@ export async function getAdminDashboardStats(): Promise<{
             return status === 'pending' || status === 'reviewing';
         }).length
 
+        const quotedQuotes = quotesResult.filter((q) => {
+            const status = Array.isArray(q.status) ? q.status[0] : q.status;
+            return status === 'quoted';
+        }).length
+
         const confirmedQuotes = quotesResult.filter((q) => {
             const status = Array.isArray(q.status) ? q.status[0] : q.status;
-            return status === 'confirmed' || status === 'quoted';
+            return status === 'confirmed';
         }).length
 
         // Get recent activity (last 5 quotes)
@@ -135,6 +141,7 @@ export async function getAdminDashboardStats(): Promise<{
                 totalEquipment,
                 totalUsers,
                 pendingQuotes,
+                quotedQuotes,
                 confirmedQuotes,
                 totalQuotes: quotesResult.length,
                 recentActivity

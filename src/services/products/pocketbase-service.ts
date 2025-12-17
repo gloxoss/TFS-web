@@ -184,11 +184,22 @@ export class PocketBaseProductService implements IProductService {
 
     async getFeaturedProducts(): Promise<Product[]> {
         try {
+            // First try to get featured products
             const records = await this.pb.collection(EQUIPMENT_COLLECTION).getList(1, 6, {
                 filter: 'featured = true',
-                // sort: 'name',
             });
-            return records.items.map(mapRecordToProductDefault);
+
+            // If we have featured products, return them
+            if (records.items.length > 0) {
+                return records.items.map(mapRecordToProductDefault);
+            }
+
+            // Fallback: get the first 6 products if no featured ones exist
+            console.log('[ProductService] No featured products found, falling back to recent products');
+            const fallbackRecords = await this.pb.collection(EQUIPMENT_COLLECTION).getList(1, 6, {
+                sort: '-created', // Most recently created first
+            });
+            return fallbackRecords.items.map(mapRecordToProductDefault);
         } catch (error) {
             console.error('Error fetching featured products:', error);
             return [];

@@ -43,6 +43,7 @@ export default async function Page({ params }: { params: Promise<{ lng: string }
     ? blogPosts.map((post) => ({
       category: post.category || 'news',
       title: post.title,
+      slug: post.slug,
       image: post.coverImage,
     }))
     : [
@@ -128,6 +129,7 @@ export default async function Page({ params }: { params: Promise<{ lng: string }
       <NewsSection
         title={t('news.title')}
         items={NEWS_ITEMS}
+        lng={lng}
       />
 
       {/* Final CTA with Aurora Background */}
