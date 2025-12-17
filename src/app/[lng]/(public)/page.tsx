@@ -36,7 +36,7 @@ export default async function Page({ params }: { params: Promise<{ lng: string }
     image: cat.thumbnail
       ? `${PB_URL}/api/files/categories/${cat.id}/${cat.thumbnail}`
       : 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop',
-  }));
+  })).slice(0, 5); // Max 5 categories
 
   // Map blog posts to NewsSection format
   const NEWS_ITEMS = blogPosts.length > 0
