@@ -1,21 +1,19 @@
 /// <reference path="../pb_data/types.d.ts" />
 migrate((app) => {
-  const collection = app.findCollectionByNameOrId("pbc_3292755704")
+  const collection = app.findCollectionByNameOrId("pbc_2527524235")
 
   // update collection data
   unmarshal({
-    "listRule": "",
-    "viewRule": ""
+    "updateRule": "@request.auth.role = 'admin' || @request.auth.role = 'superadmin'"
   }, collection)
 
   return app.save(collection)
 }, (app) => {
-  const collection = app.findCollectionByNameOrId("pbc_3292755704")
+  const collection = app.findCollectionByNameOrId("pbc_2527524235")
 
   // update collection data
   unmarshal({
-    "listRule": null,
-    "viewRule": null
+    "updateRule": null
   }, collection)
 
   return app.save(collection)
