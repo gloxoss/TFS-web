@@ -37,7 +37,7 @@ export const company = {
 
     // Contact details
     address: {
-        street: "55-57, Rue Souleimane el Farissi",
+        street: "N°55-57, Rue Souleimane El Farissi, Ain Borja",
         city: "Casablanca",
         postalCode: "20330",
         country: "Morocco",
@@ -45,11 +45,17 @@ export const company = {
     },
 
     phone: {
-        display: "0522 246 372",
+        display: "+212 522 246 372",
         link: "+212522246372"
     },
 
+    fax: {
+        display: "+212 522 241 396",
+        link: "+212522241396"
+    },
+
     email: "contact@tfs.ma",
+    website: "www.tfs.ma",
 
     // Social media links (leave empty string if not used)
     social: {
@@ -59,8 +65,10 @@ export const company = {
         youtube: ""
     },
 
-    // Copyright year
-    copyrightYear: "2025"
+    // Copyright year - dynamically generated
+    get copyrightYear() {
+        return new Date().getFullYear().toString()
+    }
 }
 
 // =============================================================================
@@ -160,8 +168,8 @@ export const homePage = {
     heroImpact: {
         // Large split text at bottom
         megaText: {
-            line1: "TV FILM",
-            line2: "SOLUTIONS"
+            line1: { en: "TV FILM", fr: "TV FILM" },
+            line2: { en: "SOLUTIONS", fr: "SOLUTIONS" }
         },
         // Top-right headline
         headline: {
