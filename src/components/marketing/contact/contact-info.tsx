@@ -55,6 +55,15 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                                 {company.phone.display}
                             </a>
                         </p>
+                        {company.fax && (
+                            <p className="flex items-center gap-3">
+                                <Phone className="w-4 h-4 shrink-0 text-zinc-500 opacity-60" />
+                                <span className="text-zinc-500 text-xs">FAX:</span>
+                                <a href={`tel:${company.fax.link}`} className="hover:text-white transition-colors">
+                                    {company.fax.display}
+                                </a>
+                            </p>
+                        )}
                         <p className="flex items-center gap-3">
                             <Mail className="w-4 h-4 shrink-0 text-zinc-500" />
                             <a href={`mailto:${company.email}`} className="hover:text-white transition-colors">
