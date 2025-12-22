@@ -185,13 +185,20 @@ function isCameraProduct(product: Product): boolean {
   // Check for specific camera model names (more precise matching)
   const cameraModelPatterns = [
     'camera',
+    // Sony cameras
     'fx6', 'fx3', 'fx30', 'fx9',  // Sony FX series
-    'komodo', 'red v-raptor', 'red ranger', 'red dsmc',  // RED cameras (not just "red")
-    'alexa', 'amira', 'arri 35', 'arriflex',  // ARRI cameras (not ARRI lights like M18, SkyPanel)
-    'c70', 'c300', 'c500', 'c200',  // Canon Cinema EOS
-    'bmpcc', 'blackmagic pocket', 'ursa',  // Blackmagic cameras
-    'varicam', 'eva1',  // Panasonic cinema cameras
-    'venice',  // Sony Venice
+    'a7s', 'a7r', 'a7 iii', 'a7 iv', 'a7c', 'a9', 'a1', 'a6', // Sony Alpha series
+    'venice', 'burano',  // Sony Cinema Line
+    // RED cameras
+    'komodo', 'red v-raptor', 'red ranger', 'red dsmc',
+    // ARRI cameras (not ARRI lights)
+    'alexa', 'amira', 'arri 35', 'arriflex',
+    // Canon Cinema EOS
+    'c70', 'c300', 'c500', 'c200', 'eos r5 c', 'eos r3',
+    // Blackmagic cameras
+    'bmpcc', 'blackmagic pocket', 'ursa',
+    // Panasonic cinema cameras
+    'varicam', 'eva1', 'gh6', 'gh5s',
   ]
 
   const matchesCameraModel = cameraModelPatterns.some(pattern => productName.includes(pattern))
@@ -352,11 +359,10 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
         if (result.success && result.kit && result.kit.slots.length > 0) {
           setResolvedKit(result.kit)
           // Initialize default selections from resolved kit
-          const defaultSelections: KitSelections = {}
+          const defaultSelections: Record<string, string[]> = {}
           for (const slot of result.kit.slots) {
-            defaultSelections[slot.slotName] = slot.defaultItems.map(item =>
-              typeof item === 'string' ? item : item.id
-            )
+            // KitItem has product_id, not id
+            defaultSelections[slot.slotName] = slot.defaultItems.map(item => item.product_id)
           }
           setKitSelections(defaultSelections)
         } else if (isCameraProduct(product)) {
@@ -443,6 +449,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           category: product.category?.name,
           imageUrl: product.imageUrl
         })),
+        // Use kitSelections if available, otherwise get product IDs from defaultItems
         selectedIds: kitSelections[slot.slotName] || slot.defaultItems.map(item => item.product_id),
       }))
     }
@@ -500,7 +507,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
             variants={fadeInBlur}
             initial="hidden"
             animate="visible"
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-6"
           >
             <Link
               href={`/${lng}/equipment`}
@@ -519,20 +526,17 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               animate="visible"
               className="grid lg:grid-cols-5 gap-8 items-start"
             >
-              {/* Camera Image - Smaller for kit layout */}
-              <motion.div variants={fadeInBlur} className="lg:col-span-2">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+              {/* Camera Image - Dynamic sizing */}
+              <motion.div variants={fadeInBlur} className="lg:col-span-2 flex justify-center">
+                <div className="relative inline-block rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                   {product.imageUrl ? (
-                    <Image
+                    <img
                       src={product.imageUrl}
                       alt={product.name}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 40vw"
-                      className="object-cover"
+                      className="block h-auto max-h-[400px] max-w-full object-contain"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-64 h-64 flex items-center justify-center">
                       <Camera className="w-24 h-24 text-zinc-700" />
                     </div>
                   )}
@@ -547,40 +551,18 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
 
               {/* Title + Description + Quick Info */}
               <motion.div variants={fadeInBlur} className="lg:col-span-3 flex flex-col">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                      {product.name}
-                    </h1>
-                    <p className="text-zinc-400 text-lg">
-                      {resolvedKit?.template.name || 'Complete Cinema Package'}
-                    </p>
-                  </div>
-                  <span
-                    className={cn(
-                      'flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full',
-                      product.isAvailable
-                        ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
-                        : 'bg-red-900/50 text-red-300 border border-red-700/50'
-                    )}
-                  >
-                    {product.isAvailable ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Available
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="w-4 h-4" />
-                        Unavailable
-                      </>
-                    )}
-                  </span>
+                <div className="mb-4">
+                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    {product.name}
+                  </h1>
+                  <p className="text-zinc-400 text-lg">
+                    {resolvedKit?.template.name || 'Complete Cinema Package'}
+                  </p>
                 </div>
 
                 {product.description && (
                   <p className="text-zinc-400 leading-relaxed mb-6">
-                    {product.description}
+                    {product.description.replace(/<[^>]*>/g, '')}
                   </p>
                 )}
 
@@ -939,7 +921,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           variants={fadeInBlur}
           initial="hidden"
           animate="visible"
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-6"
         >
           <Link
             href={`/${lng}/equipment`}
@@ -958,20 +940,17 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
             animate="visible"
             className="grid lg:grid-cols-2 gap-12"
           >
-            {/* Image Gallery */}
-            <motion.div variants={fadeInBlur}>
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+            {/* Image Gallery - Dynamic sizing */}
+            <motion.div variants={fadeInBlur} className="flex justify-center">
+              <div className="relative inline-block rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                 {product.imageUrl ? (
-                  <Image
+                  <img
                     src={product.imageUrl}
                     alt={product.name}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
+                    className="block h-auto max-h-[500px] max-w-full object-contain"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-64 h-64 flex items-center justify-center">
                     <Package className="w-24 h-24 text-zinc-700" />
                   </div>
                 )}
@@ -1010,57 +989,37 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               variants={fadeInBlur}
               className="flex flex-col"
             >
-              {/* Title & Availability */}
+              {/* Title */}
               <div className="mb-6">
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                <h1 className="text-3xl md:text-4xl font-bold text-white">
                   {product.name}
                 </h1>
-
-                <div className="flex items-center gap-4">
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full',
-                      product.isAvailable
-                        ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
-                        : 'bg-red-900/50 text-red-300 border border-red-700/50'
-                    )}
-                  >
-                    {product.isAvailable ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Available
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="w-4 h-4" />
-                        Unavailable
-                      </>
-                    )}
-                  </span>
-                </div>
               </div>
 
               {/* Description */}
               {product.description && (
                 <p className="text-zinc-400 leading-relaxed mb-8">
-                  {product.description}
+                  {product.description.replace(/<[^>]*>/g, '')}
                 </p>
               )}
 
-              {/* Specs */}
+              {/* Specs - Modern Minimalist */}
               {product.specs && Object.keys(product.specs).length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-3">
+                  <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">
                     Specifications
                   </h3>
-                  <dl className="grid grid-cols-2 gap-x-6 gap-y-2">
+                  <div className="space-y-0">
                     {Object.entries(product.specs).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-zinc-800">
-                        <dt className="text-zinc-500">{key}</dt>
-                        <dd className="text-zinc-300 font-medium">{String(value)}</dd>
+                      <div
+                        key={key}
+                        className="flex items-center justify-between py-3 border-b border-zinc-800/60 last:border-b-0"
+                      >
+                        <span className="text-sm text-zinc-500 capitalize">{key.replace(/_/g, ' ')}</span>
+                        <span className="text-sm text-white font-medium">{String(value)}</span>
                       </div>
                     ))}
-                  </dl>
+                  </div>
                 </div>
               )}
 

@@ -20,17 +20,17 @@ export interface AppSettings {
 }
 
 const DEFAULT_SETTINGS: Omit<AppSettings, 'id'> = {
-    company_name: 'TFS Equipment Rental',
-    contact_email: 'contact@tfs-rental.com',
-    company_phone: '+212 522 123 456',
-    company_address: 'Casablanca, Morocco',
+    company_name: 'TV Film Solutions',  // Matches site-content.ts
+    contact_email: 'contact@tfs.ma',    // Matches site-content.ts
+    company_phone: '+212522246372',      // Matches site-content.ts (format: link)
+    company_address: '55-57, Rue Souleimane el Farissi, Casablanca 20330, Morocco',  // Matches site-content.ts
     email_notifications: true,
     new_quote_alert: true,
     quote_status_alert: true,
     show_prices: false,
     maintenance_mode: false,
     default_language: 'en',
-    currency: 'USD'
+    currency: 'MAD'  // Morocco uses MAD, not USD
 }
 
 /**

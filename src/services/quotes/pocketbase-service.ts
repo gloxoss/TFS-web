@@ -18,11 +18,13 @@ import type {
   QuoteStatus,
 } from './interface'
 import type { PaginatedResult } from '@/services/products/interface'
+import { createServiceLogger } from '@/lib/logger'
 
 const POCKETBASE_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
 
 export class PocketBaseQuoteService implements IQuoteService {
   private pb: PocketBase
+  private log = createServiceLogger('QuoteService')
 
   constructor(pbClient: PocketBase) {
     if (!pbClient) {
@@ -111,23 +113,20 @@ export class PocketBaseQuoteService implements IQuoteService {
         recordData.user = payload.userId
       }
 
-      console.log('[QuoteService] Creating quote with payload:', JSON.stringify(recordData, null, 2))
+      this.log.debug('Creating quote', { payload: recordData })
 
       const record = await this.pb.collection('quotes').create(recordData)
 
-      // Log the magic link for testing (temporary)
-      console.log(`🎬 Magic Link Generated: /en/quote/${record.id}?token=${accessToken}`)
+      // Log the magic link for testing
+      const locale = payload.language || 'en'
+      this.log.info(`Magic link generated: /${locale}/quote/${record.id}?token=${accessToken}`)
 
       return { success: true, data: { quoteId: record.id, confirmationNumber, accessToken } }
     } catch (error: any) {
-      console.error('Quote creation error:', error)
-      // Log detailed PocketBase error response if available
-      if (error?.response?.data) {
-        console.error('PocketBase error details:', JSON.stringify(error.response.data, null, 2))
-      }
-      if (error?.response) {
-        console.error('PocketBase full response:', JSON.stringify(error.response, null, 2))
-      }
+      this.log.error('Quote creation failed', error, {
+        errorData: error?.response?.data,
+        errorResponse: error?.response
+      })
       return { success: false, error: 'Unable to create quote. Please try again.' }
     }
   }
@@ -140,7 +139,7 @@ export class PocketBaseQuoteService implements IQuoteService {
       })
       return records.items.map((r) => this.mapRecordToQuote(r))
     } catch (error) {
-      console.error('Error fetching user quotes:', error)
+      this.log.error('Failed to fetch user quotes', error)
       return []
     }
   }
@@ -153,7 +152,7 @@ export class PocketBaseQuoteService implements IQuoteService {
       })
       return records.items.map((r) => this.mapRecordToQuote(r))
     } catch (error) {
-      console.error('Error fetching quotes by email:', error)
+      this.log.error('Failed to fetch quotes by email', error, { email })
       return []
     }
   }
@@ -163,7 +162,33 @@ export class PocketBaseQuoteService implements IQuoteService {
       const record = await this.pb.collection('quotes').getOne(quoteId, { expand: 'user' })
       return this.mapRecordToQuote(record)
     } catch (error) {
-      console.error('Error fetching quote:', error)
+      this.log.error('Failed to fetch quote by ID', error, { quoteId })
+      return null
+    }
+  }
+
+  async getQuoteByToken(quoteId: string, token: string): Promise<Quote | null> {
+    try {
+      // Use Admin Auth to fetch quote + access_token securely
+      // We create a new client here to avoid messing with the injected client's auth state
+      // if it happens to be a user client.
+      const adminPb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+      await adminPb.collection('_superusers').authWithPassword(
+        process.env.PB_ADMIN_EMAIL || '',
+        process.env.PB_ADMIN_PASSWORD || ''
+      )
+
+      // Fetch quote by ID using admin client
+      const record = await adminPb.collection('quotes').getOne(quoteId)
+
+      // Verify token matches
+      if (record.access_token !== token) {
+        return null
+      }
+
+      return this.mapRecordToQuote(record)
+    } catch (error) {
+      this.log.error('Failed to fetch quote by token', error)
       return null
     }
   }

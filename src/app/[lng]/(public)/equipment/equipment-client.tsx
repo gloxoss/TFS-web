@@ -8,11 +8,12 @@
  */
 'use client'
 
-import { useState, useCallback, useTransition } from 'react'
+import { useState, useCallback, useTransition, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Product, Category } from '@/services/products/types'
-import { ProductGrid, CategoryFilter, SearchBar } from '@/components/catalog'
+import { ProductGrid, CategoryFilter, SearchBar, BrandFilter, SortDropdown, SortOption } from '@/components/catalog'
+import { Pagination } from '@/components/ui/pagination'
 import { useTranslation } from '@/app/i18n/client'
 import { cn } from '@/lib/utils'
 
@@ -44,6 +45,13 @@ export function EquipmentCatalogClient({
 
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const [searchQuery, setSearchQuery] = useState(initialSearch)
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState<SortOption>('name')
+
+  // Extract unique brands from products
+  const availableBrands = Array.from(
+    new Set(initialProducts.map(p => p.brand).filter(Boolean))
+  ).sort() as string[]
 
   // Update URL with filters
   const updateFilters = useCallback(
@@ -103,12 +111,50 @@ export function EquipmentCatalogClient({
     [updateFilters]
   )
 
+  // Robust client-side filtering
+  const filteredProducts = useMemo(() => {
+    let result = [...initialProducts]
+
+    // Brand filtering - Normalized for robustness
+    if (selectedBrands.length > 0) {
+      const normalizedSelectedBrands = selectedBrands.map(b => b.toLowerCase().trim())
+      result = result.filter(product => {
+        if (!product.brand) return false
+        const pBrand = product.brand.toLowerCase().trim()
+        // Check if product brand matches ANY of the selected brands
+        return normalizedSelectedBrands.includes(pBrand)
+      })
+    }
+
+    // Sorting
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name)
+        case 'featured':
+          // Featured first, then name
+          return (Number(b.isFeatured) - Number(a.isFeatured)) || a.name.localeCompare(b.name)
+        case 'category':
+          // By category name, then product name
+          const catA = a.category?.name || ''
+          const catB = b.category?.name || ''
+          return catA.localeCompare(catB) || a.name.localeCompare(b.name)
+        default:
+          return 0
+      }
+    })
+
+    return result
+  }, [initialProducts, selectedBrands, sortBy])
+
+  const totalFilteredCount = filteredProducts.length
+
   return (
     <div className="min-h-screen bg-zinc-950">
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 to-zinc-950" />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -126,35 +172,113 @@ export function EquipmentCatalogClient({
         </div>
       </section>
 
-      {/* Filters Section */}
-      <section className="sticky top-0 z-30 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            {/* Category Pills */}
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-              className="order-2 md:order-1"
-            />
+      {/* Sticky Tabs Header - Floating Boxed Design */}
+      <div className="sticky top-24 z-30 transition-transform duration-300 px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="max-w-7xl mx-auto bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl ring-1 ring-white/5">
 
-            {/* Search Bar */}
-            <SearchBar
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full md:w-72 order-1 md:order-2"
-            />
+          {/* Primary Tabs - Elegant Horizontal Scroll */}
+          <div className="relative border-b border-white/5">
+            {/* Left fade gradient */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-950/90 to-transparent z-10 pointer-events-none" />
+            {/* Right fade gradient */}
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-950/90 to-transparent z-10 pointer-events-none" />
+
+            <div
+              className="flex overflow-x-auto px-6 py-1 scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <TabItem
+                label={t('categories.all')}
+                active={selectedCategory === null}
+                onClick={() => handleCategoryChange(null)}
+              />
+              {categories.map(cat => (
+                <TabItem
+                  key={cat.id}
+                  label={cat.name}
+                  active={selectedCategory === cat.slug}
+                  count={cat.productCount}
+                  onClick={() => handleCategoryChange(cat.slug)}
+                />
+              ))}
+            </div>
           </div>
+
+          {/* Secondary Toolbar */}
+          <div className="py-3 px-4 sm:px-6">
+            {/* Desktop: Single row. Mobile: Stack */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+
+              {/* Left Side: Brand Filters + Item Count */}
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <span className="text-xs text-zinc-500 shrink-0">
+                  {totalFilteredCount} items
+                </span>
+
+                {/* Brand Filters - Horizontal scroll with fade */}
+                {availableBrands.length > 0 && (
+                  <div className="relative flex-1 min-w-0">
+                    {/* Left fade */}
+                    <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-zinc-950/90 to-transparent z-10 pointer-events-none" />
+                    {/* Right fade */}
+                    <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-zinc-950/90 to-transparent z-10 pointer-events-none" />
+
+                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap px-1">
+                      <span className="text-xs font-bold text-zinc-600 uppercase tracking-widest shrink-0">
+                        Brand:
+                      </span>
+                      <BrandFilter
+                        brands={availableBrands}
+                        selectedBrands={selectedBrands}
+                        onBrandToggle={(brand) => {
+                          setSelectedBrands(prev => {
+                            const isIncluded = prev.some(b => b.toLowerCase() === brand.toLowerCase())
+                            if (isIncluded) {
+                              return prev.filter(b => b.toLowerCase() !== brand.toLowerCase())
+                            } else {
+                              return [...prev, brand]
+                            }
+                          })
+                        }}
+                      />
+                      {selectedBrands.length > 0 && (
+                        <button
+                          onClick={() => setSelectedBrands([])}
+                          className="text-xs text-zinc-500 hover:text-white shrink-0 ml-1"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Side: Sort & Search */}
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="relative z-50">
+                  <SortDropdown value={sortBy} onChange={setSortBy} />
+                </div>
+                <SearchBar
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-40 md:w-48"
+                />
+              </div>
+            </div>
+          </div>
+
         </div>
-      </section>
+      </div>
 
       {/* Results Section */}
       <section className="py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Apply client-side filtering and sorting */}
           {/* Results Count */}
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-zinc-500">
-              {initialPagination.totalItems} {t('pagination.results')}
+              {totalFilteredCount} {t('pagination.results')}
               {selectedCategory && (
                 <span className="ml-1">
                   in <span className="text-zinc-300">{categories.find(c => c.slug === selectedCategory)?.name}</span>
@@ -165,26 +289,15 @@ export function EquipmentCatalogClient({
                   matching &ldquo;<span className="text-zinc-300">{searchQuery}</span>&rdquo;
                 </span>
               )}
+              {selectedBrands.length > 0 && (
+                <span className="ml-1">
+                  · <span className="text-indigo-400">{selectedBrands.join(', ')}</span>
+                </span>
+              )}
             </p>
 
             {isPending && (
               <span className="text-sm text-zinc-500 flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
                 Loading...
               </span>
             )}
@@ -192,13 +305,13 @@ export function EquipmentCatalogClient({
 
           {/* Product Grid */}
           <ProductGrid
-            products={initialProducts}
+            products={filteredProducts}
             lng={lng}
             isLoading={isPending}
           />
 
-          {/* Pagination */}
-          {initialPagination.totalPages > 1 && (
+          {/* Pagination - Only show if NO client-side filters are active */}
+          {initialPagination.totalPages > 1 && selectedBrands.length === 0 && (
             <Pagination
               currentPage={initialPagination.page}
               totalPages={initialPagination.totalPages}
@@ -211,80 +324,26 @@ export function EquipmentCatalogClient({
   )
 }
 
-// Pagination Component
-interface PaginationProps {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
-}
-
-function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
-  const pages = generatePageNumbers(currentPage, totalPages)
-
+function TabItem({ label, count, active, onClick }: { label: string, count?: number, active: boolean, onClick: () => void }) {
   return (
-    <nav className="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage <= 1}
-        className={cn(
-          'px-3 py-2 text-sm rounded-lg transition-colors',
-          currentPage <= 1
-            ? 'text-zinc-600 cursor-not-allowed'
-            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-        )}
-      >
-        Previous
-      </button>
+    <button
+      onClick={onClick}
+      className={cn(
+        "relative px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors",
+        active ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+      )}
+    >
+      {label}
+      {count !== undefined && <span className="ml-2 text-xs opacity-50">{count}</span>}
 
-      {pages.map((page, i) => (
-        page === '...' ? (
-          <span key={`ellipsis-${i}`} className="px-2 text-zinc-600">
-            ...
-          </span>
-        ) : (
-          <button
-            key={page}
-            onClick={() => onPageChange(page as number)}
-            className={cn(
-              'px-3 py-2 text-sm rounded-lg transition-colors',
-              currentPage === page
-                ? 'bg-white text-zinc-900 font-medium'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-            )}
-          >
-            {page}
-          </button>
-        )
-      ))}
-
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages}
-        className={cn(
-          'px-3 py-2 text-sm rounded-lg transition-colors',
-          currentPage >= totalPages
-            ? 'text-zinc-600 cursor-not-allowed'
-            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-        )}
-      >
-        Next
-      </button>
-    </nav>
+      {active && (
+        <motion.div
+          layoutId="activeTab"
+          className="absolute bottom-0 left-0 right-0 h-[2px] bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+      )}
+    </button>
   )
 }
 
-function generatePageNumbers(current: number, total: number): (number | '...')[] {
-  if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-
-  if (current <= 3) {
-    return [1, 2, 3, 4, 5, '...', total]
-  }
-
-  if (current >= total - 2) {
-    return [1, '...', total - 4, total - 3, total - 2, total - 1, total]
-  }
-
-  return [1, '...', current - 1, current, current + 1, '...', total]
-}

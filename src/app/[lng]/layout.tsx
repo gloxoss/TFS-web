@@ -12,6 +12,7 @@ import { Providers } from "@/app/providers";
 
 import AuthListener from "@/components/auth/auth-listener";
 import { CartMergeHandler } from "@/components/cart/cart-merge-handler";
+import { CartSyncProvider } from "@/components/cart/cart-sync-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -78,6 +79,7 @@ export default async function RootLayout({
             <Providers>
               <AuthListener initialUser={user} />
               <CartMergeHandler />
+              <CartSyncProvider />
               {children}
             </Providers>
           </PocketBaseProvider>

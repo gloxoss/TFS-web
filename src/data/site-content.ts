@@ -59,8 +59,10 @@ export const company = {
         youtube: ""
     },
 
-    // Copyright year
-    copyrightYear: "2025"
+    // Copyright year - dynamically generated
+    get copyrightYear() {
+        return new Date().getFullYear().toString()
+    }
 }
 
 // =============================================================================
@@ -160,8 +162,8 @@ export const homePage = {
     heroImpact: {
         // Large split text at bottom
         megaText: {
-            line1: "TV FILM",
-            line2: "SOLUTIONS"
+            line1: { en: "TV FILM", fr: "TV FILM" },
+            line2: { en: "SOLUTIONS", fr: "SOLUTIONS" }
         },
         // Top-right headline
         headline: {

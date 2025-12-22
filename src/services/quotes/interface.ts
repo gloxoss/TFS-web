@@ -149,6 +149,12 @@ export interface IQuoteService {
   getQuoteById(quoteId: string): Promise<Quote | null>
 
   /**
+   * Get quote by ID and Token (Secure Public Access)
+   * Used for Magic Links
+   */
+  getQuoteByToken(quoteId: string, token: string): Promise<Quote | null>
+
+  /**
    * Admin: Upload a PDF quote and lock the record
    */
   uploadQuote(id: string, file: File, price: number): Promise<QuoteResult>

@@ -21,6 +21,7 @@ import type {
   calculateRentalDays,
 } from './interface'
 import { formatDateForEmail as formatDate, calculateRentalDays as calcDays } from './interface'
+import { createServiceLogger } from '@/lib/logger'
 
 // ============================================================================
 // Configuration
@@ -444,6 +445,7 @@ export class ResendEmailService implements IEmailService {
   private apiKey: string
   private fromEmail: string
   private adminEmail: string
+  private log = createServiceLogger('EmailService')
 
   constructor() {
     const config = getConfig()
@@ -457,7 +459,7 @@ export class ResendEmailService implements IEmailService {
    */
   async send(payload: EmailPayload & { html: string }): Promise<EmailResult> {
     if (!this.apiKey) {
-      console.warn('RESEND_API_KEY not configured - email not sent')
+      this.log.warn('RESEND_API_KEY not configured - email not sent')
       return {
         success: false,
         error: 'Email service not configured',
@@ -482,7 +484,7 @@ export class ResendEmailService implements IEmailService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        console.error('Resend API error:', errorData)
+        this.log.error('Resend API error', new Error(errorData.message || 'API error'), { errorData })
         return {
           success: false,
           error: errorData.message || 'Failed to send email',
@@ -495,7 +497,7 @@ export class ResendEmailService implements IEmailService {
         messageId: data.id,
       }
     } catch (error) {
-      console.error('Email send error:', error)
+      this.log.error('Email send error', error)
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -522,7 +524,7 @@ export class ResendEmailService implements IEmailService {
    */
   async sendAdminQuoteNotification(payload: AdminQuoteNotificationPayload): Promise<EmailResult> {
     if (!this.adminEmail) {
-      console.warn('ADMIN_EMAIL not configured - admin notification not sent')
+      this.log.warn('ADMIN_EMAIL not configured - admin notification not sent')
       return {
         success: false,
         error: 'Admin email not configured',

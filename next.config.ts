@@ -2,10 +2,18 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    // Disable optimization for local development (private IPs blocked by Next.js)
+    unoptimized: process.env.NODE_ENV === 'development',
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: 'http',
         hostname: '127.0.0.1',
+        port: '8090',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
         port: '8090',
       },
       {

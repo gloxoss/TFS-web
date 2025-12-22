@@ -17,6 +17,7 @@ import { cookies } from 'next/headers'
 import PocketBase from 'pocketbase'
 import { QuoteFormData } from '@/lib/schemas/quote'
 import { getQuoteService, getEmailService } from '@/services'
+import { createServerClient, createAdminClient } from '@/lib/pocketbase/server'
 import type { CreateQuotePayload, QuoteResult, QuoteEmailItem } from '@/services'
 
 // BLIND QUOTE: Simplified cart item - no pricing data
@@ -89,20 +90,14 @@ export async function submitQuote(submission: QuoteSubmissionData): Promise<Quot
     }
 
     // Initialize PocketBase with server cookies for authenticated requests
-    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
-
-    // Try to load auth from cookies
-    const cookieStore = await cookies()
-    const authCookie = cookieStore.get('pb_auth')
+    const pb = await createServerClient(true)
     let userId: string | undefined
 
-    if (authCookie) {
+    // Validate auth state if present
+    if (pb.authStore.isValid) {
       try {
-        pb.authStore.loadFromCookie(`pb_auth=${authCookie.value}`)
-        await pb.collection('users').authRefresh() // Validate token
-        if (pb.authStore.isValid && pb.authStore.model) {
-          userId = pb.authStore.model.id
-        }
+        await pb.collection('users').authRefresh()
+        userId = pb.authStore.model?.id
       } catch {
         // Auth invalid, continue as guest
         pb.authStore.clear()
@@ -261,13 +256,7 @@ export async function acceptQuote(
     }
 
     // Initialize PocketBase with admin auth for server-side operations
-    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
-
-    // Authenticate as admin for secure operations
-    await pb.collection('_superusers').authWithPassword(
-      process.env.PB_ADMIN_EMAIL || '',
-      process.env.PB_ADMIN_PASSWORD || ''
-    )
+    const pb = await createAdminClient()
 
     // Fetch the quote and validate access token
     let quote
@@ -335,8 +324,8 @@ export async function acceptQuote(
     return {
       success: true,
       data: {
-        id: quoteId,
-        status: 'confirmed',
+        quoteId: quoteId,
+        confirmationNumber: quote.confirmation_number,
       },
     }
   } catch (error) {
@@ -369,12 +358,7 @@ export async function rejectQuote(
     }
 
     // Initialize PocketBase with admin auth
-    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
-
-    await pb.collection('_superusers').authWithPassword(
-      process.env.PB_ADMIN_EMAIL || '',
-      process.env.PB_ADMIN_PASSWORD || ''
-    )
+    const pb = await createAdminClient()
 
     // Fetch the quote and validate access token
     let quote
@@ -415,13 +399,13 @@ export async function rejectQuote(
       }
     }
 
-    // Update quote with rejection
-    await pb.collection('quotes').update(quoteId, {
-      status: 'rejected',
-      internal_notes: reason
-        ? `${quote.internal_notes || ''}\n\n[REJECTION REASON - ${new Date().toISOString()}]:\n${reason}`.trim()
-        : quote.internal_notes,
-    })
+    // Update quote with rejection via service
+    const quoteService = getQuoteService(pb)
+    const rejectionNote = reason
+      ? `${quote.internal_notes || ''}\n\n[REJECTION REASON - ${new Date().toISOString()}]:\n${reason}`.trim()
+      : quote.internal_notes
+
+    const updatedQuote = await quoteService.updateQuoteStatus(quoteId, 'rejected', rejectionNote)
 
     // Send admin notification email
     try {
@@ -446,10 +430,7 @@ export async function rejectQuote(
 
     return {
       success: true,
-      data: {
-        id: quoteId,
-        status: 'rejected',
-      },
+      data: updatedQuote,
     }
   } catch (error) {
     console.error('Reject quote error:', error)

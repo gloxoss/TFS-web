@@ -72,10 +72,7 @@ export function ProductGrid({
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+    <div
       className={cn(
         'grid gap-6',
         'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
@@ -85,7 +82,7 @@ export function ProductGrid({
       {products.map((product) => (
         <ProductCard key={product.id} product={product} lng={lng} />
       ))}
-    </motion.div>
+    </div>
   )
 }
 

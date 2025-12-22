@@ -40,6 +40,8 @@ export interface Product {
   visibility?: boolean
   /** Daily rate (exposed only if show_prices is true, or always exposed but hidden by UI) */
   price?: number
+  /** Flag to indicate if product is a kit with accessories (for builder UI) */
+  is_kit?: boolean
 }
 
 /**

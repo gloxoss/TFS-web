@@ -12,9 +12,37 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|images|assets|favicon.ico|sw.js).*)'],
 };
 
+/**
+ * Safely parse the PocketBase auth cookie
+ */
+function parseAuthCookie(cookieValue: string) {
+  try {
+    let decoded = decodeURIComponent(cookieValue);
+    // Handle legacy format: strip "pb_auth=" prefix if present
+    if (decoded.startsWith("pb_auth=")) {
+      decoded = decoded.substring(8);
+    }
+    return JSON.parse(decoded);
+  } catch (e) {
+    console.error("[Middleware] Failed to parse auth cookie:", e);
+    return null;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+
+  // -----------------------------------------------------------------------
+  // 0. Security Headers
+  // -----------------------------------------------------------------------
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: http://127.0.0.1:8090 http://localhost:8090 https://*.bhphoto.com https://*.cloudinary.com https://*.unsplash.com; font-src 'self' https://fonts.gstatic.com https://*.perplexity.ai data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
+  );
 
   // -----------------------------------------------------------------------
   // 1. I18n Redirection Logic
@@ -43,7 +71,6 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // -----------------------------------------------------------------------
   // -----------------------------------------------------------------------
   // 2. RBAC Strategy (Unified Security)
   // -----------------------------------------------------------------------
@@ -76,38 +103,17 @@ export async function middleware(request: NextRequest) {
 
   // If it's a protected path, we check auth
   if (isAdminPath || isDashboardPath || isAccountPath) {
-    console.log("[Middleware] Protected path detected:", pathWithoutLocale);
-
     // Load auth state from cookies
     const authCookie = request.cookies.get('pb_auth');
-    console.log("[Middleware] pb_auth cookie present:", !!authCookie);
-    console.log("[Middleware] pb_auth cookie value (first 50 chars):", authCookie?.value?.substring(0, 50));
 
     if (authCookie) {
-      try {
-        // Parse the JSON cookie payload
-        let decoded = decodeURIComponent(authCookie.value);
-
-        // Handle legacy format: strip "pb_auth=" prefix if present
-        if (decoded.startsWith("pb_auth=")) {
-          decoded = decoded.substring(8); // Remove "pb_auth=" prefix
-        }
-
-        const authData = JSON.parse(decoded);
-        console.log("[Middleware] Parsed authData - token present:", !!authData.token);
-        console.log("[Middleware] Parsed authData - record present:", !!authData.record);
-
-        // Load token and model directly into authStore
+      const authData = parseAuthCookie(authCookie.value);
+      if (authData) {
         pb.authStore.save(authData.token, authData.record);
-        console.log("[Middleware] After save - isValid:", pb.authStore.isValid);
-        console.log("[Middleware] After save - model id:", pb.authStore.model?.id);
-      } catch (parseError) {
-        console.error("[Middleware] Failed to parse auth cookie:", parseError);
       }
     }
 
     const isValid = pb.authStore.isValid;
-    console.log("[Middleware] Final isValid check:", isValid);
 
     // Logic: Redirect if not allowed
     if (!isValid) {
@@ -121,22 +127,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    console.log("[Middleware] === VALID - Allowing access ===");
-
     if (isAdminPath && isValid) {
       // Logged in but checking Role
-      // NOTE: PocketBase 'admins' collection behaves differently than 'users' with role field.
-      // If you are using a unified 'users' collection with a 'role' field:
       const userRole = pb.authStore.model?.role;
 
-      // If you are using the separate 'admins' collection, pb.authStore.model will be an Admin model.
-      // We check if it's NOT an admin (assuming 'users' collection role approach for now based on prompt context)
-      // If using native PB admins, we would check `pb.authStore.model.collectionName === '_superusers'` or similar.
-
       // Strict Admin Check
-      console.log(`[Middleware] Checking Admin Path: ${pathWithoutLocale}`);
-      console.log(`[Middleware] User Role: ${userRole}, Email: ${pb.authStore.model?.email}`);
-
       if (userRole !== ROLES.ADMIN) {
         console.log('[Middleware] Access Denied: User is not admin.');
         // Not an admin -> Go to Home

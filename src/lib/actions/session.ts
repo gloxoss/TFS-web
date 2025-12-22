@@ -13,7 +13,7 @@ interface AuthResult {
 export async function login(prevState: AuthResult | undefined, formData: FormData): Promise<AuthResult> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const defaultRedirect = formData.get("redirect") as string || "/en/dashboard";
+  const defaultRedirect = formData.get("redirect") as string || "/dashboard";
 
   console.log("[LOGIN] === Starting Login ===");
   console.log("[LOGIN] Email:", email);

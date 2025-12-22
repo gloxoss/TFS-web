@@ -26,7 +26,7 @@ import Select from "@/components/application-ui/forms/select";
 import Toggle from "@/components/application-ui/forms/toggle";
 import Checkbox from "@/components/application-ui/forms/checkbox";
 import Dropdown from "@/components/application-ui/elements/dropdown";
-import Pagination from "@/components/application-ui/navigation/pagination";
+import { Pagination } from "@/components/ui/pagination";
 import Breadcrumbs from "@/components/application-ui/navigation/breadcrumbs";
 import EmptyState from "@/components/application-ui/feedback/empty-state";
 import SlideOver from "@/components/application-ui/overlays/slide-over";
@@ -367,7 +367,7 @@ export default function PlaygroundPage() {
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-gray-900 p-4 dark:border-gray-800">
                             <StackedList />
                             <div className="mt-4 rounded-b-lg bg-gray-50 dark:bg-gray-800">
-                                <Pagination currentPage={1} totalPages={10} />
+                                <Pagination currentPage={1} totalPages={10} onPageChange={(page) => console.log('Page:', page)} />
                             </div>
                         </div>
                     </div>

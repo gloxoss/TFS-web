@@ -27,9 +27,28 @@ const SLIDES = [
     }
 ];
 
-export default function HeroCinemaV2() {
+const translations = {
+    en: {
+        rentals: 'Premium Rentals',
+        catalog: 'View Catalog',
+        showreel: 'Showreel',
+        subtext: "Access the world's finest cinema equipment. From ARRI to Zeiss, delivered to your set.",
+        scroll: 'Scroll'
+    },
+    fr: {
+        rentals: 'Locations Premium',
+        catalog: 'Voir le Catalogue',
+        showreel: 'Démonstration',
+        subtext: "Accédez aux meilleurs équipements de cinéma au monde. D'ARRI à Zeiss, livrés sur votre plateau.",
+        scroll: 'Faire défiler'
+    }
+}
+
+export default function HeroCinemaV2({ lng = 'en' }: { lng?: string }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentSlide, setCurrentSlide] = useState(0);
+
+    const t = translations[lng as keyof typeof translations] || translations.en;
 
     // Parallax & Fade on Scroll
     const { scrollY } = useScroll();
@@ -87,7 +106,7 @@ export default function HeroCinemaV2() {
                     >
                         <span className="h-[1px] w-8 bg-indigo-500/80"></span>
                         <span className="text-xs font-mono tracking-[0.2em] text-gray-400 uppercase">
-                            Premium Rentals
+                            {t.rentals}
                         </span>
                     </motion.div>
                 </div>
@@ -113,8 +132,7 @@ export default function HeroCinemaV2() {
                         transition={{ delay: 0.8 }}
                         className="max-w-md text-lg md:text-xl font-light text-gray-300 leading-relaxed font-sans"
                     >
-                        Access the world's finest cinema equipment. <br />
-                        From ARRI to Zeiss, delivered to your set.
+                        {t.subtext}
                     </motion.p>
 
                     <motion.div
@@ -124,17 +142,17 @@ export default function HeroCinemaV2() {
                         className="flex gap-6"
                     >
                         <Link
-                            href="/en/catalog"
+                            href={`/${lng}/equipment`}
                             className="group relative inline-flex h-12 items-center justify-center overflow-hidden bg-white px-8 font-medium text-black transition-all hover:bg-gray-200"
                         >
-                            <span className="font-sans text-sm tracking-widest uppercase">View Catalog</span>
+                            <span className="font-sans text-sm tracking-widest uppercase">{t.catalog}</span>
                         </Link>
 
                         <button className="group flex items-center gap-3 text-sm tracking-widest uppercase text-white hover:text-indigo-400 transition-colors">
                             <span className="flex h-10 w-10 items-center justify-center border border-white/20 rounded-full group-hover:border-indigo-400 transition-colors">
                                 <Play className="h-3 w-3 fill-current" />
                             </span>
-                            Showreel
+                            {t.showreel}
                         </button>
                     </motion.div>
                 </div>
@@ -146,7 +164,7 @@ export default function HeroCinemaV2() {
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-                <span className="text-[10px] uppercase tracking-[0.2em]">Scroll</span>
+                <span className="text-[10px] uppercase tracking-[0.2em]">{t.scroll}</span>
                 <ArrowDown className="h-4 w-4" />
             </motion.div>
         </section>
