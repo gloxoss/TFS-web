@@ -10,7 +10,7 @@
 import PocketBase, { RecordModel } from 'pocketbase'
 import { BlogPost, BlogFilters } from './types'
 
-const PB_URL = process.env.NEXT_PUBLIC_PB_URL || 'http://127.0.0.1:8090'
+const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
 
 /**
  * Map PocketBase record to BlogPost

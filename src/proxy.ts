@@ -41,7 +41,7 @@ export async function proxy(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: http://127.0.0.1:8090 http://localhost:8090 https://*.bhphoto.com https://*.cloudinary.com https://*.unsplash.com; font-src 'self' https://fonts.gstatic.com https://*.perplexity.ai data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
+    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: http://127.0.0.1:8090 http://localhost:8090 https://*.bhphoto.com https://*.cloudinary.com https://*.unsplash.com https://grainy-gradients.vercel.app; font-src 'self' https://fonts.gstatic.com https://*.perplexity.ai data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
   );
 
   // -----------------------------------------------------------------------

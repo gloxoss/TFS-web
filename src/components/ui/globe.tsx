@@ -101,8 +101,10 @@ export function Globe({ globeConfig, data, rings }: WorldProps) {
     // Build material when globe is initialized or when relevant props change
     useEffect(() => {
         if (!globeRef.current || !isInitialized) return;
+        const material = globeRef.current.globeMaterial();
+        if (!material) return;
 
-        const globeMaterial = globeRef.current.globeMaterial() as unknown as {
+        const globeMaterial = material as unknown as {
             color: Color;
             emissive: Color;
             emissiveIntensity: number;
