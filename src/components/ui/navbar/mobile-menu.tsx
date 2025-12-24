@@ -98,6 +98,7 @@ export function MobileMenu({
                     onClose();
                     onOpenSearch();
                 }}
+                aria-label="Open search"
                 className="flex items-center gap-3 p-3 bg-white/5 rounded-xl text-zinc-400 hover:bg-white/10 transition-colors"
             >
                 <Search className="w-4 h-4" />
@@ -199,6 +200,7 @@ export function MobileMenu({
                                 router.push(newPath);
                                 onClose();
                             }}
+                            aria-label={`Switch to ${language.toUpperCase()}`}
                             className={cn(
                                 "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors uppercase",
                                 lng === language

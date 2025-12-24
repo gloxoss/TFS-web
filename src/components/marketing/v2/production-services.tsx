@@ -35,15 +35,15 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 // Default images for services without images
 const DEFAULT_IMAGES: Record<string, string> = {
-    'equipment-hire': 'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?q=80&w=2670&auto=format&fit=crop',
-    'film-shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2670&auto=format&fit=crop',
-    'film-permits': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2670&auto=format&fit=crop',
-    'crewing': 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop',
-    'scouting': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2670&auto=format&fit=crop',
-    'catering': 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2670&auto=format&fit=crop',
-    'accommodation': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2670&auto=format&fit=crop',
-    'transportation': 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2670&auto=format&fit=crop',
-    'casting': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2670&auto=format&fit=crop',
+    'equipment-hire': 'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?q=75&w=800&auto=format&fit=crop',
+    'film-shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=75&w=800&auto=format&fit=crop',
+    'film-permits': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=75&w=800&auto=format&fit=crop',
+    'crewing': 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=75&w=800&auto=format&fit=crop',
+    'scouting': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=75&w=800&auto=format&fit=crop',
+    'catering': 'https://images.unsplash.com/photo-1555244162-803834f70033?q=75&w=800&auto=format&fit=crop',
+    'accommodation': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=75&w=800&auto=format&fit=crop',
+    'transportation': 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=75&w=800&auto=format&fit=crop',
+    'casting': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=75&w=800&auto=format&fit=crop',
 }
 
 // Mapped service type for the component
@@ -63,7 +63,7 @@ function mapServicesToDisplay(services: Service[], lng: string): MappedService[]
         title: lng === 'fr' && service.titleFr ? service.titleFr : service.title,
         description: lng === 'fr' && service.briefDescriptionFr ? service.briefDescriptionFr : (service.briefDescription || ''),
         icon: ICON_MAP[service.slug] || <Camera className="w-6 h-6" />,
-        image: service.images?.[0] || DEFAULT_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2559&auto=format&fit=crop',
+        image: service.images?.[0] || DEFAULT_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=75&w=800&auto=format&fit=crop',
     }))
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useSpring, useVelocity } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { homePage, t } from "@/data/site-content";
 
 // TFS Cinema Rental Hero Images - Local optimized images
@@ -83,20 +84,29 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
 
     return (
         <div ref={containerRef} className="relative h-[80vh] min-h-[600px] sm:min-h-[700px] lg:h-screen lg:min-h-[1100px] w-full isolation-isolate overflow-hidden font-sans selection:bg-red-600 selection:text-white">
-
             {/* Background Slideshow */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.div style={{ scale }} className="absolute inset-0">
                     <AnimatePresence mode="popLayout">
                         <motion.div
                             key={currentSlide}
-                            className="absolute inset-0 bg-cover bg-center"
-                            style={{ backgroundImage: `url(${HERO_IMAGES[currentSlide]})` }}
+                            className="absolute inset-0"
                             initial={{ opacity: 0, scale: 1.1 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1.5 }}
-                        />
+                        >
+                            <Image
+                                src={HERO_IMAGES[currentSlide]}
+                                alt="Cinema production set"
+                                fill
+                                priority={currentSlide === 0}
+                                className="object-cover"
+                                sizes="100vw"
+                                quality={90}
+                                {...(currentSlide === 0 ? { fetchPriority: "high" } : {})}
+                            />
+                        </motion.div>
                     </AnimatePresence>
                 </motion.div>
             </div>
