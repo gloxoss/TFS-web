@@ -1,6 +1,7 @@
 const PocketBase = require('pocketbase/cjs');
-
-const pb = new PocketBase('http://127.0.0.1:8090');
+const POCKETBASE_URL = process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
+console.log(`Connecting to PocketBase at: ${POCKETBASE_URL}`);
+const pb = new PocketBase(POCKETBASE_URL);
 
 const NEW_ITEMS = [
     {
@@ -617,7 +618,10 @@ const NEW_ITEMS = [
 async function run() {
     try {
         console.log("Authenticating...");
-        await pb.admins.authWithPassword('zakiossama28@gmail.com', 'GloXoss123.');
+        const PB_ADMIN_EMAIL = process.env.PB_ADMIN_EMAIL || 'zakiossama28@gmail.com';
+        const PB_ADMIN_PASSWORD = process.env.PB_ADMIN_PASSWORD || 'GloXoss123.';
+
+        await pb.admins.authWithPassword(PB_ADMIN_EMAIL, PB_ADMIN_PASSWORD);
 
         for (const item of NEW_ITEMS) {
             const slug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');

@@ -1,6 +1,7 @@
 const PocketBase = require('pocketbase/cjs');
-
-const pb = new PocketBase('http://127.0.0.1:8090');
+const POCKETBASE_URL = process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
+console.log(`Connecting to PocketBase at: ${POCKETBASE_URL}`);
+const pb = new PocketBase(POCKETBASE_URL);
 
 // -------------------------------------------------------------------------
 // DATA CONSTANTS (Simplified for script)
@@ -306,8 +307,11 @@ const UI_CONFIG = {
 
 async function seed() {
     try {
+        const PB_ADMIN_EMAIL = process.env.PB_ADMIN_EMAIL || 'zakiossama28@gmail.com';
+        const PB_ADMIN_PASSWORD = process.env.PB_ADMIN_PASSWORD || 'GloXoss123.';
+
         console.log("Authenticating...");
-        await pb.admins.authWithPassword('zakiossama28@gmail.com', 'GloXoss123.');
+        await pb.admins.authWithPassword(PB_ADMIN_EMAIL, PB_ADMIN_PASSWORD);
 
         // ---------------------------------------------------------------------
         // 1. ENSURE COLLECTIONS EXIST

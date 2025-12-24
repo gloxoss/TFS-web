@@ -353,7 +353,10 @@ const SERVICES = [
 async function main() {
     console.log('=== TFS SERVICES SEEDING v2 ===\n');
 
-    await pb.admins.authWithPassword('zakiossama28@gmail.com', 'GloXoss123.');
+    const PB_ADMIN_EMAIL = process.env.PB_ADMIN_EMAIL || 'zakiossama28@gmail.com';
+    const PB_ADMIN_PASSWORD = process.env.PB_ADMIN_PASSWORD || 'GloXoss123.';
+
+    await pb.admins.authWithPassword(PB_ADMIN_EMAIL, PB_ADMIN_PASSWORD);
     console.log('✓ Authenticated\n');
 
     // Delete existing services
