@@ -66,19 +66,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
     // Helper to split text into word components
     const AnimatedText = ({ text, className, delayOffset = 0 }: { text: string, className?: string, delayOffset?: number }) => (
         <span className={className}>
-            {text.split(" ").map((word, i) => (
-                <motion.span
-                    key={i}
-                    variants={wordVariants}
-                    custom={i}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: delayOffset + i * 0.1 }}
-                    className="inline-block mr-[0.2em]"
-                >
-                    {word}
-                </motion.span>
-            ))}
+            {text}
         </span>
     );
 
@@ -87,11 +75,11 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
             {/* Background Slideshow */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.div style={{ scale }} className="absolute inset-0">
-                    <AnimatePresence mode="popLayout">
+                    <AnimatePresence mode="popLayout" initial={false}>
                         <motion.div
                             key={currentSlide}
                             className="absolute inset-0"
-                            initial={{ opacity: 0, scale: 1.1 }}
+                            initial={currentSlide === 0 ? { opacity: 1 } : { opacity: 0, scale: 1.1 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1.5 }}

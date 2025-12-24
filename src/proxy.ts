@@ -39,12 +39,15 @@ export async function proxy(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
   response.headers.set(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: http://127.0.0.1:8090 http://localhost:8090 http://72.62.27.47:8090 https://*.bhphoto.com https://*.cloudinary.com https://*.unsplash.com https://grainy-gradients.vercel.app; font-src 'self' https://fonts.gstatic.com https://*.perplexity.ai data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
   );
   // Preconnect to grainy gradients (used for effects)
-  response.headers.set('Link', '<https://grainy-gradients.vercel.app>; rel=preconnect');
+  response.headers.set('Link', '<https://grainy-gradients.vercel.app>; rel=preconnect; crossorigin');
 
   // -----------------------------------------------------------------------
   // 1. I18n Redirection Logic
