@@ -38,12 +38,12 @@ export default function ServiceContactSection({ lng }: ServiceContactSectionProp
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="space-y-4"
                     >
-                        {/* View Equipment */}
+                        {/* Request Quote - Links to Equipment */}
                         <Link
                             href={`/${lng}/equipment`}
-                            className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-[#D00000] hover:bg-[#B00000] text-white font-medium rounded-lg transition-all duration-300 group"
+                            className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-[#D00000] hover:bg-[#B00000] text-white font-medium rounded-full transition-all duration-300 group"
                         >
-                            {lng === 'fr' ? 'Voir l\'Équipement' : 'View Equipment'}
+                            {lng === 'fr' ? 'Demander un Devis' : 'Request a Quote'}
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
 

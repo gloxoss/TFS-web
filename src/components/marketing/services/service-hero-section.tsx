@@ -78,9 +78,9 @@ export default function ServiceHeroSection({ title, description, heroImage, lng 
                 >
                     <Link
                         href={`/${lng}/equipment`}
-                        className="inline-flex items-center gap-3 bg-[#D00000] hover:bg-[#B00000] text-white px-8 py-4 rounded-lg font-medium transition-all duration-300 group"
+                        className="inline-flex items-center gap-3 bg-[#D00000] hover:bg-[#B00000] text-white px-8 py-4 rounded-full font-medium transition-all duration-300 group"
                     >
-                        {lng === 'fr' ? 'Voir l\'Équipement' : 'Browse Equipment'}
+                        {lng === 'fr' ? 'Demander un Devis' : 'Request a Quote'}
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </motion.div>
