@@ -6,9 +6,13 @@
  * - stats
  * - features
  * - tags
+ * 
+ * Usage: POCKETBASE_URL=http://72.62.27.47:8090 node scripts/seed-services.cjs
  */
 const PocketBase = require('pocketbase/cjs');
-const pb = new PocketBase('http://127.0.0.1:8090');
+const POCKETBASE_URL = process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
+console.log(`Connecting to PocketBase at: ${POCKETBASE_URL}`);
+const pb = new PocketBase(POCKETBASE_URL);
 
 // Stock images for services (placeholder URLs)
 const STOCK_IMAGES = {
