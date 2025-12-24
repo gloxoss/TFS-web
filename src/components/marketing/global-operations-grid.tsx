@@ -3,7 +3,12 @@
 import React from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { World as Globe, GlobeConfig } from "@/components/ui/globe";
+import dynamic from "next/dynamic";
+const Globe = dynamic(() => import("@/components/ui/globe").then((m) => m.World), {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-neutral-900 animate-pulse rounded-xl" />
+});
+import { GlobeConfig } from "@/components/ui/globe";
 import { motion } from "framer-motion";
 import {
     IconGlobe,

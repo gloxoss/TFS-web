@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Disable optimization for local development (private IPs blocked by Next.js)
-    unoptimized: process.env.NODE_ENV === 'development',
+    // Enable unoptimized to bypass Next.js optimizer fetch failures on some VPS environments
+    unoptimized: true,
     dangerouslyAllowSVG: true,
     remotePatterns: [
       {
