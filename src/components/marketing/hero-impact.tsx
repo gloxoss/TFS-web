@@ -101,6 +101,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                                 alt="Cinema production set"
                                 fill
                                 priority={currentSlide === 0}
+                                loading="eager"
                                 className="object-cover"
                                 sizes="100vw"
                                 quality={90}
