@@ -1,0 +1,18 @@
+=== kit_items schema ===
+id : text REQUIRED
+
+=== Sample kit_item record ===
+{
+  "collectionId": "pbc_1366492821",
+  "collectionName": "kit_items",
+  "id": "q6m5dullwci6bmg"
+}
+
+=== kit_templates schema ===
+id : text REQUIRED
+name : text REQUIRED
+main_product_id : relation REQUIRED
+base_price_modifier : number
+description : text
+created : autodate
+updated : autodate

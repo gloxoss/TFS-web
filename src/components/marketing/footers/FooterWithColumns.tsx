@@ -53,8 +53,14 @@ export default function FooterWithColumns({ lng }: FooterWithColumnsProps) {
                             <div className="flex items-start gap-2">
                                 <MapPin className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
                                 <span>
-                                    {company.address.street}<br />
-                                    {company.address.city} {company.address.postalCode}, {lng === 'fr' ? company.address.countryFr : company.address.country}
+                                    {company.address.street}
+                                    {(company.address.city || company.address.country) && (
+                                        <>
+                                            <br />
+                                            {company.address.postalCode} {company.address.city}
+                                            {company.address.country && `, ${lng === 'fr' ? company.address.countryFr : company.address.country}`}
+                                        </>
+                                    )}
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -63,6 +69,14 @@ export default function FooterWithColumns({ lng }: FooterWithColumnsProps) {
                                     {company.phone.display}
                                 </a>
                             </div>
+                            {company.fax && company.fax.display && (
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-4 flex items-center justify-center text-primary font-bold text-[10px]">FAX</div>
+                                    <a href={`tel:${company.fax.link}`} className="hover:text-foreground transition-colors">
+                                        {company.fax.display}
+                                    </a>
+                                </div>
+                            )}
                         </div>
 
                         {/* Social Links */}

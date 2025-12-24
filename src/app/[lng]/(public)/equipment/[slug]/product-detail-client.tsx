@@ -185,13 +185,20 @@ function isCameraProduct(product: Product): boolean {
   // Check for specific camera model names (more precise matching)
   const cameraModelPatterns = [
     'camera',
+    // Sony cameras
     'fx6', 'fx3', 'fx30', 'fx9',  // Sony FX series
-    'komodo', 'red v-raptor', 'red ranger', 'red dsmc',  // RED cameras (not just "red")
-    'alexa', 'amira', 'arri 35', 'arriflex',  // ARRI cameras (not ARRI lights like M18, SkyPanel)
-    'c70', 'c300', 'c500', 'c200',  // Canon Cinema EOS
-    'bmpcc', 'blackmagic pocket', 'ursa',  // Blackmagic cameras
-    'varicam', 'eva1',  // Panasonic cinema cameras
-    'venice',  // Sony Venice
+    'a7s', 'a7r', 'a7 iii', 'a7 iv', 'a7c', 'a9', 'a1', 'a6', // Sony Alpha series
+    'venice', 'burano',  // Sony Cinema Line
+    // RED cameras
+    'komodo', 'red v-raptor', 'red ranger', 'red dsmc',
+    // ARRI cameras (not ARRI lights)
+    'alexa', 'amira', 'arri 35', 'arriflex',
+    // Canon Cinema EOS
+    'c70', 'c300', 'c500', 'c200', 'eos r5 c', 'eos r3',
+    // Blackmagic cameras
+    'bmpcc', 'blackmagic pocket', 'ursa',
+    // Panasonic cinema cameras
+    'varicam', 'eva1', 'gh6', 'gh5s',
   ]
 
   const matchesCameraModel = cameraModelPatterns.some(pattern => productName.includes(pattern))
@@ -207,7 +214,7 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
   return (
     <div className="min-h-screen bg-zinc-950">
       {/* Animated gradient overlay */}
-      <div className="fixed inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-zinc-900/50 pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-to-br from-red-700/5 via-transparent to-zinc-900/50 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Back link skeleton */}
@@ -293,7 +300,7 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
 
       {/* Loading indicator */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900/90 backdrop-blur-sm border border-zinc-800 rounded-full px-6 py-3 flex items-center gap-3">
-        <div className="w-5 h-5 border-2 border-zinc-600 border-t-amber-400 rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-zinc-600 border-t-red-500 rounded-full animate-spin" />
         <span className="text-sm text-zinc-400">Loading equipment details...</span>
       </div>
 
@@ -347,38 +354,48 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
     async function loadKit() {
       try {
         // Use server action for kit resolution
+        console.log('[KIT DEBUG] Loading kit for product:', product.id, product.name);
         const result = await resolveKit(product.id)
+        console.log('[KIT DEBUG] resolveKit result:', result);
+        console.log('[KIT DEBUG] result.success:', result.success);
+        console.log('[KIT DEBUG] result.kit:', result.kit);
+        console.log('[KIT DEBUG] result.kit?.slots:', result.kit?.slots);
+        console.log('[KIT DEBUG] result.kit?.slots.length:', result.kit?.slots?.length);
 
         if (result.success && result.kit && result.kit.slots.length > 0) {
+          console.log('[KIT DEBUG] Setting resolvedKit with', result.kit.slots.length, 'slots');
           setResolvedKit(result.kit)
           // Initialize default selections from resolved kit
-          const defaultSelections: KitSelections = {}
+          const defaultSelections: Record<string, string[]> = {}
           for (const slot of result.kit.slots) {
-            defaultSelections[slot.slotName] = slot.defaultItems.map(item =>
-              typeof item === 'string' ? item : item.id
-            )
+            // KitItem has product_id, not id
+            defaultSelections[slot.slotName] = slot.defaultItems.map(item => item.product_id)
           }
           setKitSelections(defaultSelections)
-        } else if (isCameraProduct(product)) {
-          // Camera with no kit in DB - use mock data
-          setUseMockKit(true)
-          const defaultMock: Record<string, string[]> = {}
-          for (const slot of MOCK_CAMERA_KIT) {
-            defaultMock[slot.slotName] = slot.defaultSelected
-          }
-          setMockSelections(defaultMock)
+          console.log('[KIT DEBUG] Kit set successfully!');
+        } else {
+          console.log('[KIT DEBUG] Kit NOT set - conditions not met');
         }
+        // DISABLED: Mock kit fallback removed - only show real kit data
+        // else if (isCameraProduct(product)) {
+        //   setUseMockKit(true)
+        //   const defaultMock: Record<string, string[]> = {}
+        //   for (const slot of MOCK_CAMERA_KIT) {
+        //     defaultMock[slot.slotName] = slot.defaultSelected
+        //   }
+        //   setMockSelections(defaultMock)
+        // }
       } catch (error) {
         console.error('Failed to load kit:', error)
-        // Fallback to mock for cameras
-        if (isCameraProduct(product)) {
-          setUseMockKit(true)
-          const defaultMock: Record<string, string[]> = {}
-          for (const slot of MOCK_CAMERA_KIT) {
-            defaultMock[slot.slotName] = slot.defaultSelected
-          }
-          setMockSelections(defaultMock)
-        }
+        // DISABLED: Mock fallback removed
+        // if (isCameraProduct(product)) {
+        //   setUseMockKit(true)
+        //   const defaultMock: Record<string, string[]> = {}
+        //   for (const slot of MOCK_CAMERA_KIT) {
+        //     defaultMock[slot.slotName] = slot.defaultSelected
+        //   }
+        //   setMockSelections(defaultMock)
+        // }
       } finally {
         setIsLoadingKit(false)
         // Small delay to ensure smooth transition
@@ -420,6 +437,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   type SlotDisplayItem = {
     id: string
     name: string
+    slug?: string
     category?: string
     imageUrl?: string
   }
@@ -440,9 +458,11 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
         items: slot.availableOptions.map(product => ({
           id: product.id,
           name: product.name,
+          slug: product.slug,
           category: product.category?.name,
           imageUrl: product.imageUrl
         })),
+        // Use kitSelections if available, otherwise get product IDs from defaultItems
         selectedIds: kitSelections[slot.slotName] || slot.defaultItems.map(item => item.product_id),
       }))
     }
@@ -500,7 +520,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
             variants={fadeInBlur}
             initial="hidden"
             animate="visible"
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-6"
           >
             <Link
               href={`/${lng}/equipment`}
@@ -519,20 +539,17 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               animate="visible"
               className="grid lg:grid-cols-5 gap-8 items-start"
             >
-              {/* Camera Image - Smaller for kit layout */}
-              <motion.div variants={fadeInBlur} className="lg:col-span-2">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+              {/* Camera Image - Dynamic sizing */}
+              <motion.div variants={fadeInBlur} className="lg:col-span-2 flex justify-center">
+                <div className="relative inline-block rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                   {product.imageUrl ? (
-                    <Image
+                    <img
                       src={product.imageUrl}
                       alt={product.name}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 40vw"
-                      className="object-cover"
+                      className="block h-auto max-h-[400px] max-w-full object-contain"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-64 h-64 flex items-center justify-center">
                       <Camera className="w-24 h-24 text-zinc-700" />
                     </div>
                   )}
@@ -547,279 +564,275 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
 
               {/* Title + Description + Quick Info */}
               <motion.div variants={fadeInBlur} className="lg:col-span-3 flex flex-col">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                      {product.name}
-                    </h1>
-                    <p className="text-zinc-400 text-lg">
-                      {resolvedKit?.template.name || 'Complete Cinema Package'}
-                    </p>
-                  </div>
-                  <span
-                    className={cn(
-                      'flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full',
-                      product.isAvailable
-                        ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
-                        : 'bg-red-900/50 text-red-300 border border-red-700/50'
-                    )}
-                  >
-                    {product.isAvailable ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Available
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="w-4 h-4" />
-                        Unavailable
-                      </>
-                    )}
-                  </span>
+                <div className="mb-4">
+                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    {product.name}
+                  </h1>
+                  <p className="text-zinc-400 text-lg">
+                    {resolvedKit?.template.name || 'Complete Cinema Package'}
+                  </p>
                 </div>
 
                 {product.description && (
                   <p className="text-zinc-400 leading-relaxed mb-6">
-                    {product.description}
+                    {product.description.replace(/<[^>]*>/g, '')}
                   </p>
                 )}
 
-                {/* Quick Stats */}
+                {/* Camera Specifications */}
                 <motion.div
                   variants={staggerContainer}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-3 gap-4 mt-auto"
+                  className="mt-6"
                 >
-                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
-                    <Layers className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">{slotData.length}</div>
-                    <div className="text-xs text-zinc-500 uppercase tracking-wide">Categories</div>
-                  </motion.div>
-                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
-                    <Package className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">
-                      {slotData.reduce((sum, s) => sum + s.selectedIds.length, 0)}
+                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-5">
+                    <h3 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">Camera Specifications</h3>
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                      {product.specifications && Object.entries(product.specifications).slice(0, 8).map(([key, value]) => (
+                        <div key={key} className="flex justify-between border-b border-zinc-800/50 pb-2">
+                          <span className="text-xs text-zinc-500 capitalize">{key.replace(/_/g, ' ')}</span>
+                          <span className="text-xs text-zinc-200 font-medium">{String(value)}</span>
+                        </div>
+                      ))}
+                      {(!product.specifications || Object.keys(product.specifications).length === 0) && (
+                        <>
+                          <div className="flex justify-between border-b border-zinc-800/50 pb-2">
+                            <span className="text-xs text-zinc-500">Sensor</span>
+                            <span className="text-xs text-zinc-200 font-medium">Full Frame</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-800/50 pb-2">
+                            <span className="text-xs text-zinc-500">Resolution</span>
+                            <span className="text-xs text-zinc-200 font-medium">4K/6K</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-800/50 pb-2">
+                            <span className="text-xs text-zinc-500">Mount</span>
+                            <span className="text-xs text-zinc-200 font-medium">PL / E-Mount</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-800/50 pb-2">
+                            <span className="text-xs text-zinc-500">Recording</span>
+                            <span className="text-xs text-zinc-200 font-medium">RAW / ProRes</span>
+                          </div>
+                        </>
+                      )}
                     </div>
-                    <div className="text-xs text-zinc-500 uppercase tracking-wide">Items Selected</div>
-                  </motion.div>
-                  <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-4 text-center">
-                    <Camera className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">1</div>
-                    <div className="text-xs text-zinc-500 uppercase tracking-wide">Camera Body</div>
                   </motion.div>
                 </motion.div>
               </motion.div>
             </motion.div>
           </div>
 
-          {/* EQUIPMENT MANIFEST - Main Focus */}
-          <motion.div
-            variants={fadeInBlur}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.3 }}
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-500/20 rounded-lg">
-                    <Layers className="w-6 h-6 text-amber-400" />
+          {/* EQUIPMENT MANIFEST - Main Focus - Only show when there's kit data */}
+          {slotData.length > 0 && (
+            <motion.div
+              variants={fadeInBlur}
+              initial="hidden"
+              animate="visible"
+              transition={{ delay: 0.3 }}
+              className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-red-700/20 rounded-lg">
+                      <Layers className="w-6 h-6 text-red-400" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Equipment Manifest</h2>
+                      <p className="text-zinc-500 text-sm">Configure the components included with your kit</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">Equipment Manifest</h2>
-                    <p className="text-zinc-500 text-sm">Configure the components included with your kit</p>
-                  </div>
-                </div>
 
-                {/* View Toggle */}
-                <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1 border border-zinc-700/50">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={cn(
-                      'p-2 rounded-md transition-all',
-                      viewMode === 'grid'
-                        ? 'bg-amber-500 text-zinc-900'
-                        : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
-                    )}
-                    title="Grid view"
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={cn(
-                      'p-2 rounded-md transition-all',
-                      viewMode === 'list'
-                        ? 'bg-amber-500 text-zinc-900'
-                        : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
-                    )}
-                    title="List view"
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {isLoadingKit ? (
-                <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center">
-                  <div className="animate-spin w-8 h-8 border-2 border-zinc-600 border-t-amber-400 rounded-full mx-auto mb-4" />
-                  <p className="text-zinc-400">Loading kit configuration...</p>
-                </div>
-              ) : (
-                <motion.div
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-6"
-                >
-                  {slotData.map((slot) => (
-                    <motion.div
-                      key={slot.slotName}
-                      variants={fadeInBlurFast}
-                      className="bg-zinc-900/30 rounded-2xl border border-zinc-800 overflow-hidden"
+                  {/* View Toggle */}
+                  <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1 border border-zinc-700/50">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={cn(
+                        'p-2 rounded-md transition-all',
+                        viewMode === 'grid'
+                          ? 'bg-red-700 text-white'
+                          : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
+                      )}
+                      title="Grid view"
                     >
-                      {/* Slot Header */}
-                      <div className="flex items-center justify-between px-6 py-4 bg-zinc-900/50 border-b border-zinc-800">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                          <div>
-                            <h3 className="font-semibold text-white">{slot.slotName}</h3>
-                            <span className="text-xs text-zinc-500">
-                              {slot.selectionMode === 'single' ? 'Select one' : 'Select multiple'} • {slot.selectedIds.length} selected
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setEditingSlot(slot.slotName)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-600 rounded-lg text-sm font-medium text-zinc-200 transition-colors"
-                        >
-                          {slot.selectionMode === 'single' ? (
-                            <>
-                              <Edit3 className="w-4 h-4" />
-                              Swap
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="w-4 h-4" />
-                              Edit
-                            </>
-                          )}
-                        </button>
-                      </div>
+                      <LayoutGrid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={cn(
+                        'p-2 rounded-md transition-all',
+                        viewMode === 'list'
+                          ? 'bg-red-700 text-white'
+                          : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
+                      )}
+                      title="List view"
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
 
-                      {/* Selected Items - Grid or List View */}
-                      <div className="p-4">
-                        {slot.selectedIds.length > 0 ? (
-                          viewMode === 'grid' ? (
-                            /* Grid View */
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                              {slot.selectedIds.map(id => {
-                                const itemDetails = getItemDetails(slot.slotName, id)
-                                if (!itemDetails) return null
-                                return (
-                                  <div
-                                    key={id}
-                                    className="group relative bg-zinc-800/50 rounded-xl border border-zinc-700/50 overflow-hidden"
-                                  >
-                                    {/* Item Image */}
-                                    <div className="relative aspect-square bg-zinc-900">
-                                      {itemDetails.imageUrl ? (
-                                        <Image
-                                          src={itemDetails.imageUrl}
-                                          alt={itemDetails.name}
-                                          fill
-                                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                                          className="object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                          <Package className="w-10 h-10 text-zinc-700" />
+                {isLoadingKit ? (
+                  <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center">
+                    <div className="animate-spin w-8 h-8 border-2 border-zinc-600 border-t-red-500 rounded-full mx-auto mb-4" />
+                    <p className="text-zinc-400">Loading kit configuration...</p>
+                  </div>
+                ) : (
+                  <motion.div
+                    variants={staggerContainer}
+                    initial="hidden"
+                    animate="visible"
+                    className="space-y-6"
+                  >
+                    {slotData.map((slot) => (
+                      <motion.div
+                        key={slot.slotName}
+                        variants={fadeInBlurFast}
+                        className="bg-zinc-900/30 rounded-2xl border border-zinc-800 overflow-hidden"
+                      >
+                        {/* Slot Header */}
+                        <div className="flex items-center justify-between px-6 py-4 bg-zinc-900/50 border-b border-zinc-800">
+                          <div className="flex items-center gap-3">
+                            <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                            <div>
+                              <h3 className="font-semibold text-white">{slot.slotName}</h3>
+                              <span className="text-xs text-zinc-500">
+                                {slot.selectionMode === 'single' ? 'Select one' : 'Select multiple'} • {slot.selectedIds.length} selected
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setEditingSlot(slot.slotName)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-600 rounded-lg text-sm font-medium text-zinc-200 transition-colors"
+                          >
+                            {slot.selectionMode === 'single' ? (
+                              <>
+                                <Edit3 className="w-4 h-4" />
+                                Swap
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="w-4 h-4" />
+                                Edit
+                              </>
+                            )}
+                          </button>
+                        </div>
+
+                        {/* Selected Items - Grid or List View */}
+                        <div className="p-4">
+                          {slot.selectedIds.length > 0 ? (
+                            viewMode === 'grid' ? (
+                              /* Grid View */
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                                {slot.selectedIds.map(id => {
+                                  const itemDetails = getItemDetails(slot.slotName, id)
+                                  if (!itemDetails) return null
+                                  return (
+                                    <Link
+                                      key={id}
+                                      href={`/${lng}/equipment/${itemDetails.slug || id}`}
+                                      className="group relative bg-zinc-800/50 rounded-xl border border-zinc-700/50 overflow-hidden hover:border-red-500/50 hover:bg-zinc-800 transition-all cursor-pointer"
+                                    >
+                                      {/* Item Image */}
+                                      <div className="relative aspect-square bg-zinc-900">
+                                        {itemDetails.imageUrl ? (
+                                          <Image
+                                            src={itemDetails.imageUrl}
+                                            alt={itemDetails.name}
+                                            fill
+                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <Package className="w-10 h-10 text-zinc-700" />
+                                          </div>
+                                        )}
+                                        {/* Selection Badge */}
+                                        <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                          <Check className="w-4 h-4 text-white" />
                                         </div>
-                                      )}
+                                      </div>
+                                      {/* Item Info */}
+                                      <div className="p-3">
+                                        <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight group-hover:text-red-400 transition-colors">
+                                          {itemDetails.name}
+                                        </p>
+                                        {itemDetails.category && (
+                                          <p className="text-xs text-zinc-500 mt-1">{itemDetails.category}</p>
+                                        )}
+                                      </div>
+                                    </Link>
+                                  )
+                                })}
+                              </div>
+                            ) : (
+                              /* List View */
+                              <div className="space-y-2">
+                                {slot.selectedIds.map(id => {
+                                  const itemDetails = getItemDetails(slot.slotName, id)
+                                  if (!itemDetails) return null
+                                  return (
+                                    <Link
+                                      key={id}
+                                      href={`/${lng}/equipment/${itemDetails.slug || id}`}
+                                      className="flex items-center gap-4 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50 hover:border-amber-500/50 hover:bg-zinc-800 transition-all cursor-pointer group"
+                                    >
+                                      {/* Item Image */}
+                                      <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
+                                        {itemDetails.imageUrl ? (
+                                          <Image
+                                            src={itemDetails.imageUrl}
+                                            alt={itemDetails.name}
+                                            fill
+                                            sizes="64px"
+                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <Package className="w-6 h-6 text-zinc-700" />
+                                          </div>
+                                        )}
+                                      </div>
+                                      {/* Item Info */}
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-zinc-200 truncate group-hover:text-amber-400 transition-colors">
+                                          {itemDetails.name}
+                                        </p>
+                                        {itemDetails.category && (
+                                          <p className="text-xs text-zinc-500 mt-0.5">{itemDetails.category}</p>
+                                        )}
+                                      </div>
                                       {/* Selection Badge */}
-                                      <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                      <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
                                         <Check className="w-4 h-4 text-white" />
                                       </div>
-                                    </div>
-                                    {/* Item Info */}
-                                    <div className="p-3">
-                                      <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight">
-                                        {itemDetails.name}
-                                      </p>
-                                      {itemDetails.category && (
-                                        <p className="text-xs text-zinc-500 mt-1">{itemDetails.category}</p>
-                                      )}
-                                    </div>
-                                  </div>
-                                )
-                              })}
-                            </div>
+                                    </Link>
+                                  )
+                                })}
+                              </div>
+                            )
                           ) : (
-                            /* List View */
-                            <div className="space-y-2">
-                              {slot.selectedIds.map(id => {
-                                const itemDetails = getItemDetails(slot.slotName, id)
-                                if (!itemDetails) return null
-                                return (
-                                  <div
-                                    key={id}
-                                    className="flex items-center gap-4 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50"
-                                  >
-                                    {/* Item Image */}
-                                    <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
-                                      {itemDetails.imageUrl ? (
-                                        <Image
-                                          src={itemDetails.imageUrl}
-                                          alt={itemDetails.name}
-                                          fill
-                                          sizes="64px"
-                                          className="object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                          <Package className="w-6 h-6 text-zinc-700" />
-                                        </div>
-                                      )}
-                                    </div>
-                                    {/* Item Info */}
-                                    <div className="flex-1 min-w-0">
-                                      <p className="text-sm font-medium text-zinc-200 truncate">
-                                        {itemDetails.name}
-                                      </p>
-                                      {itemDetails.category && (
-                                        <p className="text-xs text-zinc-500 mt-0.5">{itemDetails.category}</p>
-                                      )}
-                                    </div>
-                                    {/* Selection Badge */}
-                                    <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                      <Check className="w-4 h-4 text-white" />
-                                    </div>
-                                  </div>
-                                )
-                              })}
+                            <div className="text-center py-8">
+                              <Package className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
+                              <p className="text-zinc-500 text-sm">No items selected</p>
+                              <button
+                                onClick={() => setEditingSlot(slot.slotName)}
+                                className="mt-3 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
+                              >
+                                Add items →
+                              </button>
                             </div>
-                          )
-                        ) : (
-                          <div className="text-center py-8">
-                            <Package className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-                            <p className="text-zinc-500 text-sm">No items selected</p>
-                            <button
-                              onClick={() => setEditingSlot(slot.slotName)}
-                              className="mt-3 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
-                            >
-                              Add items →
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
 
           {/* Add to Quote Section - Sticky Bottom on Mobile */}
           <motion.div
@@ -860,7 +873,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                       min={1}
                       max={99}
                       onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-14 px-2 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-center text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                      className="w-14 px-2 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-center text-zinc-100 focus:outline-none focus:ring-2 focus:ring-red-500/50"
                     />
                     <button
                       onClick={() => setQuantity((q) => Math.min(99, q + 1))}
@@ -878,7 +891,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                   className={cn(
                     'px-8 py-3 flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200',
                     product.isAvailable
-                      ? 'bg-amber-500 text-zinc-900 hover:bg-amber-400'
+                      ? 'bg-red-700 text-white hover:bg-red-600'
                       : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
                   )}
                 >
@@ -939,7 +952,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           variants={fadeInBlur}
           initial="hidden"
           animate="visible"
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-6"
         >
           <Link
             href={`/${lng}/equipment`}
@@ -958,20 +971,17 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
             animate="visible"
             className="grid lg:grid-cols-2 gap-12"
           >
-            {/* Image Gallery */}
-            <motion.div variants={fadeInBlur}>
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+            {/* Image Gallery - Container fits exactly to image */}
+            <motion.div variants={fadeInBlur} className="flex justify-center">
+              <div className="relative w-fit h-fit rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                 {product.imageUrl ? (
-                  <Image
+                  <img
                     src={product.imageUrl}
                     alt={product.name}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
+                    className="block max-h-[500px] max-w-full object-contain"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-64 h-64 flex items-center justify-center">
                     <Package className="w-24 h-24 text-zinc-700" />
                   </div>
                 )}
@@ -1010,57 +1020,37 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               variants={fadeInBlur}
               className="flex flex-col"
             >
-              {/* Title & Availability */}
+              {/* Title */}
               <div className="mb-6">
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                <h1 className="text-3xl md:text-4xl font-bold text-white">
                   {product.name}
                 </h1>
-
-                <div className="flex items-center gap-4">
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full',
-                      product.isAvailable
-                        ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700/50'
-                        : 'bg-red-900/50 text-red-300 border border-red-700/50'
-                    )}
-                  >
-                    {product.isAvailable ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Available
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="w-4 h-4" />
-                        Unavailable
-                      </>
-                    )}
-                  </span>
-                </div>
               </div>
 
               {/* Description */}
               {product.description && (
                 <p className="text-zinc-400 leading-relaxed mb-8">
-                  {product.description}
+                  {product.description.replace(/<[^>]*>/g, '')}
                 </p>
               )}
 
-              {/* Specs */}
+              {/* Specs - Modern Minimalist */}
               {product.specs && Object.keys(product.specs).length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-3">
+                  <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">
                     Specifications
                   </h3>
-                  <dl className="grid grid-cols-2 gap-x-6 gap-y-2">
+                  <div className="space-y-0">
                     {Object.entries(product.specs).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-zinc-800">
-                        <dt className="text-zinc-500">{key}</dt>
-                        <dd className="text-zinc-300 font-medium">{String(value)}</dd>
+                      <div
+                        key={key}
+                        className="flex items-center justify-between py-3 border-b border-zinc-800/60 last:border-b-0"
+                      >
+                        <span className="text-sm text-zinc-500 capitalize">{key.replace(/_/g, ' ')}</span>
+                        <span className="text-sm text-white font-medium">{String(value)}</span>
                       </div>
                     ))}
-                  </dl>
+                  </div>
                 </div>
               )}
 

@@ -40,9 +40,9 @@ SPECIAL SERVICES:
 - Crew recommendations available (DPs, gaffers, camera operators)
 
 CONTACT:
-- Phone: +212 5XX-XXXXXX (placeholder - update with real number)
-- Email: contact@tfsfilm.ma
-- Address: Casablanca, Morocco (specific address available via get_store_info tool)
+- Phone: +212522246372 (0522 246 372)
+- Email: contact@tfs.ma
+- Address: 55-57, Rue Souleimane el Farissi, Casablanca 20330, Morocco
 
 DEEP LINKING (IMPORTANT):
 - When mentioning SPECIFIC products from lookup results, format them as Markdown links using their slug.
@@ -60,10 +60,10 @@ NAVIGATION GUIDANCE:
  * Store information for the get_store_info tool
  */
 export const STORE_INFO = {
-    name: 'TFS Film Equipment Rental',
-    address: 'Boulevard Mohammed V, Casablanca, Morocco',
-    phone: '+212 5XX-XXXXXX',
-    email: 'contact@tfsfilm.ma',
+    name: 'TV Film Solutions',
+    address: '55-57, Rue Souleimane el Farissi, Casablanca 20330, Morocco',
+    phone: '+212522246372',
+    email: 'contact@tfs.ma',
     hours: {
         weekdays: '9:00 AM - 7:00 PM',
         saturday: '9:00 AM - 7:00 PM',

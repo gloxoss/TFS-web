@@ -161,14 +161,23 @@ export async function mergeGuestCart(guestItems: CartItem[]): Promise<{ success:
 
 export async function resolveKit(productId: string): Promise<ResolveKitResult> {
   try {
+    console.log('[SERVER resolveKit] Starting for productId:', productId);
     const pb = await createServerClient();
+    console.log('[SERVER resolveKit] PocketBase client created');
+
     const cartService = getCartService(pb);
+    console.log('[SERVER resolveKit] Cart service obtained');
 
     const kit = await cartService.resolveKit(productId);
+    console.log('[SERVER resolveKit] Kit result:', kit ? 'Found with ' + kit.slots?.length + ' slots' : 'null');
+
+    if (!kit) {
+      console.log('[SERVER resolveKit] Kit is null, returning success with undefined kit');
+    }
 
     return { success: true, kit: kit || undefined };
   } catch (error) {
-    console.error("Resolve kit error:", error);
+    console.error("[SERVER resolveKit] Error:", error);
     return { success: false, error: "Failed to resolve kit" };
   }
 }

@@ -4,6 +4,7 @@ import { verifyAdminAccess } from '@/services/auth/access-control';
 import { createServerClient, createAdminClient } from '@/lib/pocketbase/server';
 import { getQuoteService } from '@/services';
 import type { Quote, QuoteStatus } from '@/services';
+import { createActionLogger } from '@/lib/logger';
 
 export interface GetRequestsResponse {
     items: Quote[];
@@ -52,7 +53,8 @@ export async function getRequestDetails(id: string): Promise<Quote | null> {
         const quote = await service.getQuoteById(id);
         return quote;
     } catch (error) {
-        console.error('Error fetching quote details:', error);
+        const log = createActionLogger('getRequestDetails');
+        log.error('Failed to fetch quote details', error, { quoteId: id });
         return null;
     }
 }
@@ -80,6 +82,15 @@ export async function updateQuotePricing(
         const quoteBeforeUpdate = await service.getQuoteById(id);
         if (!quoteBeforeUpdate) {
             return { success: false, error: 'Quote not found' };
+        }
+
+        // SERVER-SIDE LOCK ENFORCEMENT: Prevent modification of locked quotes
+        const lockCheck = await pb.collection('quotes').getOne(id);
+        if (lockCheck.is_locked && lockCheck.status === 'quoted') {
+            return {
+                success: false,
+                error: 'This quote is locked. Please unlock it before making changes.'
+            };
         }
 
         // Upload PDF and update quote
@@ -110,13 +121,15 @@ export async function updateQuotePricing(
                 console.log(`📧 Quote ready email sent to ${quoteBeforeUpdate.clientEmail}`);
             } catch (emailError) {
                 // Log but don't fail the action if email fails
-                console.error('Failed to send quote ready email:', emailError);
+                const log = createActionLogger('updateQuotePricing');
+                log.warn('Failed to send quote ready email', { error: emailError, email: quoteBeforeUpdate.clientEmail });
             }
         }
 
         return { success: true };
     } catch (error: any) {
-        console.error('Error updating quote pricing:', error);
+        const log = createActionLogger('updateQuotePricing');
+        log.error('Quote pricing update failed', error, { quoteId: id });
         return { success: false, error: error.message || 'Failed to update quote' };
     }
 }
@@ -235,6 +248,15 @@ export async function finalizeQuote(
         const quote = await service.getQuoteById(id);
         if (!quote) {
             return { success: false, error: 'Quote not found' };
+        }
+
+        // SERVER-SIDE LOCK ENFORCEMENT: Check if quote is locked
+        const lockCheckRecord = await pb.collection('quotes').getOne(id);
+        if (lockCheckRecord.is_locked && lockCheckRecord.status === 'quoted') {
+            return {
+                success: false,
+                error: 'This quote is locked and cannot be modified. Please unlock it first.'
+            };
         }
 
         // If file provided, upload it

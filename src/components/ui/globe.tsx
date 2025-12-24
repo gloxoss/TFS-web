@@ -58,11 +58,16 @@ export type GlobeConfig = {
 interface WorldProps {
     globeConfig: GlobeConfig;
     data: Position[];
+    rings?: {
+        lat: number;
+        lng: number;
+        color: string;
+    }[];
 }
 
 const numbersOfRings = [0];
 
-export function Globe({ globeConfig, data }: WorldProps) {
+export function Globe({ globeConfig, data, rings }: WorldProps) {
     const globeRef = useRef<ThreeGlobe | null>(null);
     const groupRef = useRef<Group>(null);
     const [isInitialized, setIsInitialized] = useState(false);
@@ -152,7 +157,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
         globeRef.current
             .hexPolygonsData(countries.features)
-            .hexPolygonResolution(3)
+            .hexPolygonResolution(2)
             .hexPolygonMargin(0.7)
             .showAtmosphere(defaultProps.showAtmosphere)
             .atmosphereColor(defaultProps.atmosphereColor)
@@ -180,17 +185,22 @@ export function Globe({ globeConfig, data }: WorldProps) {
             .pointAltitude(0.0)
             .pointRadius(2);
 
-        globeRef.current
-            .ringsData([])
-            .ringColor(() => defaultProps.polygonColor)
-            .ringMaxRadius(defaultProps.maxRings)
-            .ringPropagationSpeed(RING_PROPAGATION_SPEED)
-            .ringRepeatPeriod(
-                (defaultProps.arcTime * defaultProps.arcLength) / defaultProps.rings,
-            );
+        // Apply rings data if provided
+        if (rings) {
+            globeRef.current
+                .ringsData(rings)
+                .ringColor((e: any) => (e as { color: string }).color)
+                .ringMaxRadius(defaultProps.maxRings)
+                .ringPropagationSpeed(RING_PROPAGATION_SPEED)
+                .ringRepeatPeriod(
+                    (defaultProps.arcTime * defaultProps.arcLength) / defaultProps.rings,
+                );
+        }
+
     }, [
         isInitialized,
         data,
+        rings, // Add rings to dependency array
         defaultProps.pointSize,
         defaultProps.showAtmosphere,
         defaultProps.atmosphereColor,
@@ -202,9 +212,16 @@ export function Globe({ globeConfig, data }: WorldProps) {
         defaultProps.maxRings,
     ]);
 
-    // Handle rings animation with cleanup
+    // Handle rings animation with cleanup (Only if rings are NOT provided via props? Or mixed?)
+    // The previous implementation used interval to generate random rings. We might want to disable that if 'rings' prob is used.
+    // For now, let's keep the random rings ONLY if rings prop is not provided, or disable them entirely if we want specific rings.
+    // The user wants "one big in morocco", so let's stick to the static rings provided via props.
+
     useEffect(() => {
         if (!globeRef.current || !isInitialized || !data) return;
+
+        // If specific rings are provided, do NOT run the random ring generator
+        if (rings) return;
 
         const interval = setInterval(() => {
             if (!globeRef.current) return;
@@ -229,7 +246,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
         return () => {
             clearInterval(interval);
         };
-    }, [isInitialized, data]);
+    }, [isInitialized, data, rings]);
 
     return <group ref={groupRef} />;
 }

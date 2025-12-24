@@ -126,3 +126,26 @@ export function blogService() {
   return new BlogService(pb)
 }
 
+// ============================================================================
+// Services (Homepage Grid)
+// ============================================================================
+
+import { PocketBaseServicesService } from './services/pocketbase-service'
+export type { Service, IServicesService } from './services/interface'
+
+/**
+ * Creates a services service instance for fetching homepage services.
+ * Requires PocketBase client for authentication.
+ */
+export function getServicesService(pbClient: PocketBase) {
+  return new PocketBaseServicesService(pbClient)
+}
+
+/**
+ * Gets a services service instance with anonymous client.
+ * Services use listRule/viewRule for public access.
+ */
+export function servicesService() {
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+  return new PocketBaseServicesService(pb)
+}

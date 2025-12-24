@@ -1,20 +1,23 @@
 /**
  * Equipment Catalog Client Component
  * 
- * Handles interactive filtering, search, and pagination.
- * Uses URL state for shareable filter states.
+ * Hybrid Filter System:
+ * - Desktop: Top sticky bar with category pills + brand dropdown
+ * - Mobile: FAB button + bottom sheet modal
+ * 
+ * No price filters - equipment rental catalog mode
  * 
  * Design Archetype: Dark Cinema / Luxury Editorial
  */
 'use client'
 
-import { useState, useCallback, useTransition } from 'react'
+import { useState, useCallback, useTransition, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Product, Category } from '@/services/products/types'
-import { ProductGrid, CategoryFilter, SearchBar } from '@/components/catalog'
+import { ProductGrid, HybridFilterBar, SortDropdown, SortOption } from '@/components/catalog'
+import { Pagination } from '@/components/ui/pagination'
 import { useTranslation } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
 
 interface EquipmentCatalogClientProps {
   lng: string
@@ -42,8 +45,67 @@ export function EquipmentCatalogClient({
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
+  // Filter state
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const [searchQuery, setSearchQuery] = useState(initialSearch)
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [selectedMounts, setSelectedMounts] = useState<string[]>([])
+  const [selectedSensorSizes, setSelectedSensorSizes] = useState<string[]>([])
+  const [selectedResolutions, setSelectedResolutions] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState<SortOption>('name')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+
+  // Extract unique brands from products
+  const availableBrands = useMemo(() => {
+    return Array.from(
+      new Set(initialProducts.map(p => p.brand).filter(Boolean))
+    ).sort() as string[]
+  }, [initialProducts])
+
+  // Extract unique types from products (check both type field and specs)
+  const availableTypes = useMemo(() => {
+    const types = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.type) types.add(p.type);
+      if (p.specs?.type) types.add(String(p.specs.type));
+    });
+    return Array.from(types).filter(Boolean).sort();
+  }, [initialProducts])
+
+  // Extract unique mounts from products (check both mount field and specs)
+  const availableMounts = useMemo(() => {
+    const mounts = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.mount) mounts.add(p.mount);
+      if (p.specs?.mount) mounts.add(String(p.specs.mount));
+      if (p.specs?.lens_mount) mounts.add(String(p.specs.lens_mount));
+    });
+    return Array.from(mounts).filter(Boolean).sort();
+  }, [initialProducts])
+
+  // Extract unique sensor sizes from products (check both field and specs)
+  const availableSensorSizes = useMemo(() => {
+    const sizes = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.sensorSize) sizes.add(p.sensorSize);
+      if (p.specs?.sensor_size) sizes.add(String(p.specs.sensor_size));
+      if (p.specs?.coverage) sizes.add(String(p.specs.coverage));
+      if (p.specs?.sensor) sizes.add(String(p.specs.sensor));
+    });
+    return Array.from(sizes).filter(Boolean).sort();
+  }, [initialProducts])
+
+  // Extract unique resolutions from products (check both field and specs)
+  const availableResolutions = useMemo(() => {
+    const resolutions = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.resolution) resolutions.add(p.resolution);
+      if (p.specs?.resolution) resolutions.add(String(p.specs.resolution));
+      if (p.specs?.max_resolution) resolutions.add(String(p.specs.max_resolution));
+    });
+    return Array.from(resolutions).filter(Boolean).sort();
+  }, [initialProducts])
 
   // Update URL with filters
   const updateFilters = useCallback(
@@ -79,6 +141,7 @@ export function EquipmentCatalogClient({
     [router, searchParams, lng]
   )
 
+  // Handlers
   const handleCategoryChange = useCallback(
     (categorySlug: string | null) => {
       setSelectedCategory(categorySlug)
@@ -95,6 +158,69 @@ export function EquipmentCatalogClient({
     [updateFilters]
   )
 
+  const handleBrandToggle = useCallback((brand: string) => {
+    setSelectedBrands(prev => {
+      const isIncluded = prev.some(b => b.toLowerCase() === brand.toLowerCase())
+      if (isIncluded) {
+        return prev.filter(b => b.toLowerCase() !== brand.toLowerCase())
+      } else {
+        return [...prev, brand]
+      }
+    })
+  }, [])
+
+  const handleBrandsChange = useCallback((brands: string[]) => {
+    setSelectedBrands(brands)
+  }, [])
+
+  const handleTypeToggle = useCallback((type: string) => {
+    setSelectedTypes(prev => {
+      const isIncluded = prev.some(t => t.toLowerCase() === type.toLowerCase())
+      if (isIncluded) {
+        return prev.filter(t => t.toLowerCase() !== type.toLowerCase())
+      } else {
+        return [...prev, type]
+      }
+    })
+  }, [])
+
+  const handleTypesChange = useCallback((types: string[]) => {
+    setSelectedTypes(types)
+  }, [])
+
+  const handleMountToggle = useCallback((mount: string) => {
+    setSelectedMounts(prev => {
+      const isIncluded = prev.some(m => m.toLowerCase() === mount.toLowerCase())
+      return isIncluded ? prev.filter(m => m.toLowerCase() !== mount.toLowerCase()) : [...prev, mount]
+    })
+  }, [])
+
+  const handleMountsChange = useCallback((mounts: string[]) => {
+    setSelectedMounts(mounts)
+  }, [])
+
+  const handleSensorToggle = useCallback((size: string) => {
+    setSelectedSensorSizes(prev => {
+      const isIncluded = prev.some(s => s.toLowerCase() === size.toLowerCase())
+      return isIncluded ? prev.filter(s => s.toLowerCase() !== size.toLowerCase()) : [...prev, size]
+    })
+  }, [])
+
+  const handleSensorsChange = useCallback((sizes: string[]) => {
+    setSelectedSensorSizes(sizes)
+  }, [])
+
+  const handleResolutionToggle = useCallback((res: string) => {
+    setSelectedResolutions(prev => {
+      const isIncluded = prev.some(r => r.toLowerCase() === res.toLowerCase())
+      return isIncluded ? prev.filter(r => r.toLowerCase() !== res.toLowerCase()) : [...prev, res]
+    })
+  }, [])
+
+  const handleResolutionsChange = useCallback((resolutions: string[]) => {
+    setSelectedResolutions(resolutions)
+  }, [])
+
   const handlePageChange = useCallback(
     (page: number) => {
       updateFilters({ page })
@@ -103,12 +229,115 @@ export function EquipmentCatalogClient({
     [updateFilters]
   )
 
+  // Client-side filtering and sorting
+  const filteredProducts = useMemo(() => {
+    let result = [...initialProducts]
+
+    // Brand filtering
+    if (selectedBrands.length > 0) {
+      const normalizedSelectedBrands = selectedBrands.map(b => b.toLowerCase().trim())
+      result = result.filter(product => {
+        if (!product.brand) return false
+        const pBrand = product.brand.toLowerCase().trim()
+        return normalizedSelectedBrands.includes(pBrand)
+      })
+    }
+
+    // Type filtering (check both type field and specs)
+    if (selectedTypes.length > 0) {
+      const normalizedSelectedTypes = selectedTypes.map(t => t.toLowerCase().trim())
+      result = result.filter(product => {
+        const pType = product.type?.toLowerCase().trim();
+        const specsType = (product.specs?.type as string)?.toLowerCase().trim();
+        return (pType && normalizedSelectedTypes.includes(pType)) ||
+          (specsType && normalizedSelectedTypes.includes(specsType));
+      })
+    }
+
+    // Mount filtering (check both mount field and specs)
+    if (selectedMounts.length > 0) {
+      const normalizedSelectedMounts = selectedMounts.map(m => m.toLowerCase().trim())
+      result = result.filter(product => {
+        const pMount = product.mount?.toLowerCase().trim();
+        const specsMount = (product.specs?.mount as string)?.toLowerCase().trim();
+        const specsLensMount = (product.specs?.lens_mount as string)?.toLowerCase().trim();
+        return (pMount && normalizedSelectedMounts.includes(pMount)) ||
+          (specsMount && normalizedSelectedMounts.includes(specsMount)) ||
+          (specsLensMount && normalizedSelectedMounts.includes(specsLensMount));
+      })
+    }
+
+    // Sensor filtering (check both sensorSize field and specs)
+    if (selectedSensorSizes.length > 0) {
+      const normalizedSelectedSensors = selectedSensorSizes.map(s => s.toLowerCase().trim())
+      result = result.filter(product => {
+        const pSensor = product.sensorSize?.toLowerCase().trim();
+        const specsSensor = (product.specs?.sensor_size as string)?.toLowerCase().trim();
+        const specsCoverage = (product.specs?.coverage as string)?.toLowerCase().trim();
+        return (pSensor && normalizedSelectedSensors.includes(pSensor)) ||
+          (specsSensor && normalizedSelectedSensors.includes(specsSensor)) ||
+          (specsCoverage && normalizedSelectedSensors.includes(specsCoverage));
+      })
+    }
+
+    // Resolution filtering (check both resolution field and specs)
+    if (selectedResolutions.length > 0) {
+      const normalizedSelectedResolutions = selectedResolutions.map(r => r.toLowerCase().trim())
+      result = result.filter(product => {
+        const pResolution = product.resolution?.toLowerCase().trim();
+        const specsRes = (product.specs?.resolution as string)?.toLowerCase().trim();
+        const specsMaxRes = (product.specs?.max_resolution as string)?.toLowerCase().trim();
+        return (pResolution && normalizedSelectedResolutions.includes(pResolution)) ||
+          (specsRes && normalizedSelectedResolutions.includes(specsRes)) ||
+          (specsMaxRes && normalizedSelectedResolutions.includes(specsMaxRes));
+      })
+    }
+
+    // Search filtering (if URL search is active, server already filtered, this is for additional client-side)
+    if (searchQuery && !initialSearch) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(product =>
+        product.name.toLowerCase().includes(query) ||
+        product.brand?.toLowerCase().includes(query) ||
+        product.category?.name.toLowerCase().includes(query)
+      )
+    }
+
+    // Sorting
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name)
+        case 'featured':
+          return (Number(b.isFeatured) - Number(a.isFeatured)) || a.name.localeCompare(b.name)
+        case 'category':
+          const catA = a.category?.name || ''
+          const catB = b.category?.name || ''
+          return catA.localeCompare(catB) || a.name.localeCompare(b.name)
+        default:
+          return 0
+      }
+    })
+
+    return result
+  }, [initialProducts, selectedBrands, sortBy, searchQuery, initialSearch])
+
+  const totalFilteredCount = filteredProducts.length
+
   return (
     <div className="min-h-screen bg-zinc-950">
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 to-zinc-950" />
-        
+
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 1px)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -116,6 +345,9 @@ export function EquipmentCatalogClient({
             transition={{ duration: 0.5 }}
             className="text-center"
           >
+            <span className="inline-block px-4 py-1.5 bg-red-700/15 text-red-400 rounded-full text-sm font-medium mb-6">
+              Professional Film Equipment
+            </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               {t('title')}
             </h1>
@@ -126,165 +358,90 @@ export function EquipmentCatalogClient({
         </div>
       </section>
 
-      {/* Filters Section */}
-      <section className="sticky top-0 z-30 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            {/* Category Pills */}
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-              className="order-2 md:order-1"
-            />
-
-            {/* Search Bar */}
-            <SearchBar
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full md:w-72 order-1 md:order-2"
-            />
-          </div>
-        </div>
-      </section>
+      {/* Hybrid Filter Bar */}
+      <HybridFilterBar
+        categories={categories}
+        brands={availableBrands}
+        types={availableTypes}
+        selectedCategory={selectedCategory}
+        selectedBrands={selectedBrands}
+        selectedTypes={selectedTypes}
+        searchQuery={searchQuery}
+        totalCount={totalFilteredCount}
+        onCategoryChange={handleCategoryChange}
+        onBrandToggle={handleBrandToggle}
+        onBrandsChange={handleBrandsChange}
+        onTypeToggle={handleTypeToggle}
+        onTypesChange={handleTypesChange}
+        mounts={availableMounts}
+        selectedMounts={selectedMounts}
+        onMountToggle={handleMountToggle}
+        onMountsChange={handleMountsChange}
+        sensorSizes={availableSensorSizes}
+        selectedSensorSizes={selectedSensorSizes}
+        onSensorToggle={handleSensorToggle}
+        onSensorsChange={handleSensorsChange}
+        resolutions={availableResolutions}
+        selectedResolutions={selectedResolutions}
+        onResolutionToggle={handleResolutionToggle}
+        onResolutionsChange={handleResolutionsChange}
+        onSearchChange={handleSearchChange}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        t={t}
+      />
 
       {/* Results Section */}
       <section className="py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Results Count */}
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-zinc-500">
-              {initialPagination.totalItems} {t('pagination.results')}
-              {selectedCategory && (
-                <span className="ml-1">
-                  in <span className="text-zinc-300">{categories.find(c => c.slug === selectedCategory)?.name}</span>
-                </span>
-              )}
-              {searchQuery && (
-                <span className="ml-1">
-                  matching &ldquo;<span className="text-zinc-300">{searchQuery}</span>&rdquo;
-                </span>
-              )}
-            </p>
+          {/* Results Header - Desktop Only (mobile shows in HybridFilterBar) */}
+          <div className="hidden md:flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-zinc-500">
+                <span className="text-white font-medium">{totalFilteredCount}</span> {t('pagination.results')}
+                {selectedCategory && (
+                  <span className="ml-1">
+                    in <span className="text-red-400">{categories.find(c => c.slug === selectedCategory)?.name}</span>
+                  </span>
+                )}
+                {selectedBrands.length > 0 && (
+                  <span className="ml-1">
+                    · <span className="text-red-400">{selectedBrands.join(', ')}</span>
+                  </span>
+                )}
+              </p>
 
-            {isPending && (
-              <span className="text-sm text-zinc-500 flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                Loading...
-              </span>
-            )}
+              {isPending && (
+                <span className="text-sm text-zinc-500 flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-zinc-600 border-t-red-500 rounded-full animate-spin" />
+                  Loading...
+                </span>
+              )}
+            </div>
+
+            {/* Sort Dropdown */}
+            <SortDropdown value={sortBy} onChange={setSortBy} />
           </div>
 
           {/* Product Grid */}
           <ProductGrid
-            products={initialProducts}
+            products={filteredProducts}
             lng={lng}
             isLoading={isPending}
           />
 
-          {/* Pagination */}
-          {initialPagination.totalPages > 1 && (
-            <Pagination
-              currentPage={initialPagination.page}
-              totalPages={initialPagination.totalPages}
-              onPageChange={handlePageChange}
-            />
+          {/* Pagination - Only show if NO client-side filters are active */}
+          {initialPagination.totalPages > 1 && selectedBrands.length === 0 && (
+            <div className="mt-12">
+              <Pagination
+                currentPage={initialPagination.page}
+                totalPages={initialPagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
           )}
         </div>
       </section>
     </div>
   )
-}
-
-// Pagination Component
-interface PaginationProps {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
-}
-
-function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
-  const pages = generatePageNumbers(currentPage, totalPages)
-
-  return (
-    <nav className="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage <= 1}
-        className={cn(
-          'px-3 py-2 text-sm rounded-lg transition-colors',
-          currentPage <= 1
-            ? 'text-zinc-600 cursor-not-allowed'
-            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-        )}
-      >
-        Previous
-      </button>
-
-      {pages.map((page, i) => (
-        page === '...' ? (
-          <span key={`ellipsis-${i}`} className="px-2 text-zinc-600">
-            ...
-          </span>
-        ) : (
-          <button
-            key={page}
-            onClick={() => onPageChange(page as number)}
-            className={cn(
-              'px-3 py-2 text-sm rounded-lg transition-colors',
-              currentPage === page
-                ? 'bg-white text-zinc-900 font-medium'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-            )}
-          >
-            {page}
-          </button>
-        )
-      ))}
-
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages}
-        className={cn(
-          'px-3 py-2 text-sm rounded-lg transition-colors',
-          currentPage >= totalPages
-            ? 'text-zinc-600 cursor-not-allowed'
-            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-        )}
-      >
-        Next
-      </button>
-    </nav>
-  )
-}
-
-function generatePageNumbers(current: number, total: number): (number | '...')[] {
-  if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-
-  if (current <= 3) {
-    return [1, 2, 3, 4, 5, '...', total]
-  }
-
-  if (current >= total - 2) {
-    return [1, '...', total - 4, total - 3, total - 2, total - 1, total]
-  }
-
-  return [1, '...', current - 1, current, current + 1, '...', total]
 }

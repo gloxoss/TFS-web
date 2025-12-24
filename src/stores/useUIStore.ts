@@ -96,7 +96,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   addToast: (toast) => {
     const id = generateToastId()
     const newToast: Toast = { ...toast, id }
-    
+
     set((state) => ({ toasts: [...state.toasts, newToast] }))
 
     // Auto-remove after duration

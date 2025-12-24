@@ -1,7 +1,10 @@
 {
   "hero": {
-    "title": "Our Story",
-    "subtitle": "Empowering filmmakers across Morocco since 2010."
+    "title": "Morocco's Premier Cinema Equipment House",
+    "subtitle": "Empowering visionary filmmakers with world-class cameras, lenses, and lighting since 2010."
+  },
+  "description_reveal": {
+    "text": "TFS is Morocco's leading cinema equipment rental house, empowering filmmakers since 2010. We continuously support international and local productions with state-of-the-art cameras, precision lenses, and advanced lighting solutions. From the bustling streets of Casablanca to the vast Sahara desert, our dedicated team ensures your vision is captured without compromise."
   },
   "story": {
     "title": "From Casablanca to Set",
@@ -30,6 +33,61 @@
     "years": "Years Experience",
     "projects": "Productions Served",
     "countries": "Cities in Morocco"
+  },
+  "expertise": {
+    "label": "DISCOVER OUR STORY",
+    "title": "About Us",
+    "description": "We are a passionate team of filmmakers and technicians dedicated to empowering visionaries. With attention to detail and a commitment to excellence, we transform your production needs into reality.",
+    "items": {
+      "cameras": {
+        "title": "Camera Systems",
+        "description": "Latest cinema cameras from ARRI, RED, and Sony."
+      },
+      "lenses": {
+        "title": "Premium Optics",
+        "description": "Anamorphic and spherical lenses for every look."
+      },
+      "lighting": {
+        "title": "Pro Lighting",
+        "description": "HMI, LED, and Tungsten tailored for any set."
+      },
+      "grip": {
+        "title": "Grip & Support",
+        "description": "Dollies, cranes, and stabilizing systems."
+      },
+      "crew": {
+        "title": "Expert Crew",
+        "description": "Experienced technicians to support your shoot."
+      },
+      "logistics": {
+        "title": "Logistics",
+        "description": "Reliable delivery and on-set support across Morocco."
+      }
+    },
+    "portfolio_btn": "Our Portfolio"
+  },
+  "team": {
+    "label": "THE CREW",
+    "title": "Meet the Experts",
+    "description": "Our team consists of industry veterans, certified technicians, and passionate filmmakers who understand exactly what you need on set.",
+    "roles": {
+      "md": "Managing Director",
+      "tech_lead": "Technical Lead",
+      "booking": "Booking Manager",
+      "logistics": "Logistics Head",
+      "maintenance": "Lens Technician",
+      "support": "Customer Support"
+    }
+  },
+  "international": {
+    "label": "Global Reach",
+    "title": "Bringing the World to Morocco",
+    "description": "We bridge the gap between international productions and Morocco's stunning landscapes. With a dedicated hub in Casablanca and a network spanning the globe, we provide seamless equipment logistics and support for filmmakers worldwide.",
+    "stats": {
+      "productions": "Int'l Productions",
+      "countries": "Countries Served",
+      "partners": "Global Partners"
+    }
   },
   "cta": {
     "title": "Ready to Start?",

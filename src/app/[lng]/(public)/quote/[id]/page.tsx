@@ -12,6 +12,7 @@
  */
 
 import { createServerClient } from '@/lib/pocketbase/server'
+import { getQuoteService } from '@/services'
 import Link from 'next/link'
 import {
   Clock,
@@ -42,47 +43,22 @@ interface QuoteViewData extends Omit<Quote, 'pdfGenerated'> {
   quotePdfUrl?: string
 }
 
-const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
-
 async function getQuoteByIdAndToken(quoteId: string, token: string): Promise<QuoteViewData | null> {
   try {
+    // Use service to fetch quote securely
+    // We pass a dummy client because getQuoteByToken handles its own admin auth
+    // But getQuoteService expects a client. We can pass a basic one.
     const pb = await createServerClient()
+    const quoteService = getQuoteService(pb)
+    const record = await quoteService.getQuoteByToken(quoteId, token)
 
-    // Fetch quote by ID
-    const record = await pb.collection('quotes').getOne(quoteId)
+    if (!record) return null
 
-    // Verify token matches
-    if (record.access_token !== token) {
-      return null
-    }
-
-    // Build PDF URL if file exists
-    let quotePdfUrl: string | undefined
-    if (record.quote_pdf) {
-      quotePdfUrl = `${PB_URL}/api/files/${record.collectionId}/${record.id}/${record.quote_pdf}`
-    }
-
-    // Map to domain type
+    // Map to domain type (QuoteService already returns Quote domain type)
+    // We just need to handle the PDF URL which might be different in the view
     return {
-      id: record.id,
-      clientName: record.client_name,
-      clientEmail: record.client_email,
-      clientPhone: record.client_phone,
-      clientCompany: record.client_company,
-      itemsJson: typeof record.items_json === 'string'
-        ? record.items_json
-        : JSON.stringify(record.items_json || []),
-      rentalStartDate: record.rental_start_date,
-      rentalEndDate: record.rental_end_date,
-      projectDescription: record.project_description,
-      specialRequests: record.special_requests,
-      status: record.status as QuoteStatus,
-      confirmationNumber: record.confirmation_number,
-      estimatedPrice: record.estimated_price,
-      quotePdfUrl,
-      language: record.language,
-      created: record.created,
-      updated: record.updated,
+      ...record,
+      quotePdfUrl: record.pdfFileUrl
     }
   } catch (error) {
     console.error('Error fetching quote:', error)

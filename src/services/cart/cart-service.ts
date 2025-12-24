@@ -11,48 +11,56 @@ export class CartService {
     this.pb = pbClient;
   }
 
-  // 1. THE TRIGGER: Check if product forces a bundle
-  async checkBundleRequirement(productId: string): Promise<{ hasBundle: boolean; template?: KitTemplate; items?: KitItem[] }> {
+  // 1. THE TRIGGER: Check if product has a kit template
+  async checkBundleRequirement(productId: string): Promise<{ hasBundle: boolean; template?: KitTemplate; slots?: any[] }> {
     try {
+      console.log('[CartService.checkBundleRequirement] Checking for productId:', productId);
       // Find a template where this product is the "Main Trigger"
-      const template = await this.pb.collection('kit_templates').getFirstListItem(`main_product="${productId}"`);
+      const template = await this.pb.collection('kit_templates').getFirstListItem(`main_product_id="${productId}"`);
+      console.log('[CartService.checkBundleRequirement] Template found:', template?.id, template?.name);
 
-      if (!template) return { hasBundle: false };
+      if (!template) {
+        console.log('[CartService.checkBundleRequirement] No template found');
+        return { hasBundle: false };
+      }
 
-      // Fetch the ingredients
-      const items = await this.pb.collection('kit_items').getFullList({
-        filter: `template="${template.id}"`,
-        expand: 'product',
+      // Fetch kit_slots for this template (NEW: category-based slots)
+      const slots = await this.pb.collection('kit_slots').getFullList({
+        filter: `template_id="${template.id}"`
       });
+      console.log('[CartService.checkBundleRequirement] Found', slots.length, 'kit slots');
 
       return {
         hasBundle: true,
         template: {
           id: template.id,
           name: template.name,
-          main_product_id: template.main_product,
+          main_product_id: template.main_product_id,
           base_price_modifier: template.base_price_modifier,
         },
-        items: items.map(record => ({
-            id: record.id,
-            product_id: record.product,
-            product: record.expand?.product,
-            is_mandatory: record.is_mandatory,
-            default_quantity: record.default_quantity,
-            slot_name: record.slot_name,
-            swappable_category_id: record.swappable_category
+        slots: slots.map(record => ({
+          id: record.id,
+          category_id: record.category_id,
+          slot_name: record.slot_name,
+          recommended_ids: record.recommended_ids || [], // JSON array of product IDs
+          display_order: record.display_order
         }))
       };
-    } catch (e) {
+    } catch (e: any) {
       // 404 means no bundle found, which is fine
+      console.log('[CartService.checkBundleRequirement] Error/404:', e?.message || e);
       return { hasBundle: false };
     }
   }
 
-  // 1b. RESOLVE KIT: Convert DB structure to UI-friendly ResolvedKit
+  // 1b. RESOLVE KIT: Convert DB structure to UI-friendly ResolvedKit (Category-Based)
   async resolveKit(productId: string): Promise<ResolvedKit | null> {
+    console.log('[CartService.resolveKit] Starting for productId:', productId);
     const bundleCheck = await this.checkBundleRequirement(productId);
-    if (!bundleCheck.hasBundle || !bundleCheck.template || !bundleCheck.items) {
+    console.log('[CartService.resolveKit] Bundle check result:', bundleCheck.hasBundle, 'slots:', bundleCheck.slots?.length);
+
+    if (!bundleCheck.hasBundle || !bundleCheck.template || !bundleCheck.slots) {
+      console.log('[CartService.resolveKit] Returning null - no bundle');
       return null;
     }
 
@@ -67,7 +75,6 @@ export class CartService {
         nameFr: record.name_fr || record.name,
         slug: record.slug,
         categoryId: record.category,
-        // BLIND QUOTE: No dailyRate, stockTotal, stockAvailable
         isAvailable: (record.stock_available || record.stock || 0) > 0,
         imageUrl: record.images?.[0] ? `${PB_URL}/api/files/equipment/${record.id}/${record.images[0]}` : undefined,
       };
@@ -75,62 +82,61 @@ export class CartService {
       return null;
     }
 
-    // Group items by slot_name
-    const slotMap = new Map<string, KitItem[]>();
-    for (const item of bundleCheck.items) {
-      const slotName = item.slot_name || 'Default';
-      if (!slotMap.has(slotName)) {
-        slotMap.set(slotName, []);
-      }
-      slotMap.get(slotName)!.push(item);
-    }
+    // Build resolved slots from category-based kit_slots
+    const resolvedSlots: ResolvedKitSlot[] = [];
 
-    // Build resolved slots
-    const slots: ResolvedKitSlot[] = [];
-    for (const [slotName, items] of slotMap) {
-      // Get available options from swappable category
-      let availableOptions: Product[] = [];
-      const categoryId = items[0]?.swappable_category_id;
-      if (categoryId) {
-        try {
-          const records = await this.pb.collection('equipment').getFullList({
-            filter: `category="${categoryId}"`,
-          });
-          // PUBLIC Product type only - no pricing data (BLIND QUOTE)
-          availableOptions = records.map(r => ({
-            id: r.id,
-            name: r.name_en || r.name,
-            nameEn: r.name_en || r.name,
-            nameFr: r.name_fr || r.name,
-            slug: r.slug,
-            categoryId: r.category,
-            // BLIND QUOTE: No dailyRate, stockTotal, stockAvailable
-            isAvailable: (r.stock_available || r.stock || 0) > 0,
-            imageUrl: r.images?.[0] ? `${PB_URL}/api/files/equipment/${r.id}/${r.images[0]}` : undefined,
-          }));
-        } catch {
-          // No available options
-        }
-      }
+    for (const slot of bundleCheck.slots) {
+      // Get ALL products from this category
+      const categoryProducts = await this.pb.collection('equipment').getFullList({
+        filter: `category="${slot.category_id}"`
+      });
 
-      // Check if any item in this slot is swappable (allows selection)
-      const allowMultiple = items.some(i => !i.is_mandatory);
-      const required = items.some(i => i.is_mandatory);
+      // Map to Product objects
+      const availableOptions: Product[] = categoryProducts.map(record => ({
+        id: record.id,
+        name: record.name_en || record.name,
+        nameEn: record.name_en || record.name,
+        nameFr: record.name_fr || record.name,
+        slug: record.slug,
+        categoryId: record.category,
+        isAvailable: (record.stock_available || record.stock || 1) > 0,
+        imageUrl: record.images?.[0]
+          ? `${PB_URL}/api/files/equipment/${record.id}/${record.images[0]}`
+          : undefined,
+      }));
 
-      slots.push({
-        slotName,
-        required,
-        allowMultiple,
-        defaultItems: items.filter(i => i.is_mandatory),
-        selectedItems: items, // Start with all items selected
+      // Create KitItem objects for recommended products (for defaultItems/selectedItems)
+      const recommendedIds = slot.recommended_ids || [];
+      const defaultItems: KitItem[] = recommendedIds.map((pid: string) => ({
+        id: `${slot.id}-${pid}`,
+        product_id: pid,
+        is_mandatory: false,
+        is_recommended: true,
+        default_quantity: 1,
+        slot_name: slot.slot_name,
+      }));
+
+      resolvedSlots.push({
+        slotName: slot.slot_name,
+        required: false,
+        allowMultiple: true,
+        defaultItems,
+        selectedItems: defaultItems, // Pre-select recommended
         availableOptions,
       });
     }
 
+    // Sort slots by display_order
+    resolvedSlots.sort((a, b) => {
+      const slotA = bundleCheck.slots!.find(s => s.slot_name === a.slotName);
+      const slotB = bundleCheck.slots!.find(s => s.slot_name === b.slotName);
+      return (slotA?.display_order || 0) - (slotB?.display_order || 0);
+    });
+
     return {
       template: bundleCheck.template,
       mainProduct,
-      slots,
+      slots: resolvedSlots,
     };
   }
 
@@ -152,8 +158,8 @@ export class CartService {
         quantity: item.quantity,
         group_id: groupId, // <-- This glues them together
         dates: {
-            start: dates.start.toISOString(),
-            end: dates.end.toISOString()
+          start: dates.start.toISOString(),
+          end: dates.end.toISOString()
         }
       });
     });
@@ -179,30 +185,30 @@ export class CartService {
   // 3. FETCH: Get Cart with Hierarchy
   async getCart(userId: string): Promise<Cart | null> {
     try {
-        const cartRecord = await this.pb.collection('carts').getFirstListItem(`user="${userId}" && status="active"`);
-        const items = await this.pb.collection('cart_items').getFullList({
-            filter: `cart="${cartRecord.id}"`,
-            expand: 'product',
-            sort: 'group_id,created' // Group items together visually
-        });
+      const cartRecord = await this.pb.collection('carts').getFirstListItem(`user="${userId}" && status="active"`);
+      const items = await this.pb.collection('cart_items').getFullList({
+        filter: `cart="${cartRecord.id}"`,
+        expand: 'product',
+        sort: 'group_id,created' // Group items together visually
+      });
 
-        return {
-            id: cartRecord.id,
-            user_id: cartRecord.user,
-            status: cartRecord.status,
-            items: items.map(item => ({
-                id: item.id,
-                product: item.expand?.product,
-                quantity: item.quantity,
-                group_id: item.group_id,
-                dates: {
-                    start: new Date(item.dates.start),
-                    end: new Date(item.dates.end)
-                }
-            })) as CartItem[]
-        };
+      return {
+        id: cartRecord.id,
+        user_id: cartRecord.user,
+        status: cartRecord.status,
+        items: items.map(item => ({
+          id: item.id,
+          product: item.expand?.product,
+          quantity: item.quantity,
+          group_id: item.group_id,
+          dates: {
+            start: new Date(item.dates.start),
+            end: new Date(item.dates.end)
+          }
+        })) as CartItem[]
+      };
     } catch {
-        return null;
+      return null;
     }
   }
 }

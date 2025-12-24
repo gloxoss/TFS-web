@@ -147,7 +147,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                     className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase"
                     style={{ x: xLeft, filter: blurPx }}
                 >
-                    {content.megaText.line1}
+                    {t(content.megaText.line1, lng)}
                 </motion.h1>
 
                 <motion.h1
@@ -157,7 +157,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                     className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw]"
                     style={{ x: xRight, filter: blurPx }}
                 >
-                    {content.megaText.line2}
+                    {t(content.megaText.line2, lng)}
                 </motion.h1>
             </div>
 

@@ -1,7 +1,10 @@
 {
     "hero": {
-        "title": "Notre Histoire",
-        "subtitle": "Au service des cinéastes au Maroc depuis 2010."
+        "title": "Premier Loueur de Matériel Cinéma au Maroc",
+        "subtitle": "Au service des cinéastes visionnaires avec des caméras, objectifs et éclairages de classe mondiale depuis 2010."
+    },
+    "description_reveal": {
+        "text": "TFS est la première maison de location de matériel de cinéma au Maroc, au service des cinéastes depuis 2010. Nous soutenons en permanence les productions internationales et locales avec des caméras de pointe, des objectifs de précision et des solutions d'éclairage avancées. Des rues animées de Casablanca au vaste désert du Sahara, notre équipe dévouée veille à ce que votre vision soit capturée sans compromis."
     },
     "story": {
         "title": "De Casablanca au Plateau",
@@ -30,6 +33,61 @@
         "years": "Ans d'Expérience",
         "projects": "Productions Servies",
         "countries": "Villes au Maroc"
+    },
+    "expertise": {
+        "label": "DÉCOUVREZ NOTRE HISTOIRE",
+        "title": "À Propos de Nous",
+        "description": "Nous sommes une équipe passionnée de cinéastes et de techniciens dédiés à l'autonomisation des visionnaires. Avec le souci du détail et un engagement envers l'excellence, nous transformons vos besoins de production en réalité.",
+        "items": {
+            "cameras": {
+                "title": "Systèmes Caméra",
+                "description": "Les dernières caméras cinéma de ARRI, RED et Sony."
+            },
+            "lenses": {
+                "title": "Optiques Premium",
+                "description": "Objectifs anamorphiques et sphériques pour chaque look."
+            },
+            "lighting": {
+                "title": "Éclairage Pro",
+                "description": "HMI, LED et Tungstène adaptés à tout plateau."
+            },
+            "grip": {
+                "title": "Machinerie & Support",
+                "description": "Dollies, grues et systèmes de stabilisation."
+            },
+            "crew": {
+                "title": "Équipe Experte",
+                "description": "Techniciens expérimentés pour soutenir votre tournage."
+            },
+            "logistics": {
+                "title": "Logistique",
+                "description": "Livraison fiable et support sur le plateau partout au Maroc."
+            }
+        },
+        "portfolio_btn": "Notre Portfolio"
+    },
+    "team": {
+        "label": "L'ÉQUIPE",
+        "title": "Rencontrez les Experts",
+        "description": "Notre équipe est composée de vétérans de l'industrie, de techniciens certifiés et de cinéastes passionnés qui comprennent exactement ce dont vous avez besoin sur le plateau.",
+        "roles": {
+            "md": "Directeur Général",
+            "tech_lead": "Responsable Technique",
+            "booking": "Responsable Réservation",
+            "logistics": "Chef Logistique",
+            "maintenance": "Technicien Optique",
+            "support": "Support Client"
+        }
+    },
+    "international": {
+        "label": "Portée Mondiale",
+        "title": "Le Monde au Maroc",
+        "description": "Nous comblons le fossé entre les productions internationales et les paysages époustouflants du Maroc. Avec un hub dédié à Casablanca et un réseau mondial, nous assurons une logistique et un support matériel sans faille pour les cinéastes du monde entier.",
+        "stats": {
+            "productions": "Productions Int'l",
+            "countries": "Pays Desservis",
+            "partners": "Partenaires Mondiaux"
+        }
     },
     "cta": {
         "title": "Prêt à Commencer ?",

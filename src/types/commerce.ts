@@ -23,6 +23,7 @@ export interface KitItem {
   product_id: string;
   product?: Product; // Expanded relation
   is_mandatory: boolean;
+  is_recommended?: boolean; // For pre-selection of defaults
   default_quantity: number;
   slot_name?: string; // Which slot this item belongs to (e.g., "Lenses")
   swappable_category_id?: string; // If set, user can swap with other items in this category

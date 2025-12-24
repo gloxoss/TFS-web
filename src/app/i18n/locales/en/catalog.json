@@ -1,5 +1,5 @@
 {
-  "title": "Equipment Catalog",
+  "title": "Equipment Hire",
   "description": "Browse our professional cinema equipment available for rent",
   "search": {
     "placeholder": "Search equipment...",
@@ -37,7 +37,7 @@
     "misc": "Accessories"
   },
   "detail": {
-    "backToCatalog": "Back to Catalog",
+    "backToCatalog": "Back to Equipment",
     "specifications": "Specifications",
     "description": "Description",
     "rentalPeriod": "Rental Period",
@@ -52,7 +52,7 @@
     "relatedProducts": "You May Also Like"
   },
   "meta": {
-    "title": "Equipment Catalog | TFS Cinema Rental",
+    "title": "Equipment Hire | TFS Cinema Rental",
     "description": "Browse our professional cinema equipment catalog. Cameras, lenses, lighting, and more available for rent."
   }
 }

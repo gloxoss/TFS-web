@@ -1,0 +1,15 @@
+Authenticated
+Total equipment: 110
+
+=== Testing findEquipment ===
+Signature Prime: 1 matches
+Supreme Prime: 2 matches
+Cooke: 2 matches
+Zeiss: 11 matches
+Cameras found: 5
+
+=== Testing single item creation ===
+Created template: c2as5lrlijnfab3
+Found lens: ut89d8t5s0q799r Cooke S4/i Prime Set
+SUCCESS! Created item: syd57doz6ew96by
+Cleaned up test template

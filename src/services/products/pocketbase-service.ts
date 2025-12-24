@@ -45,7 +45,12 @@ function mapRecordToProduct(record: RecordModel, lang: string = 'en'): Product {
     } else if (typeof specsRaw === 'object' && specsRaw !== null) {
         specs = specsRaw
     } else if (record.specs) {
-        specs = typeof record.specs === 'string' ? JSON.parse(record.specs) : record.specs
+        try {
+            specs = typeof record.specs === 'string' ? JSON.parse(record.specs) : record.specs
+        } catch (e) {
+            console.warn(`Failed to parse legacy specs for product ${record.id}`, e)
+            specs = {}
+        }
     }
 
     // Calculate availability without exposing stock numbers
@@ -53,6 +58,12 @@ function mapRecordToProduct(record: RecordModel, lang: string = 'en'): Product {
     const isAvailable = record.visibility !== false &&
         record.availability_status !== 'maintenance' &&
         stockAvailable > 0
+
+    // Extract filter fields from specs as fallback (many items store these in JSON)
+    const mount = record.mount || specs?.mount || specs?.lens_mount || null;
+    const sensorSize = record.sensor_size || specs?.sensor_size || specs?.coverage || specs?.sensor || null;
+    const resolution = record.resolution || specs?.resolution || specs?.max_resolution || null;
+    const productType = record.type || specs?.type || null;
 
     // Return PUBLIC Product type - NO pricing or stock numbers exposed
     return {
@@ -64,6 +75,10 @@ function mapRecordToProduct(record: RecordModel, lang: string = 'en'): Product {
         slug: record.slug || record.id,
         categoryId: record.category,
         brand: record.brand,
+        type: productType,
+        mount: mount,
+        sensorSize: sensorSize,
+        resolution: resolution,
         // Bilingual descriptions
         descriptionEn,
         descriptionFr,

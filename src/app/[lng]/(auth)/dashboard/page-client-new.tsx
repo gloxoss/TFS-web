@@ -85,9 +85,45 @@ interface ProfileCardProps {
   lng: string
 }
 
+const translations = {
+  en: {
+    dashboard: 'Dashboard',
+    welcome: 'Welcome back',
+    totalRequests: 'Total Requests',
+    allTime: 'All time submissions',
+    pending: 'Pending',
+    awaiting: 'Awaiting response',
+    confirmed: 'Confirmed',
+    ready: 'Ready for pickup',
+    activeRentals: 'Active Rentals',
+    currentlyInUse: 'Currently in use',
+    clientType: 'Cinema Equipment Client',
+    memberSince: 'Member since',
+    browseEquipment: 'Browse Equipment',
+    signOut: 'Sign Out'
+  },
+  fr: {
+    dashboard: 'Tableau de bord',
+    welcome: 'Bon retour',
+    totalRequests: 'Total des demandes',
+    allTime: 'Toutes les soumissions',
+    pending: 'En attente',
+    awaiting: 'En attente de réponse',
+    confirmed: 'Confirmé',
+    ready: 'Prêt pour retrait',
+    activeRentals: 'Locations actives',
+    currentlyInUse: 'Actuellement utilisé',
+    clientType: 'Client matériel cinéma',
+    memberSince: 'Membre depuis',
+    browseEquipment: 'Parcourir le matériel',
+    signOut: 'Se déconnecter'
+  }
+}
+
 function ProfileCard({ user, onLogout, lng }: ProfileCardProps) {
+  const t = translations[lng as keyof typeof translations] || translations.en;
   const memberSince = user.created
-    ? new Date(user.created).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    ? new Date(user.created).toLocaleDateString(lng === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', year: 'numeric' })
     : 'N/A'
 
   return (
@@ -109,7 +145,7 @@ function ProfileCard({ user, onLogout, lng }: ProfileCardProps) {
             <h3 className="text-lg font-semibold text-white truncate">
               {user.name || 'User'}
             </h3>
-            <p className="text-sm text-zinc-500">Cinema Equipment Client</p>
+            <p className="text-sm text-zinc-500">{t.clientType}</p>
           </div>
         </div>
       </div>
@@ -122,7 +158,7 @@ function ProfileCard({ user, onLogout, lng }: ProfileCardProps) {
         </div>
         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
           <Calendar className="w-4 h-4 text-zinc-500" />
-          <span className="text-sm text-zinc-300">Member since {memberSince}</span>
+          <span className="text-sm text-zinc-300">{t.memberSince} {memberSince}</span>
         </div>
         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
           <User className="w-4 h-4 text-zinc-500" />
@@ -138,7 +174,7 @@ function ProfileCard({ user, onLogout, lng }: ProfileCardProps) {
         >
           <span className="text-sm font-medium text-white flex items-center gap-2">
             <Camera className="w-4 h-4" />
-            Browse Equipment
+            {t.browseEquipment}
           </span>
           <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
         </a>
@@ -148,7 +184,7 @@ function ProfileCard({ user, onLogout, lng }: ProfileCardProps) {
           className="flex items-center justify-center gap-2 w-full p-3 text-sm text-zinc-400 hover:text-red-400 transition-colors"
         >
           <LogOut className="w-4 h-4" />
-          Sign Out
+          {t.signOut}
         </button>
       </div>
     </motion.div>
@@ -174,6 +210,8 @@ export function DashboardPageClient({ lng }: DashboardPageClientProps) {
     activeRentals: 0
   })
   const [isLoading, setIsLoading] = useState(true)
+
+  const t = translations[lng as keyof typeof translations] || translations.en;
 
   useEffect(() => {
     async function fetchData() {
@@ -220,9 +258,9 @@ export function DashboardPageClient({ lng }: DashboardPageClientProps) {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-white">{t.dashboard}</h1>
           <p className="text-zinc-500 mt-1">
-            Welcome back, {user.name || 'there'}
+            {t.welcome}, {user.name || (lng === 'fr' ? 'ami' : 'there')}
           </p>
         </div>
         <button className="p-2 text-zinc-400 hover:text-white transition-colors">
@@ -237,37 +275,37 @@ export function DashboardPageClient({ lng }: DashboardPageClientProps) {
           {/* Stats Row */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard
-              title="Total Requests"
+              title={t.totalRequests}
               value={stats.totalQuotes}
               icon={<FileText className="w-5 h-5 text-white" />}
-              description="All time submissions"
+              description={t.allTime}
               delay={0.1}
             />
             <StatCard
-              title="Pending"
+              title={t.pending}
               value={stats.pendingQuotes}
               icon={<Clock className="w-5 h-5 text-amber-400" />}
-              description="Awaiting response"
+              description={t.awaiting}
               delay={0.15}
             />
             <StatCard
-              title="Confirmed"
+              title={t.confirmed}
               value={stats.confirmedQuotes}
               icon={<CheckCircle2 className="w-5 h-5 text-emerald-400" />}
-              description="Ready for pickup"
+              description={t.ready}
               delay={0.2}
             />
             <StatCard
-              title="Active Rentals"
+              title={t.activeRentals}
               value={stats.activeRentals}
               icon={<Camera className="w-5 h-5 text-blue-400" />}
-              description="Currently in use"
+              description={t.currentlyInUse}
               delay={0.25}
             />
           </div>
 
           {/* Quotes List */}
-          <UserQuotesList quotes={quotes} isLoading={isLoading} />
+          <UserQuotesList quotes={quotes} isLoading={isLoading} lng={lng} />
         </div>
 
         {/* Right Column: Profile Sidebar */}
@@ -287,3 +325,4 @@ export function DashboardPageClient({ lng }: DashboardPageClientProps) {
     </div>
   )
 }
+
