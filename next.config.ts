@@ -40,6 +40,7 @@ const nextConfig: NextConfig = {
       'lodash',
       '@heroui/react',
       'framer-motion',
+      '@tabler/icons-react',
     ],
   },
 

@@ -29,7 +29,7 @@ function parseAuthCookie(cookieValue: string) {
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next();
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
