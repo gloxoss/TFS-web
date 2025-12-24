@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["three", "three-globe"],
   images: {
     // Enable unoptimized to bypass Next.js optimizer fetch failures on some VPS environments
     unoptimized: true,

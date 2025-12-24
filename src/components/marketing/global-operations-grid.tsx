@@ -8,7 +8,7 @@ const Globe = dynamic(() => import("@/components/ui/globe").then((m) => m.World)
     ssr: false,
     loading: () => <div className="h-full w-full bg-neutral-900 animate-pulse rounded-xl" />
 });
-import { GlobeConfig } from "@/components/ui/globe";
+import type { GlobeConfig } from "@/components/ui/globe";
 import { motion } from "framer-motion";
 import {
     IconGlobe,
