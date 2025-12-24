@@ -112,20 +112,20 @@ export function ChatWidget() {
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
-                        className="fixed bottom-6 right-6 z-40"
+                        className="fixed bottom-6 right-6 z-40 group"
                     >
                         <Button
                             isIconOnly
-                            className="w-14 h-14 bg-primary shadow-lg shadow-primary/30 hover:shadow-primary/50"
-                            radius="full"
+                            className="w-14 h-14 bg-black/80 backdrop-blur-md border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(208,0,0,0.4)] hover:border-[#D00000]/50 transition-all duration-500"
+                            radius="lg"
                             size="lg"
                             onPress={() => setIsOpen(true)}
                             aria-label="Open chat"
                         >
-                            <MessageCircle className="w-6 h-6" />
+                            <MessageCircle className="w-6 h-6 text-white group-hover:scale-110 transition-transform duration-300" />
                         </Button>
                         {/* Online indicator */}
-                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-background animate-pulse" />
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#D00000] rounded-full border-2 border-black animate-pulse shadow-[0_0_10px_#D00000]" />
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -140,26 +140,22 @@ export function ChatWidget() {
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                         className="fixed bottom-6 right-6 z-40 w-[400px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)]"
                     >
-                        <Card className="h-full bg-content1/95 backdrop-blur-xl border border-default-200 shadow-2xl">
+                        <Card className="h-full bg-zinc-950/90 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-3xl overflow-hidden">
                             {/* Header */}
-                            <CardHeader className="flex items-center justify-between px-4 py-3 border-b border-default-200">
+                            <CardHeader className="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-transparent">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                                        <Sparkles className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-small font-semibold text-foreground">Rental Concierge</h3>
-                                        <p className="text-tiny text-default-500">Powered by AI</p>
-                                    </div>
+                                    <Sparkles className="w-4 h-4 text-[#D00000]" />
+                                    <h3 className="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase font-display">TFS Intelligence</h3>
                                 </div>
                                 <Button
                                     isIconOnly
-                                    radius="lg"
+                                    radius="full"
                                     size="sm"
                                     variant="light"
+                                    className="hover:bg-white/5 text-zinc-500 hover:text-white"
                                     onPress={() => setIsOpen(false)}
                                 >
-                                    <X className="w-5 h-5 text-default-500" />
+                                    <X className="w-4 h-4" />
                                 </Button>
                             </CardHeader>
 
@@ -170,17 +166,18 @@ export function ChatWidget() {
                             >
                                 {/* Empty State - Starter Chips */}
                                 {messages.length === 0 && !hasInteracted && (
-                                    <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/30 flex items-center justify-center mb-4">
-                                            <Bot className="w-8 h-8 text-primary" />
+                                    <div className="h-full flex flex-col items-center justify-center text-center px-6">
+                                        <div className="relative mb-8 group">
+                                            <div className="absolute inset-0 bg-[#D00000] blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700" />
+                                            <Bot className="relative w-10 h-10 text-white/90" />
                                         </div>
-                                        <h4 className="text-large font-semibold text-foreground mb-2">
-                                            Welcome to TFS Film Equipment
+                                        <h4 className="text-lg font-light text-white/80 mb-3 tracking-wide font-display">
+                                            How can we visualize your story?
                                         </h4>
-                                        <p className="text-small text-default-500 mb-6">
-                                            I can help you find the perfect gear for your shoot.
+                                        <p className="text-xs text-zinc-500 mb-8 max-w-[200px] leading-relaxed">
+                                            Expert equipment recommendations for your production needs.
                                         </p>
-                                        <div className="space-y-2 w-full max-w-xs">
+                                        <div className="space-y-2 w-full max-w-[280px]">
                                             {STARTER_CHIPS.map((chip, index) => (
                                                 <motion.div
                                                     key={index}
@@ -188,19 +185,14 @@ export function ChatWidget() {
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ delay: index * 0.1 }}
                                                 >
-                                                    <Chip
-                                                        as="button"
-                                                        className="w-full h-auto py-3 px-4 cursor-pointer"
-                                                        classNames={{
-                                                            base: "bg-content2 hover:bg-content3 border border-default-200",
-                                                            content: "text-small text-default-600 text-left",
-                                                        }}
-                                                        radius="lg"
-                                                        variant="flat"
+                                                    <button
                                                         onClick={() => handleStarterClick(chip.query)}
+                                                        className="w-full text-left py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition-all duration-300 group"
                                                     >
-                                                        {chip.text}
-                                                    </Chip>
+                                                        <span className="text-xs text-zinc-400 group-hover:text-zinc-200 transition-colors">
+                                                            {chip.text}
+                                                        </span>
+                                                    </button>
                                                 </motion.div>
                                             ))}
                                         </div>
@@ -305,7 +297,7 @@ export function ChatWidget() {
                         </Card>
                     </motion.div>
                 )}
-            </AnimatePresence>
+            </AnimatePresence >
         </>
     )
 }
