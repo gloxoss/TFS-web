@@ -55,10 +55,10 @@ const config: Config = {
         },
         aurora: {
           from: {
-            backgroundPosition: "50% 50%, 50% 50%",
+            transform: "translate(-10px, -10px)",
           },
           to: {
-            backgroundPosition: "350% 50%, 350% 50%",
+            transform: "translate(10px, 10px)",
           },
         },
         scroll: {

@@ -46,10 +46,11 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
 
     const content = homePage.heroImpact;
 
-    // Velocity-Based Blur (Motion Blur)
-    const scrollVelocity = useVelocity(scrollY);
-    const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
-    const blurPx = useTransform(smoothVelocity, (latest) => `blur(${Math.min(Math.abs(latest / 50), 8)}px)`);
+    // Velocity-Based Blur (Disabled for performance/TBT)
+    // const scrollVelocity = useVelocity(scrollY);
+    // const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+    // const blurPx = useTransform(smoothVelocity, (latest) => `blur(${Math.min(Math.abs(latest / 50), 8)}px)`);
+    const blurPx = "blur(0px)";
 
     // Parallax Position
     const scale = useTransform(scrollY, [0, 1000], [1, 1.2]);
