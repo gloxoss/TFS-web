@@ -1,0 +1,48 @@
+=== KIT VERIFICATION ===
+
+Templates: 10
+Items: 1000
+
+=== Templates with item counts ===
+Sony Venice 2 8K Complete Package (ydxhtel9vugc1lk)
+  main_product_id: okitvzvbskrml71
+  items: 100
+ARRI Alexa 35 Complete Package (s86sq9ongvnkna7)
+  main_product_id: 77108oucl5yw6oq
+  items: 100
+ARRI Alexa Mini LF Complete Package (wuawi5qrhmzbm9j)
+  main_product_id: 36bwe2z4up5wr4r
+  items: 100
+ARRI Alexa Mini Complete Package (z8w9e6cbzdn5ssm)
+  main_product_id: wh9mjj7gp6o19wp
+  items: 100
+Sony PXW-FX9 Complete Package (9xmx5p7cn5supje)
+  main_product_id: 3fkbw2jjp98qul8
+  items: 100
+Sony FX3 Complete Package (dkqm39z631vviv7)
+  main_product_id: 60694uokpk0cxlq
+  items: 100
+RED DSMC2 Monstro 8K VV Complete Package (11wzoyeu9lunlr5)
+  main_product_id: 87p6im4b2jfh6cc
+  items: 100
+ARRI Amira Complete Package (i6fx9elt9acnobt)
+  main_product_id: jtgs0dp37djsaxx
+  items: 100
+Panasonic VariCam LT Complete Package (ekbv40ykn84c9ax)
+  main_product_id: nxvhihux0o59i3z
+  items: 100
+Sony PMW-F55 Complete Package (iige4oeu5xelq7r)
+  main_product_id: 7nrklhhl8gkyfsa
+  items: 100
+
+=== Item template_ids ===
+ydxhtel9vugc1lk: 100 items -> Sony Venice 2 8K Complete Package
+s86sq9ongvnkna7: 100 items -> ARRI Alexa 35 Complete Package
+wuawi5qrhmzbm9j: 100 items -> ARRI Alexa Mini LF Complete Package
+z8w9e6cbzdn5ssm: 100 items -> ARRI Alexa Mini Complete Package
+9xmx5p7cn5supje: 100 items -> Sony PXW-FX9 Complete Package
+dkqm39z631vviv7: 100 items -> Sony FX3 Complete Package
+11wzoyeu9lunlr5: 100 items -> RED DSMC2 Monstro 8K VV Complete Package
+i6fx9elt9acnobt: 100 items -> ARRI Amira Complete Package
+ekbv40ykn84c9ax: 100 items -> Panasonic VariCam LT Complete Package
+iige4oeu5xelq7r: 100 items -> Sony PMW-F55 Complete Package

@@ -5,13 +5,25 @@
  */
 
 import PocketBase from 'pocketbase'
-import type { Service, IServicesService } from './interface'
+import type { Service, ServiceSection, ServiceStat, ServiceFeature, IServicesService } from './interface'
 
 export class PocketBaseServicesService implements IServicesService {
     private pb: PocketBase
 
     constructor(pbClient: PocketBase) {
         this.pb = pbClient
+    }
+
+    private parseJsonField<T>(value: unknown): T | undefined {
+        if (!value) return undefined
+        if (typeof value === 'string') {
+            try {
+                return JSON.parse(value) as T
+            } catch {
+                return undefined
+            }
+        }
+        return value as T
     }
 
     private mapRecordToService(record: Record<string, unknown>): Service {
@@ -28,6 +40,11 @@ export class PocketBaseServicesService implements IServicesService {
             type: record.type as 'internal_link' | 'content_page',
             targetUrl: record.target_url as string | undefined,
             images: record.images as string[] | undefined,
+            heroImage: record.hero_image as string | undefined,
+            sections: this.parseJsonField<ServiceSection[]>(record.sections),
+            stats: this.parseJsonField<ServiceStat[]>(record.stats),
+            tags: this.parseJsonField<string[]>(record.tags),
+            features: this.parseJsonField<ServiceFeature[]>(record.features),
             displayOrder: record.display_order as number || 0,
             isActive: record.is_active as boolean ?? true,
             created: record.created as string,

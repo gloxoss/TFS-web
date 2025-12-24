@@ -1,96 +1,71 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Clapperboard, Tv, Radio, MonitorPlay, Mic2, Camera, Video, Settings, LayoutGrid, HardDrive } from 'lucide-react'
+import { ArrowRight, Clapperboard, Tv, Radio, MonitorPlay, Mic2, Camera, Video, Settings, LayoutGrid, HardDrive, Truck, MapPin, Users, FileCheck, Utensils, Hotel, Car, UserCheck, Package } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { EvervaultCard, Icon } from "@/components/ui/evervault-card"
+import type { Service } from '@/services/services/interface'
 
-const SERVICES = [
-    {
-        id: 1,
-        slug: 'sporting-events',
-        title: 'Sporting Events',
-        description: 'Dynamic and immersive broadcasts for major competitions (CAN, World Cup).',
-        icon: <TrophyIcon className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1574629810360-7efbbe436cd9?q=80&w=2600&auto=format&fit=crop'
-    },
-    {
-        id: 2,
-        slug: 'film-production',
-        title: 'Film Production',
-        description: 'Executive production services with state-of-the-art camera and lighting fleets.',
-        icon: <Clapperboard className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2559&auto=format&fit=crop'
-    },
-    {
-        id: 3,
-        slug: 'tv-recording',
-        title: 'TV Recording',
-        description: 'High-quality capabilities for television works, sitcoms, and series.',
-        icon: <Tv className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=2070'
-    },
-    {
-        id: 4,
-        slug: 'live-events',
-        title: 'Live Events & Festivals',
-        description: 'Visual expertise for cultural events like Mawazine and live performances.',
-        icon: <Mic2 className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=2670&auto=format&fit=crop'
-    },
-    {
-        id: 5,
-        slug: 'studio-infrastructure',
-        title: 'Studio Infrastructure',
-        description: 'Fully equipped TV studio with soundproofing and innovative decor services.',
-        icon: <LayoutGrid className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=2670&auto=format&fit=crop'
-    },
-    // Row 2
-    {
-        id: 6,
-        slug: 'ob-vans',
-        title: 'OB Vans & Mobile Units',
-        description: 'Mobile recording setups offering maximum flexibility for any event.',
-        icon: <Radio className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop'
-    },
-    {
-        id: 7,
-        slug: 'consulting-design',
-        title: 'Consulting & Design',
-        description: 'Technical consulting and audiovisual design for complex projects.',
-        icon: <Settings className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2670&auto=format&fit=crop'
-    },
-    {
-        id: 8,
-        slug: 'post-production',
-        title: 'Post-Production',
-        description: 'Advanced solutions for editing, color grading, and enhancement.',
-        icon: <MonitorPlay className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?q=80&w=2664&auto=format&fit=crop'
-    },
-    {
-        id: 9,
-        slug: 'equipment-rental',
-        title: 'Equipment Rental',
-        description: 'The largest technical fleet in the region: cameras, lenses, and lighting.',
-        icon: <Camera className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?q=80&w=2670&auto=format&fit=crop'
-    },
-    {
-        id: 10,
-        slug: 'digital-storage',
-        title: 'Digital & Storage',
-        description: 'Secure storage and digital transmission solutions for large-scale media.',
-        icon: <HardDrive className="w-6 h-6" />,
-        image: 'https://images.unsplash.com/photo-1558494949-ef526b01201b?q=80&w=2670&auto=format&fit=crop'
-    }
-]
+// Icon mapping based on service slug
+const ICON_MAP: Record<string, React.ReactNode> = {
+    'equipment-hire': <Package className="w-6 h-6" />,
+    'film-shipping': <Truck className="w-6 h-6" />,
+    'film-permits': <FileCheck className="w-6 h-6" />,
+    'crewing': <Users className="w-6 h-6" />,
+    'scouting': <MapPin className="w-6 h-6" />,
+    'catering': <Utensils className="w-6 h-6" />,
+    'accommodation': <Hotel className="w-6 h-6" />,
+    'transportation': <Car className="w-6 h-6" />,
+    'casting': <UserCheck className="w-6 h-6" />,
+    // Legacy icons for fallback
+    'sporting-events': <TrophyIcon className="w-6 h-6" />,
+    'film-production': <Clapperboard className="w-6 h-6" />,
+    'tv-recording': <Tv className="w-6 h-6" />,
+    'live-events': <Mic2 className="w-6 h-6" />,
+    'studio-infrastructure': <LayoutGrid className="w-6 h-6" />,
+    'ob-vans': <Radio className="w-6 h-6" />,
+    'consulting-design': <Settings className="w-6 h-6" />,
+    'post-production': <MonitorPlay className="w-6 h-6" />,
+    'equipment-rental': <Camera className="w-6 h-6" />,
+    'digital-storage': <HardDrive className="w-6 h-6" />,
+}
+
+// Default images for services without images
+const DEFAULT_IMAGES: Record<string, string> = {
+    'equipment-hire': 'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?q=80&w=2670&auto=format&fit=crop',
+    'film-shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2670&auto=format&fit=crop',
+    'film-permits': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2670&auto=format&fit=crop',
+    'crewing': 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop',
+    'scouting': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2670&auto=format&fit=crop',
+    'catering': 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2670&auto=format&fit=crop',
+    'accommodation': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2670&auto=format&fit=crop',
+    'transportation': 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2670&auto=format&fit=crop',
+    'casting': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2670&auto=format&fit=crop',
+}
+
+// Mapped service type for the component
+interface MappedService {
+    id: string
+    slug: string
+    title: string
+    description: string
+    icon: React.ReactNode
+    image: string
+}
+
+function mapServicesToDisplay(services: Service[], lng: string): MappedService[] {
+    return services.map((service) => ({
+        id: service.id,
+        slug: service.slug,
+        title: lng === 'fr' && service.titleFr ? service.titleFr : service.title,
+        description: lng === 'fr' && service.briefDescriptionFr ? service.briefDescriptionFr : (service.briefDescription || ''),
+        icon: ICON_MAP[service.slug] || <Camera className="w-6 h-6" />,
+        image: service.images?.[0] || DEFAULT_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2559&auto=format&fit=crop',
+    }))
+}
 
 function TrophyIcon(props: any) {
     return (
@@ -116,7 +91,7 @@ function TrophyIcon(props: any) {
     )
 }
 
-function ExpandingCardRow({ items, startIndex, lng }: { items: typeof SERVICES, startIndex: number, lng: string }) {
+function ExpandingCardRow({ items, startIndex, lng }: { items: MappedService[], startIndex: number, lng: string }) {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [centeredIndex, setCenteredIndex] = useState<number | null>(null);
     const [isMobile, setIsMobile] = useState(false);
@@ -165,10 +140,15 @@ function ExpandingCardRow({ items, startIndex, lng }: { items: typeof SERVICES, 
                 const isCentered = isMobile && centeredIndex === index;
                 const isActive = isHovered || isCentered;
 
+                // Equipment Hire links to the equipment page, others to services
+                const href = item.slug === 'equipment-hire'
+                    ? `/${lng}/equipment`
+                    : `/${lng}/services/${item.slug}`;
+
                 return (
                     <Link
                         key={item.id}
-                        href={`/${lng}/services/${item.slug}`}
+                        href={href}
                         className="contents"
                     >
                         <motion.div
@@ -239,23 +219,36 @@ function ExpandingCardRow({ items, startIndex, lng }: { items: typeof SERVICES, 
 // Translations
 const translations = {
     en: {
-        title: 'Our Areas of Intervention',
-        subtitle: 'We handle the filming and production of events with proven technical expertise.',
-        viewAll: 'View all capabilities'
+        title: 'Our Services',
+        subtitle: 'We manage filming from the smallest technical details—down to cables and connections—to full-scale productions, delivering reliable, professional results.',
+        viewAll: 'View all services'
     },
     fr: {
-        title: 'Nos Domaines d\'Intervention',
-        subtitle: 'Nous gérons le tournage et la production d\'événements avec une expertise technique éprouvée.',
-        viewAll: 'Voir toutes nos capacités'
+        title: 'Nos Services',
+        subtitle: 'Nous gérons le tournage des moindres détails techniques — des câbles aux connexions — jusqu\'aux productions de grande envergure, garantissant des résultats fiables et professionnels.',
+        viewAll: 'Voir tous les services'
     }
 }
 
-export function ProductionServices({ lng = 'en' }: { lng?: string }) {
-    // Split into 2 rows of 5
-    const row1 = SERVICES.slice(0, 5);
-    const row2 = SERVICES.slice(5, 10);
+interface ProductionServicesProps {
+    lng?: string
+    services?: Service[]
+}
+
+export function ProductionServices({ lng = 'en', services = [] }: ProductionServicesProps) {
+    // Map services to display format with icons and images
+    const mappedServices = mapServicesToDisplay(services, lng);
+
+    // Split into rows (up to 5 per row)
+    const row1 = mappedServices.slice(0, 5);
+    const row2 = mappedServices.slice(5, 10);
 
     const t = translations[lng as keyof typeof translations] || translations.en;
+
+    // If no services, don't render the section
+    if (mappedServices.length === 0) {
+        return null;
+    }
 
     return (
         <section className="py-24 bg-black relative overflow-hidden px-4 md:px-0">
@@ -271,20 +264,15 @@ export function ProductionServices({ lng = 'en' }: { lng?: string }) {
                             {t.subtitle}
                         </p>
                     </div>
-                    <Link
-                        href={`/${lng}/services`}
-                        className="hidden md:flex items-center gap-2 text-white border-b border-white pb-1 hover:text-purple-400 hover:border-purple-400 transition-colors"
-                    >
-                        {t.viewAll}
-                        <ArrowRight className="w-4 h-4" />
-                    </Link>
+
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    <ExpandingCardRow items={row1} startIndex={0} lng={lng} />
-                    <ExpandingCardRow items={row2} startIndex={5} lng={lng} />
+                    {row1.length > 0 && <ExpandingCardRow items={row1} startIndex={0} lng={lng} />}
+                    {row2.length > 0 && <ExpandingCardRow items={row2} startIndex={5} lng={lng} />}
                 </div>
             </div>
         </section>
     )
 }
+

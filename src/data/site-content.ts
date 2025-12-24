@@ -37,7 +37,7 @@ export const company = {
 
     // Contact details
     address: {
-        street: "55-57, Rue Souleimane el Farissi",
+        street: "N°55-57, Rue Souleimane El Farissi, Ain Borja",
         city: "Casablanca",
         postalCode: "20330",
         country: "Morocco",
@@ -45,11 +45,17 @@ export const company = {
     },
 
     phone: {
-        display: "0522 246 372",
+        display: "+212 522 246 372",
         link: "+212522246372"
     },
 
+    fax: {
+        display: "+212 522 241 396",
+        link: "+212522241396"
+    },
+
     email: "contact@tfs.ma",
+    website: "www.tfs.ma",
 
     // Social media links (leave empty string if not used)
     social: {
@@ -70,9 +76,8 @@ export const company = {
 // =============================================================================
 
 export const nav = {
-    // Main navigation items
+    // Main navigation items (Services is a dynamic dropdown, not listed here)
     links: [
-        { href: "/equipment", label: { en: "Equipment", fr: "Équipement" } },
         { href: "/about", label: { en: "About", fr: "À Propos" } },
         { href: "/contact", label: { en: "Contact", fr: "Contact" } }
     ],
@@ -83,6 +88,7 @@ export const nav = {
         label: { en: "Request Quote", fr: "Demander un Devis" }
     }
 }
+
 
 // =============================================================================
 // FOOTER
@@ -200,8 +206,8 @@ export const aboutPage = {
     },
 
     hero: {
-        title: { en: "Our Story", fr: "Notre Histoire" },
-        subtitle: { en: "Empowering filmmakers across Morocco since 2010", fr: "Au service des cinéastes au Maroc depuis 2010" }
+        title: { en: "Morocco's Premier Cinema Equipment House", fr: "Premier Loueur de Matériel Cinéma au Maroc" },
+        subtitle: { en: "Empowering visionary filmmakers with world-class cameras, lenses, and lighting since 2010.", fr: "Au service des cinéastes visionnaires avec des caméras, objectifs et éclairages de classe mondiale depuis 2010." }
     },
 
     story: [

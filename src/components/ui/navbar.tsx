@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingCart, Search } from "lucide-react";
+import { Menu, X, ShoppingCart, Search, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { ClientWrapper } from "./client-wrapper";
@@ -15,6 +15,7 @@ import { useSiteSettings } from "@/components/providers/site-settings-provider";
 import { SearchDialog } from "./navbar/search-dialog";
 import { MobileMenu } from "./navbar/mobile-menu";
 import { LanguageSwitcher } from "./navbar/language-switcher";
+import { ServicesMegaMenu } from "./navbar/services-mega-menu";
 
 export function Navbar({ lng }: { lng: string }) {
   const pathname = usePathname();
@@ -28,9 +29,8 @@ export function Navbar({ lng }: { lng: string }) {
   const openCartDrawer = useUIStore((state) => state.openCartDrawer);
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Navigation links focused on rental business
+  // Navigation links (excluding Services which is a dropdown)
   const navLinks = [
-    { href: "/equipment", label: t("nav.equipment") || "Equipment" },
     { href: "/about", label: t("nav.about") || "About" },
     { href: "/contact", label: t("nav.contact") || "Contact" },
   ];
@@ -54,6 +54,13 @@ export function Navbar({ lng }: { lng: string }) {
 
         {/* Center Pill Nav - The "Island" */}
         <div className="hidden md:flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/5 shadow-2xl">
+          {/* Services Mega Menu */}
+          <ServicesMegaMenu
+            lng={lng}
+            label={t("nav.services") || "Services"}
+          />
+
+          {/* Other nav links */}
           {navLinks.map((link) => {
             const isActive = pathname === `/${lng}${link.href}` || pathname.startsWith(`/${lng}${link.href}/`);
             return (
@@ -113,6 +120,17 @@ export function Navbar({ lng }: { lng: string }) {
           >
             {t("nav.requestQuote") || "Request Quote"}
           </Link>
+
+          {/* IMDB Button */}
+          <a
+            href="https://www.imdb.com/company/co0891334"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold bg-[#F5C518] text-black hover:bg-[#E0B015] transition-all"
+          >
+            IMDB
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
 
           {/* Mobile Menu Toggle */}
           <button

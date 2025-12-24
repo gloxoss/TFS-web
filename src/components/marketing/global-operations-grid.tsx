@@ -1,254 +1,164 @@
 "use client";
-import React, { useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
-import createGlobe from "cobe";
+
+import React from "react";
+import { useTranslation } from "@/app/i18n/client";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { World as Globe, GlobeConfig } from "@/components/ui/globe";
 import { motion } from "framer-motion";
-import { Youtube, Search, Zap, Globe as GlobeIcon } from "lucide-react";
+import {
+    IconGlobe,
+    IconBuildingSkyscraper,
+    IconTruckDelivery,
+    IconUsersGroup,
+    IconCertificate
+} from "@tabler/icons-react";
 import Image from "next/image";
-import { globalOperations, t } from "@/data/site-content";
 
 interface GlobalOperationsGridProps {
-    lng?: string;
+    lng: string;
 }
 
-export default function GlobalOperationsGrid({ lng = 'en' }: GlobalOperationsGridProps) {
-    const content = globalOperations;
+export default function GlobalOperationsGrid({ lng }: GlobalOperationsGridProps) {
+    const { t } = useTranslation(lng, "about");
 
-    const features = [
+    // Globe Configuration
+    const globeConfig: GlobeConfig = {
+        pointSize: 4,
+        globeColor: "#0D0D0D",
+        showAtmosphere: true,
+        atmosphereColor: "#FFFFFF",
+        atmosphereAltitude: 0.1,
+        emissive: "#111111",
+        emissiveIntensity: 0.1,
+        shininess: 0.9,
+        polygonColor: "rgba(255,255,255,0.7)",
+        ambientLight: "#38bdf8",
+        directionalLeftLight: "#ffffff",
+        directionalTopLight: "#ffffff",
+        pointLight: "#ffffff",
+        arcTime: 1500,
+        arcLength: 0.9,
+        rings: 1,
+        maxRings: 3,
+        initialPosition: { lat: 31.7917, lng: -7.0926 }, // Morocco
+        autoRotate: true,
+        autoRotateSpeed: 0.5,
+    };
+
+    // Arcs & Rings Data
+    const casablanca = { lat: 33.5731, lng: -7.5898 };
+    const arcs = [
+        { startLat: 34.0522, startLng: -118.2437, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.3, color: "#D00000", order: 1 }, // LA
+        { startLat: 51.5074, startLng: -0.1278, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.1, color: "#D00000", order: 2 }, // London
+        { startLat: 48.8566, startLng: 2.3522, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.1, color: "#D00000", order: 3 }, // Paris
+        { startLat: 25.2048, startLng: 55.2708, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.2, color: "#D00000", order: 4 }, // Dubai
+        { startLat: -33.9249, startLng: 18.4241, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.3, color: "#D00000", order: 5 }, // Cape Town
+        { startLat: 35.6762, startLng: 139.6503, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.5, color: "#D00000", order: 6 }, // Tokyo
+        { startLat: 40.7128, startLng: -74.0060, endLat: casablanca.lat, endLng: casablanca.lng, arcAlt: 0.2, color: "#D00000", order: 7 }, // NYC
+    ];
+    const rings = [{ lat: casablanca.lat, lng: casablanca.lng, color: "#D00000" }];
+
+    const items = [
+        // 1. Main Global Reach Card (Span 2 columns) - The Globe
         {
-            title: t(content.features[0].title, lng),
-            description: t(content.features[0].description, lng),
-            skeleton: <SkeletonOne />,
-            className: "col-span-1 lg:col-span-4 border-b lg:border-r border-white/10",
+            title: t("international.title"),
+            description: t("international.description"),
+            header: (
+                <div className="flex flex-1 w-full h-full min-h-[12rem] rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-800 relative overflow-hidden group/globe">
+                    {/* Globe Wrapper */}
+                    <div className="absolute inset-0 z-0 opacity-80 group-hover/globe:opacity-100 transition-opacity duration-500 scale-150 translate-y-12 md:translate-y-8 -translate-x-12">
+                        <Globe globeConfig={globeConfig} data={arcs} rings={rings} />
+                    </div>
+                </div>
+            ),
+            className: "md:col-span-1", // Square card
+            icon: <IconGlobe className="h-4 w-4 text-neutral-500" />,
         },
+        // 2. Casablanca Hub (The specific "One Big Dot" context in text)
         {
-            title: t(content.features[1].title, lng),
-            description: t(content.features[1].description, lng),
-            skeleton: <SkeletonTwo />,
-            className: "border-b col-span-1 lg:col-span-2 border-white/10",
+            title: "Casablanca HQ",
+            description: "Our central logistics hub connects international productions with local expertise.",
+            header: <SkeletonOne />,
+            className: "md:col-span-1",
+            icon: <IconBuildingSkyscraper className="h-4 w-4 text-neutral-500" />,
         },
+        // 3. Logistics & Customs
         {
-            title: t(content.features[2].title, lng),
-            description: t(content.features[2].description, lng),
-            skeleton: <SkeletonThree />,
-            className: "col-span-1 lg:col-span-3 lg:border-r border-white/10",
+            title: "Seamless Logistics",
+            description: "We handle ATA carnets, customs clearance, and secure transport across Morocco.",
+            header: <SkeletonTwo />,
+            className: "md:col-span-1",
+            icon: <IconTruckDelivery className="h-4 w-4 text-neutral-500" />,
         },
+        // 4. Crew & Talent
         {
-            title: t(content.features[3].title, lng),
-            description: t(content.features[3].description, lng),
-            skeleton: <SkeletonFour />,
-            className: "col-span-1 lg:col-span-3 border-b lg:border-none border-white/10",
+            title: "World-Class Crew",
+            description: "Bilingual technicians and operators experienced with diverse international teams.",
+            header: <SkeletonThree />,
+            className: "md:col-span-3", // Full width
+            icon: <IconUsersGroup className="h-4 w-4 text-neutral-500" />,
         },
     ];
 
     return (
-        <div className="relative z-20 w-full overflow-hidden">
-            {/* Background Decoration */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[1500px] h-[800px] bg-[#D00000]/10 rounded-full blur-[140px] pointer-events-none" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-[#D00000]/10 rounded-full blur-[120px] pointer-events-none" />
-
-            {/* Content Container */}
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 relative z-10">
-                <div className="px-8 mb-12 relative z-10">
-                    <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-bold font-display uppercase text-white">
-                        {t(content.title, lng)}
-                    </h4>
-
-                    <p className="text-sm lg:text-xl max-w-2xl my-4 mx-auto text-zinc-400 text-center font-light">
-                        {t(content.subtitle, lng)}
+        <section className="py-20 bg-black">
+            <div className="container mx-auto px-4 max-w-7xl">
+                <div className="mb-12 text-center max-w-2xl mx-auto">
+                    <span className="text-[#D00000] font-medium tracking-widest uppercase text-sm mb-2 block">
+                        {t("international.label")}
+                    </span>
+                    <h2 className="text-3xl md:text-5xl font-display text-white mb-4">
+                        International Standard, Local Soul
+                    </h2>
+                    <p className="text-zinc-400">
+                        Bridging the gap for international filmmakers ensuring a seamless production experience in Morocco.
                     </p>
                 </div>
 
-                <div className="relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-3xl border-white/10 bg-zinc-950/50 backdrop-blur-sm overflow-hidden">
-                        {features.map((feature) => (
-                            <FeatureCard key={feature.title} className={feature.className}>
-                                <FeatureTitle>{feature.title}</FeatureTitle>
-                                <FeatureDescription>{feature.description}</FeatureDescription>
-                                <div className=" h-full w-full">{feature.skeleton}</div>
-                            </FeatureCard>
-                        ))}
-                    </div>
-                </div>
+                <BentoGrid className="max-w-6xl mx-auto md:auto-rows-[25rem]">
+                    {items.map((item, i) => (
+                        <BentoGridItem
+                            key={i}
+                            title={item.title}
+                            description={item.description}
+                            header={item.header}
+                            className={item.className}
+                            icon={item.icon}
+                        />
+                    ))}
+                </BentoGrid>
             </div>
-        </div>
+        </section>
     );
 }
 
-const FeatureCard = ({
-    children,
-    className,
-}: {
-    children?: React.ReactNode;
-    className?: string;
-}) => {
-    return (
-        <div className={cn(`p-4 sm:p-8 relative overflow-hidden`, className)}>
-            {children}
+// Placeholder Skeletons for Bento Cards
+
+const SkeletonOne = () => (
+    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-800 border border-white/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-40 hover:opacity-60 transition-opacity duration-500" />
+        <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+            <span className="text-xs text-white font-mono">HUB: CMN</span>
         </div>
-    );
-};
+    </div>
+);
 
-const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
-    return (
-        <p className="max-w-5xl mx-auto text-left tracking-tight text-white text-xl md:text-2xl font-display font-bold uppercase">
-            {children}
-        </p>
-    );
-};
-
-const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
-    return (
-        <p
-            className={cn(
-                "text-sm md:text-base max-w-4xl text-left mx-auto",
-                "text-zinc-400 font-light",
-                "text-left max-w-sm mx-0 md:text-sm my-2"
-            )}
-        >
-            {children}
-        </p>
-    );
-};
-
-export const SkeletonOne = () => {
-    return (
-        <div className="relative flex py-8 px-2 gap-10 h-full">
-            <div className="w-full p-5 mx-auto bg-zinc-900 shadow-2xl group h-full rounded-xl border border-white/5">
-                <div className="flex flex-1 w-full h-full flex-col space-y-2 relative overflow-hidden rounded-lg">
-                    <Image
-                        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop"
-                        alt="Dashboard"
-                        fill
-                        className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
-                </div>
+const SkeletonTwo = () => (
+    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-800 border border-white/5 relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-24 h-24 rounded-full bg-[#D00000]/10 animate-pulse flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[#D00000]/20" />
             </div>
         </div>
-    );
-};
+    </div>
+);
 
-export const SkeletonThree = () => {
-    return (
-        <div className="relative flex gap-10 h-full group/image pt-8">
-            <div className="w-full mx-auto bg-transparent group h-full relative rounded-xl overflow-hidden border border-white/10">
-                <div className="flex flex-1 w-full h-full flex-col space-y-2 relative">
-                    <Youtube className="h-20 w-20 absolute z-10 inset-0 text-red-600 m-auto drop-shadow-lg" />
-                    <Image
-                        src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2671&auto=format&fit=crop"
-                        alt="Youtube"
-                        fill
-                        className="object-cover opacity-60 group-hover/image:opacity-80 transition-opacity"
-                    />
-                </div>
-            </div>
+const SkeletonThree = () => (
+    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-800 border border-white/5 relative overflow-hidden group">
+        <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
+        <div className="absolute inset-0 grid grid-cols-2 gap-2 p-4 opacity-50 group-hover:opacity-80 transition-opacity">
+            <div className="bg-zinc-800 rounded-lg h-full w-full animate-pulse delay-75" />
+            <div className="bg-zinc-800 rounded-lg h-full w-full animate-pulse delay-150" />
         </div>
-    );
-};
-
-export const SkeletonTwo = () => {
-    const images = [
-        "https://images.unsplash.com/photo-1542204165-6b8c9a807d96?q=80&w=2670&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1533750516457-a7f992034fec?q=80&w=2676&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2528&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1588693850125-964205f242aa?q=80&w=2672&auto=format&fit=crop",
-    ];
-
-    const imageVariants = {
-        whileHover: {
-            scale: 1.1,
-            rotate: 0,
-            zIndex: 100,
-        },
-        whileTap: {
-            scale: 1.1,
-            rotate: 0,
-            zIndex: 100,
-        },
-    };
-    return (
-        <div className="relative flex flex-col items-start gap-10 h-full overflow-hidden -mx-8 mt-4">
-            <div className="flex flex-row -ml-20">
-                {images.map((image, idx) => (
-                    <motion.div
-                        variants={imageVariants}
-                        key={"images-first" + idx}
-                        style={{
-                            rotate: Math.random() * 20 - 10,
-                        }}
-                        whileHover="whileHover"
-                        whileTap="whileTap"
-                        className="rounded-xl -mr-4 mt-4 p-1 bg-zinc-900 border border-white/10 shrink-0 overflow-hidden"
-                    >
-                        <div className="relative h-20 w-20 md:h-40 md:w-40 rounded-lg overflow-hidden">
-                            <Image
-                                src={image}
-                                alt="Gear"
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-            <div className="absolute left-0 z-10 inset-y-0 w-20 bg-gradient-to-r from-zinc-950 to-transparent h-full pointer-events-none" />
-            <div className="absolute right-0 z-10 inset-y-0 w-20 bg-gradient-to-l from-zinc-950 to-transparent h-full pointer-events-none" />
-        </div>
-    );
-};
-
-export const SkeletonFour = () => {
-    return (
-        <div className="h-60 md:h-60 flex flex-col items-center relative bg-transparent mt-10">
-            <Globe className="absolute -right-10 md:-right-10 -bottom-80 md:-bottom-72" />
-        </div>
-    );
-};
-
-export const Globe = ({ className }: { className?: string }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    useEffect(() => {
-        let phi = 0;
-
-        if (!canvasRef.current) return;
-
-        const globe = createGlobe(canvasRef.current, {
-            devicePixelRatio: 2,
-            width: 600 * 2,
-            height: 600 * 2,
-            phi: 0,
-            theta: 0,
-            dark: 1,
-            diffuse: 1.2,
-            mapSamples: 16000,
-            mapBrightness: 6,
-            baseColor: [0.1, 0.1, 0.1],
-            markerColor: [0.6, 0.6, 0.6],
-            glowColor: [0.2, 0.2, 0.2],
-            markers: [
-                { location: [33.5731, -7.5898], size: 0.15 }, // Casablanca (Main)
-                { location: [31.6295, -7.9811], size: 0.08 }, // Marrakech
-                { location: [34.0209, -6.8416], size: 0.08 }, // Rabat
-                { location: [30.9335, -6.9370], size: 0.06 }, // Ouarzazate
-            ],
-            onRender: (state) => {
-                state.phi = phi;
-                phi += 0.01;
-            },
-        });
-
-        return () => {
-            globe.destroy();
-        };
-    }, []);
-
-    return (
-        <canvas
-            ref={canvasRef}
-            style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1 }}
-            className={className}
-        />
-    );
-};
+    </div>
+);

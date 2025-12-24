@@ -1,8 +1,11 @@
 /**
  * Equipment Catalog Client Component
  * 
- * Handles interactive filtering, search, and pagination.
- * Uses URL state for shareable filter states.
+ * Hybrid Filter System:
+ * - Desktop: Top sticky bar with category pills + brand dropdown
+ * - Mobile: FAB button + bottom sheet modal
+ * 
+ * No price filters - equipment rental catalog mode
  * 
  * Design Archetype: Dark Cinema / Luxury Editorial
  */
@@ -12,10 +15,9 @@ import { useState, useCallback, useTransition, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Product, Category } from '@/services/products/types'
-import { ProductGrid, CategoryFilter, SearchBar, BrandFilter, SortDropdown, SortOption } from '@/components/catalog'
+import { ProductGrid, HybridFilterBar, SortDropdown, SortOption } from '@/components/catalog'
 import { Pagination } from '@/components/ui/pagination'
 import { useTranslation } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
 
 interface EquipmentCatalogClientProps {
   lng: string
@@ -43,15 +45,67 @@ export function EquipmentCatalogClient({
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
+  // Filter state
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const [searchQuery, setSearchQuery] = useState(initialSearch)
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [selectedMounts, setSelectedMounts] = useState<string[]>([])
+  const [selectedSensorSizes, setSelectedSensorSizes] = useState<string[]>([])
+  const [selectedResolutions, setSelectedResolutions] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<SortOption>('name')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   // Extract unique brands from products
-  const availableBrands = Array.from(
-    new Set(initialProducts.map(p => p.brand).filter(Boolean))
-  ).sort() as string[]
+  const availableBrands = useMemo(() => {
+    return Array.from(
+      new Set(initialProducts.map(p => p.brand).filter(Boolean))
+    ).sort() as string[]
+  }, [initialProducts])
+
+  // Extract unique types from products (check both type field and specs)
+  const availableTypes = useMemo(() => {
+    const types = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.type) types.add(p.type);
+      if (p.specs?.type) types.add(String(p.specs.type));
+    });
+    return Array.from(types).filter(Boolean).sort();
+  }, [initialProducts])
+
+  // Extract unique mounts from products (check both mount field and specs)
+  const availableMounts = useMemo(() => {
+    const mounts = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.mount) mounts.add(p.mount);
+      if (p.specs?.mount) mounts.add(String(p.specs.mount));
+      if (p.specs?.lens_mount) mounts.add(String(p.specs.lens_mount));
+    });
+    return Array.from(mounts).filter(Boolean).sort();
+  }, [initialProducts])
+
+  // Extract unique sensor sizes from products (check both field and specs)
+  const availableSensorSizes = useMemo(() => {
+    const sizes = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.sensorSize) sizes.add(p.sensorSize);
+      if (p.specs?.sensor_size) sizes.add(String(p.specs.sensor_size));
+      if (p.specs?.coverage) sizes.add(String(p.specs.coverage));
+      if (p.specs?.sensor) sizes.add(String(p.specs.sensor));
+    });
+    return Array.from(sizes).filter(Boolean).sort();
+  }, [initialProducts])
+
+  // Extract unique resolutions from products (check both field and specs)
+  const availableResolutions = useMemo(() => {
+    const resolutions = new Set<string>();
+    initialProducts.forEach(p => {
+      if (p.resolution) resolutions.add(p.resolution);
+      if (p.specs?.resolution) resolutions.add(String(p.specs.resolution));
+      if (p.specs?.max_resolution) resolutions.add(String(p.specs.max_resolution));
+    });
+    return Array.from(resolutions).filter(Boolean).sort();
+  }, [initialProducts])
 
   // Update URL with filters
   const updateFilters = useCallback(
@@ -87,6 +141,7 @@ export function EquipmentCatalogClient({
     [router, searchParams, lng]
   )
 
+  // Handlers
   const handleCategoryChange = useCallback(
     (categorySlug: string | null) => {
       setSelectedCategory(categorySlug)
@@ -103,6 +158,69 @@ export function EquipmentCatalogClient({
     [updateFilters]
   )
 
+  const handleBrandToggle = useCallback((brand: string) => {
+    setSelectedBrands(prev => {
+      const isIncluded = prev.some(b => b.toLowerCase() === brand.toLowerCase())
+      if (isIncluded) {
+        return prev.filter(b => b.toLowerCase() !== brand.toLowerCase())
+      } else {
+        return [...prev, brand]
+      }
+    })
+  }, [])
+
+  const handleBrandsChange = useCallback((brands: string[]) => {
+    setSelectedBrands(brands)
+  }, [])
+
+  const handleTypeToggle = useCallback((type: string) => {
+    setSelectedTypes(prev => {
+      const isIncluded = prev.some(t => t.toLowerCase() === type.toLowerCase())
+      if (isIncluded) {
+        return prev.filter(t => t.toLowerCase() !== type.toLowerCase())
+      } else {
+        return [...prev, type]
+      }
+    })
+  }, [])
+
+  const handleTypesChange = useCallback((types: string[]) => {
+    setSelectedTypes(types)
+  }, [])
+
+  const handleMountToggle = useCallback((mount: string) => {
+    setSelectedMounts(prev => {
+      const isIncluded = prev.some(m => m.toLowerCase() === mount.toLowerCase())
+      return isIncluded ? prev.filter(m => m.toLowerCase() !== mount.toLowerCase()) : [...prev, mount]
+    })
+  }, [])
+
+  const handleMountsChange = useCallback((mounts: string[]) => {
+    setSelectedMounts(mounts)
+  }, [])
+
+  const handleSensorToggle = useCallback((size: string) => {
+    setSelectedSensorSizes(prev => {
+      const isIncluded = prev.some(s => s.toLowerCase() === size.toLowerCase())
+      return isIncluded ? prev.filter(s => s.toLowerCase() !== size.toLowerCase()) : [...prev, size]
+    })
+  }, [])
+
+  const handleSensorsChange = useCallback((sizes: string[]) => {
+    setSelectedSensorSizes(sizes)
+  }, [])
+
+  const handleResolutionToggle = useCallback((res: string) => {
+    setSelectedResolutions(prev => {
+      const isIncluded = prev.some(r => r.toLowerCase() === res.toLowerCase())
+      return isIncluded ? prev.filter(r => r.toLowerCase() !== res.toLowerCase()) : [...prev, res]
+    })
+  }, [])
+
+  const handleResolutionsChange = useCallback((resolutions: string[]) => {
+    setSelectedResolutions(resolutions)
+  }, [])
+
   const handlePageChange = useCallback(
     (page: number) => {
       updateFilters({ page })
@@ -111,19 +229,78 @@ export function EquipmentCatalogClient({
     [updateFilters]
   )
 
-  // Robust client-side filtering
+  // Client-side filtering and sorting
   const filteredProducts = useMemo(() => {
     let result = [...initialProducts]
 
-    // Brand filtering - Normalized for robustness
+    // Brand filtering
     if (selectedBrands.length > 0) {
       const normalizedSelectedBrands = selectedBrands.map(b => b.toLowerCase().trim())
       result = result.filter(product => {
         if (!product.brand) return false
         const pBrand = product.brand.toLowerCase().trim()
-        // Check if product brand matches ANY of the selected brands
         return normalizedSelectedBrands.includes(pBrand)
       })
+    }
+
+    // Type filtering (check both type field and specs)
+    if (selectedTypes.length > 0) {
+      const normalizedSelectedTypes = selectedTypes.map(t => t.toLowerCase().trim())
+      result = result.filter(product => {
+        const pType = product.type?.toLowerCase().trim();
+        const specsType = (product.specs?.type as string)?.toLowerCase().trim();
+        return (pType && normalizedSelectedTypes.includes(pType)) ||
+          (specsType && normalizedSelectedTypes.includes(specsType));
+      })
+    }
+
+    // Mount filtering (check both mount field and specs)
+    if (selectedMounts.length > 0) {
+      const normalizedSelectedMounts = selectedMounts.map(m => m.toLowerCase().trim())
+      result = result.filter(product => {
+        const pMount = product.mount?.toLowerCase().trim();
+        const specsMount = (product.specs?.mount as string)?.toLowerCase().trim();
+        const specsLensMount = (product.specs?.lens_mount as string)?.toLowerCase().trim();
+        return (pMount && normalizedSelectedMounts.includes(pMount)) ||
+          (specsMount && normalizedSelectedMounts.includes(specsMount)) ||
+          (specsLensMount && normalizedSelectedMounts.includes(specsLensMount));
+      })
+    }
+
+    // Sensor filtering (check both sensorSize field and specs)
+    if (selectedSensorSizes.length > 0) {
+      const normalizedSelectedSensors = selectedSensorSizes.map(s => s.toLowerCase().trim())
+      result = result.filter(product => {
+        const pSensor = product.sensorSize?.toLowerCase().trim();
+        const specsSensor = (product.specs?.sensor_size as string)?.toLowerCase().trim();
+        const specsCoverage = (product.specs?.coverage as string)?.toLowerCase().trim();
+        return (pSensor && normalizedSelectedSensors.includes(pSensor)) ||
+          (specsSensor && normalizedSelectedSensors.includes(specsSensor)) ||
+          (specsCoverage && normalizedSelectedSensors.includes(specsCoverage));
+      })
+    }
+
+    // Resolution filtering (check both resolution field and specs)
+    if (selectedResolutions.length > 0) {
+      const normalizedSelectedResolutions = selectedResolutions.map(r => r.toLowerCase().trim())
+      result = result.filter(product => {
+        const pResolution = product.resolution?.toLowerCase().trim();
+        const specsRes = (product.specs?.resolution as string)?.toLowerCase().trim();
+        const specsMaxRes = (product.specs?.max_resolution as string)?.toLowerCase().trim();
+        return (pResolution && normalizedSelectedResolutions.includes(pResolution)) ||
+          (specsRes && normalizedSelectedResolutions.includes(specsRes)) ||
+          (specsMaxRes && normalizedSelectedResolutions.includes(specsMaxRes));
+      })
+    }
+
+    // Search filtering (if URL search is active, server already filtered, this is for additional client-side)
+    if (searchQuery && !initialSearch) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(product =>
+        product.name.toLowerCase().includes(query) ||
+        product.brand?.toLowerCase().includes(query) ||
+        product.category?.name.toLowerCase().includes(query)
+      )
     }
 
     // Sorting
@@ -132,10 +309,8 @@ export function EquipmentCatalogClient({
         case 'name':
           return a.name.localeCompare(b.name)
         case 'featured':
-          // Featured first, then name
           return (Number(b.isFeatured) - Number(a.isFeatured)) || a.name.localeCompare(b.name)
         case 'category':
-          // By category name, then product name
           const catA = a.category?.name || ''
           const catB = b.category?.name || ''
           return catA.localeCompare(catB) || a.name.localeCompare(b.name)
@@ -145,15 +320,23 @@ export function EquipmentCatalogClient({
     })
 
     return result
-  }, [initialProducts, selectedBrands, sortBy])
+  }, [initialProducts, selectedBrands, sortBy, searchQuery, initialSearch])
 
   const totalFilteredCount = filteredProducts.length
 
   return (
     <div className="min-h-screen bg-zinc-950">
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 to-zinc-950" />
+
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 1px)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -162,6 +345,9 @@ export function EquipmentCatalogClient({
             transition={{ duration: 0.5 }}
             className="text-center"
           >
+            <span className="inline-block px-4 py-1.5 bg-red-700/15 text-red-400 rounded-full text-sm font-medium mb-6">
+              Professional Film Equipment
+            </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               {t('title')}
             </h1>
@@ -172,135 +358,69 @@ export function EquipmentCatalogClient({
         </div>
       </section>
 
-      {/* Sticky Tabs Header - Floating Boxed Design */}
-      <div className="sticky top-24 z-30 transition-transform duration-300 px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="max-w-7xl mx-auto bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl ring-1 ring-white/5">
-
-          {/* Primary Tabs - Elegant Horizontal Scroll */}
-          <div className="relative border-b border-white/5">
-            {/* Left fade gradient */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-950/90 to-transparent z-10 pointer-events-none" />
-            {/* Right fade gradient */}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-950/90 to-transparent z-10 pointer-events-none" />
-
-            <div
-              className="flex overflow-x-auto px-6 py-1 scrollbar-hide"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              <TabItem
-                label={t('categories.all')}
-                active={selectedCategory === null}
-                onClick={() => handleCategoryChange(null)}
-              />
-              {categories.map(cat => (
-                <TabItem
-                  key={cat.id}
-                  label={cat.name}
-                  active={selectedCategory === cat.slug}
-                  count={cat.productCount}
-                  onClick={() => handleCategoryChange(cat.slug)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Secondary Toolbar */}
-          <div className="py-3 px-4 sm:px-6">
-            {/* Desktop: Single row. Mobile: Stack */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-
-              {/* Left Side: Brand Filters + Item Count */}
-              <div className="flex items-center gap-4 flex-1 min-w-0">
-                <span className="text-xs text-zinc-500 shrink-0">
-                  {totalFilteredCount} items
-                </span>
-
-                {/* Brand Filters - Horizontal scroll with fade */}
-                {availableBrands.length > 0 && (
-                  <div className="relative flex-1 min-w-0">
-                    {/* Left fade */}
-                    <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-zinc-950/90 to-transparent z-10 pointer-events-none" />
-                    {/* Right fade */}
-                    <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-zinc-950/90 to-transparent z-10 pointer-events-none" />
-
-                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap px-1">
-                      <span className="text-xs font-bold text-zinc-600 uppercase tracking-widest shrink-0">
-                        Brand:
-                      </span>
-                      <BrandFilter
-                        brands={availableBrands}
-                        selectedBrands={selectedBrands}
-                        onBrandToggle={(brand) => {
-                          setSelectedBrands(prev => {
-                            const isIncluded = prev.some(b => b.toLowerCase() === brand.toLowerCase())
-                            if (isIncluded) {
-                              return prev.filter(b => b.toLowerCase() !== brand.toLowerCase())
-                            } else {
-                              return [...prev, brand]
-                            }
-                          })
-                        }}
-                      />
-                      {selectedBrands.length > 0 && (
-                        <button
-                          onClick={() => setSelectedBrands([])}
-                          className="text-xs text-zinc-500 hover:text-white shrink-0 ml-1"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Right Side: Sort & Search */}
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="relative z-50">
-                  <SortDropdown value={sortBy} onChange={setSortBy} />
-                </div>
-                <SearchBar
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="w-40 md:w-48"
-                />
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
+      {/* Hybrid Filter Bar */}
+      <HybridFilterBar
+        categories={categories}
+        brands={availableBrands}
+        types={availableTypes}
+        selectedCategory={selectedCategory}
+        selectedBrands={selectedBrands}
+        selectedTypes={selectedTypes}
+        searchQuery={searchQuery}
+        totalCount={totalFilteredCount}
+        onCategoryChange={handleCategoryChange}
+        onBrandToggle={handleBrandToggle}
+        onBrandsChange={handleBrandsChange}
+        onTypeToggle={handleTypeToggle}
+        onTypesChange={handleTypesChange}
+        mounts={availableMounts}
+        selectedMounts={selectedMounts}
+        onMountToggle={handleMountToggle}
+        onMountsChange={handleMountsChange}
+        sensorSizes={availableSensorSizes}
+        selectedSensorSizes={selectedSensorSizes}
+        onSensorToggle={handleSensorToggle}
+        onSensorsChange={handleSensorsChange}
+        resolutions={availableResolutions}
+        selectedResolutions={selectedResolutions}
+        onResolutionToggle={handleResolutionToggle}
+        onResolutionsChange={handleResolutionsChange}
+        onSearchChange={handleSearchChange}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        t={t}
+      />
 
       {/* Results Section */}
       <section className="py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Apply client-side filtering and sorting */}
-          {/* Results Count */}
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-zinc-500">
-              {totalFilteredCount} {t('pagination.results')}
-              {selectedCategory && (
-                <span className="ml-1">
-                  in <span className="text-zinc-300">{categories.find(c => c.slug === selectedCategory)?.name}</span>
-                </span>
-              )}
-              {searchQuery && (
-                <span className="ml-1">
-                  matching &ldquo;<span className="text-zinc-300">{searchQuery}</span>&rdquo;
-                </span>
-              )}
-              {selectedBrands.length > 0 && (
-                <span className="ml-1">
-                  · <span className="text-indigo-400">{selectedBrands.join(', ')}</span>
-                </span>
-              )}
-            </p>
+          {/* Results Header - Desktop Only (mobile shows in HybridFilterBar) */}
+          <div className="hidden md:flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-zinc-500">
+                <span className="text-white font-medium">{totalFilteredCount}</span> {t('pagination.results')}
+                {selectedCategory && (
+                  <span className="ml-1">
+                    in <span className="text-red-400">{categories.find(c => c.slug === selectedCategory)?.name}</span>
+                  </span>
+                )}
+                {selectedBrands.length > 0 && (
+                  <span className="ml-1">
+                    · <span className="text-red-400">{selectedBrands.join(', ')}</span>
+                  </span>
+                )}
+              </p>
 
-            {isPending && (
-              <span className="text-sm text-zinc-500 flex items-center gap-2">
-                Loading...
-              </span>
-            )}
+              {isPending && (
+                <span className="text-sm text-zinc-500 flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-zinc-600 border-t-red-500 rounded-full animate-spin" />
+                  Loading...
+                </span>
+              )}
+            </div>
+
+            {/* Sort Dropdown */}
+            <SortDropdown value={sortBy} onChange={setSortBy} />
           </div>
 
           {/* Product Grid */}
@@ -312,38 +432,16 @@ export function EquipmentCatalogClient({
 
           {/* Pagination - Only show if NO client-side filters are active */}
           {initialPagination.totalPages > 1 && selectedBrands.length === 0 && (
-            <Pagination
-              currentPage={initialPagination.page}
-              totalPages={initialPagination.totalPages}
-              onPageChange={handlePageChange}
-            />
+            <div className="mt-12">
+              <Pagination
+                currentPage={initialPagination.page}
+                totalPages={initialPagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
           )}
         </div>
       </section>
     </div>
   )
 }
-
-function TabItem({ label, count, active, onClick }: { label: string, count?: number, active: boolean, onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "relative px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors",
-        active ? "text-white" : "text-zinc-400 hover:text-zinc-200"
-      )}
-    >
-      {label}
-      {count !== undefined && <span className="ml-2 text-xs opacity-50">{count}</span>}
-
-      {active && (
-        <motion.div
-          layoutId="activeTab"
-          className="absolute bottom-0 left-0 right-0 h-[2px] bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        />
-      )}
-    </button>
-  )
-}
-

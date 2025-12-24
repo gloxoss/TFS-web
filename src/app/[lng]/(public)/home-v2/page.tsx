@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/pocketbase/server";
 import { useTranslation } from "@/app/i18n";
-import { getBlogService } from "@/services";
+import { getBlogService, getServicesService } from "@/services";
 import HeroImpact from "@/components/marketing/hero-impact";
 import SocialProof from "@/components/marketing/social-proof";
 import CTASection from "@/components/marketing/cta-section";
@@ -14,7 +14,11 @@ export default async function HomeV2Page({ params }: { params: Promise<{ lng: st
     const client = await createServerClient();
     const { t } = await useTranslation(lng, 'home');
 
-    // Fetch Method
+    // Fetch services from PocketBase
+    const servicesService = getServicesService(client);
+    const services = await servicesService.getServices();
+
+    // Fetch blog posts
     const blogService = getBlogService(client);
     const blogPosts = await blogService.getLatestPosts(4, lng);
 
@@ -45,7 +49,7 @@ export default async function HomeV2Page({ params }: { params: Promise<{ lng: st
             <ExpertiseBento lng={lng} />
 
             {/* 4. Production Services */}
-            <ProductionServices lng={lng} />
+            <ProductionServices lng={lng} services={services} />
 
             {/* 5. Intro / Value Section (Moved Down) */}
             <IntroBento lng={lng} />

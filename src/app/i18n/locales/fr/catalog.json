@@ -1,5 +1,5 @@
 {
-  "title": "Catalogue d'équipement",
+  "title": "Location d'équipement",
   "description": "Parcourez notre équipement cinéma professionnel disponible à la location",
   "search": {
     "placeholder": "Rechercher un équipement...",
@@ -37,7 +37,7 @@
     "misc": "Accessoires"
   },
   "detail": {
-    "backToCatalog": "Retour au catalogue",
+    "backToCatalog": "Retour à l'équipement",
     "specifications": "Spécifications",
     "description": "Description",
     "rentalPeriod": "Période de location",
@@ -52,7 +52,7 @@
     "relatedProducts": "Vous pourriez aussi aimer"
   },
   "meta": {
-    "title": "Catalogue d'équipement | TFS Location Cinéma",
+    "title": "Location d'équipement | TFS Location Cinéma",
     "description": "Parcourez notre catalogue d'équipement cinéma professionnel. Caméras, objectifs, éclairage et plus disponibles à la location."
   }
 }

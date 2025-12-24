@@ -24,6 +24,14 @@ export interface Product {
   categoryId: string
   category?: Category
   brand?: string
+  /** Product type (e.g., Anamorphic, Spherical, Large Format for lenses) */
+  type?: string
+  /** Lens Mount (e.g., PL, E-Mount, EF) */
+  mount?: string
+  /** Sensor Size (e.g., Full Frame, Super 35) */
+  sensorSize?: string
+  /** Resolution (e.g., 4K, 8K) */
+  resolution?: string
   // Bilingual descriptions per TDD
   descriptionEn?: string
   descriptionFr?: string
@@ -32,6 +40,8 @@ export interface Product {
   specsEn?: string
   specsFr?: string
   specs?: Record<string, string | number>
+  /** Specifications object for camera detail page */
+  specifications?: Record<string, string | number | boolean>
   imageUrl?: string
   images?: string[]
   isFeatured?: boolean

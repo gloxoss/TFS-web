@@ -9,6 +9,7 @@ export interface AppSettings {
     company_name: string
     contact_email: string
     company_phone: string
+    company_fax: string
     company_address: string
     email_notifications: boolean
     new_quote_alert: boolean
@@ -20,17 +21,18 @@ export interface AppSettings {
 }
 
 const DEFAULT_SETTINGS: Omit<AppSettings, 'id'> = {
-    company_name: 'TV Film Solutions',  // Matches site-content.ts
-    contact_email: 'contact@tfs.ma',    // Matches site-content.ts
-    company_phone: '+212522246372',      // Matches site-content.ts (format: link)
-    company_address: '55-57, Rue Souleimane el Farissi, Casablanca 20330, Morocco',  // Matches site-content.ts
+    company_name: 'TFS - TV Film Solutions',
+    contact_email: 'contact@tfs.ma',
+    company_phone: '+212 522 246 372',
+    company_fax: '+212 522 241 396',
+    company_address: 'N°55-57, Rue Souleimane El Farissi, Ain Borja - Casablanca 20330, Morocco',
     email_notifications: true,
     new_quote_alert: true,
     quote_status_alert: true,
     show_prices: false,
     maintenance_mode: false,
     default_language: 'en',
-    currency: 'MAD'  // Morocco uses MAD, not USD
+    currency: 'MAD'
 }
 
 /**
@@ -55,6 +57,7 @@ export async function getSettings(): Promise<{ success: boolean, settings: AppSe
                     company_name: record.company_name,
                     contact_email: record.contact_email,
                     company_phone: record.company_phone,
+                    company_fax: record.company_fax,
                     company_address: record.company_address,
                     email_notifications: record.email_notifications,
                     new_quote_alert: record.new_quote_alert,
@@ -139,7 +142,7 @@ export async function updateSettings(formData: FormData): Promise<{ success: boo
         const data: any = {}
 
         // Text fields
-        const textFields = ['company_name', 'contact_email', 'company_phone', 'company_address', 'default_language', 'currency']
+        const textFields = ['company_name', 'contact_email', 'company_phone', 'company_fax', 'company_address', 'default_language', 'currency']
         textFields.forEach(field => {
             const val = formData.get(field)
             if (val !== null) data[field] = val.toString()

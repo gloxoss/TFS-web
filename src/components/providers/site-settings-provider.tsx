@@ -35,21 +35,30 @@ export function SiteSettingsProvider({ settings, children }: SiteSettingsProvide
                 mergedCompany.phone = {
                     ...mergedCompany.phone,
                     display: settings.company_phone,
-                    link: settings.company_phone.replace(/\s/g, '') // Simple format
+                    link: settings.company_phone.replace(/\s/g, '').replace(/\+/g, '') // Sanitize link
+                };
+            }
+
+            if (settings.company_fax) {
+                mergedCompany.fax = {
+                    ...mergedCompany.fax,
+                    display: settings.company_fax,
+                    link: settings.company_fax.replace(/\s/g, '').replace(/\+/g, '')
                 };
             }
 
             if (settings.company_address) {
-                // Address in DB is a single string 'company_address'
-                // Static has structured address. We'll update 'street' or 'city' roughly, 
-                // or just keep static if the DB one is simple.
-                // Let's assume DB address overrides the 'street' for simple display, 
-                // or we might need to parse it. For now, let's just override display logic where possible.
-                // The static content splits it. Let's put the full string in 'street' as a fallback?
+                // Address in DB is a single string.
+                // We map it to 'street' and clear others to avoid duplication in FooterWithColumns
+                // Footer displays: street <br/> city postal, country
+                // So we set street=Full Address, others=empty
                 mergedCompany.address = {
                     ...mergedCompany.address,
                     street: settings.company_address,
-                    // keep other fields distinct if needed, or assume DB has full address
+                    city: "",
+                    postalCode: "",
+                    country: "",
+                    countryFr: ""
                 };
             }
         }
