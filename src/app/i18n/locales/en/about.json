@@ -32,7 +32,24 @@
   "stats": {
     "years": "Years Experience",
     "projects": "Productions Served",
-    "countries": "Cities in Morocco"
+    "countries": "Cities in Morocco",
+    "satisfaction": "Client Satisfaction"
+  },
+  "operations": {
+    "cards": {
+      "hq": {
+        "title": "Casablanca HQ",
+        "description": "Our central logistics hub connects international productions with local expertise."
+      },
+      "logistics": {
+        "title": "Seamless Logistics",
+        "description": "We handle ATA carnets, customs clearance, and secure transport across Morocco."
+      },
+      "crew": {
+        "title": "World-Class Crew",
+        "description": "Bilingual technicians and operators experienced with diverse international teams."
+      }
+    }
   },
   "expertise": {
     "label": "DISCOVER OUR STORY",

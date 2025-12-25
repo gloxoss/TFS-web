@@ -1,14 +1,55 @@
 {
   "title": "Equipment Hire",
   "description": "Browse our professional cinema equipment available for rent",
+  "hero": {
+    "pill": "Professional Film Equipment"
+  },
   "search": {
     "placeholder": "Search equipment...",
+    "label": "Search",
     "noResults": "No equipment found",
     "noResultsHint": "Try adjusting your filters or search term"
   },
   "filters": {
+    "title": "Filters",
+    "active": "active filters",
+    "more": "more",
     "allCategories": "All Categories",
-    "clearFilters": "Clear Filters"
+    "all": "All",
+    "clear": "Clear",
+    "clearAll": "Clear all",
+    "showResults": "Show {{count}} Results",
+    "clearFilters": "Clear Filters",
+    "items": "items",
+    "in": "in",
+    "brand": {
+      "label": "Brand",
+      "title": "Filter by Brand"
+    },
+    "type": {
+      "label": "Type",
+      "title": "Filter by Type"
+    },
+    "mount": {
+      "label": "Mount",
+      "title": "Filter by Mount"
+    },
+    "sensor": {
+      "label": "Sensor",
+      "title": "Filter by Sensor"
+    },
+    "resolution": {
+      "label": "Resolution",
+      "title": "Filter by Resolution"
+    }
+  },
+  "sort": {
+    "label": "Sort by",
+    "options": {
+      "name": "Name (A-Z)",
+      "featured": "Featured First",
+      "category": "Category"
+    }
   },
   "product": {
     "dailyRate": "Daily Rate",
@@ -51,8 +92,30 @@
     "days": "days",
     "relatedProducts": "You May Also Like"
   },
-  "meta": {
-    "title": "Equipment Hire | TFS Cinema Rental",
-    "description": "Browse our professional cinema equipment catalog. Cameras, lenses, lighting, and more available for rent."
+  "kit": {
+    "manifest": {
+      "title": "Equipment Manifest",
+      "subtitle": "Configure the components included with your kit",
+      "loading": "Loading kit configuration..."
+    },
+    "selection": {
+      "selectOne": "Select one",
+      "selectMultiple": "Select multiple",
+      "selected": "{{count}} selected"
+    },
+    "actions": {
+      "swap": "Swap",
+      "edit": "Edit",
+      "viewGrid": "Grid view",
+      "viewList": "List view"
+    },
+    "defaultName": "Complete Cinema Package"
+  },
+  "specs": {
+    "title": "Camera Specifications",
+    "sensor": "Sensor",
+    "resolution": "Resolution",
+    "mount": "Mount",
+    "recording": "Recording"
   }
 }

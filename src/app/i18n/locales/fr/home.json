@@ -1,7 +1,79 @@
 {
     "hero": {
         "title": "Équipez Votre Vision",
-        "subtitle": "Équipement cinéma professionnel pour les cinéastes exigeants. Des caméras RED à l'éclairage ARRI."
+        "subtitle": "Équipement cinéma professionnel pour les cinéastes exigeants. Des caméras RED à l'éclairage ARRI.",
+        "megaText": {
+            "line1": "TV FILM",
+            "line2": "SOLUTIONS"
+        },
+        "headline": {
+            "line1": "Équipez",
+            "line2": "Votre Vision"
+        },
+        "description": "Équipement cinéma professionnel pour les cinéastes exigeants. Des caméras RED à l'éclairage ARRI.",
+        "cta": "Parlons"
+    },
+    "intro": {
+        "title": "QUI SOMMES-NOUS ?",
+        "subtitle": "Le Standard d'Excellence",
+        "description": "Nous combinons maîtrise technique et puissance logistique pour donner vie à votre vision.",
+        "items": {
+            "0": {
+                "title": "UN PARTENAIRE FIABLE",
+                "description": "Nous sommes l'épine dorsale technique de l'industrie audiovisuelle marocaine, offrant des solutions complètes du conseil au stockage pour des productions de toutes tailles.",
+                "stat": "Confiance"
+            },
+            "1": {
+                "title": "MODÈLE D'EXCELLENCE",
+                "description": "TFS a construit son modèle économique autour de trois valeurs fondamentales qui constituent le socle de sa culture d'entreprise."
+            },
+            "2": {
+                "title": "Innovation",
+                "description": "Chaque service que nous fournissons est unique. Nous concevons des solutions spécialisées avec nos partenaires pour répondre aux plus hauts standards."
+            },
+            "3": {
+                "title": "Qualité Technique",
+                "description": "Garantie par l'expertise de nos équipes et la fiabilité de nos équipements, appareils et solutions IT/numériques."
+            },
+            "4": {
+                "title": "Service Client",
+                "description": "Nous garantissons le respect des délais grâce au professionnalisme de nos équipes et à des processus opérationnels efficaces."
+            }
+        }
+    },
+    "expertise": {
+        "title": "Expertise Mondiale",
+        "mainTitle": "EXPERTISE RECONNUE",
+        "mainDescription": {
+            "0": "L'expertise de nos équipes, combinée à une flotte d'équipements de haute technologie, garantit notre maîtrise de toute la chaîne de production audiovisuelle.",
+            "1": "Notre savoir-faire est désormais reconnu au Maroc, en Afrique et au Moyen-Orient pour les grands événements audiovisuels : sport, divertissement, spectacles vivants et production TV.",
+            "2": "TFS a équipé un studio TV dans ses locaux répondant aux plus hautes exigences en matière d'équipement audiovisuel et d'insonorisation."
+        },
+        "stat1": {
+            "title": "21+ ANS",
+            "description": "Leader du secteur depuis 2003 avec une excellence constante."
+        },
+        "stat2": {
+            "title": "500+ PROJETS",
+            "description": "Événements majeurs livrés avec succès dans la région."
+        },
+        "fact1": {
+            "title": "NORMES INTERNATIONALES",
+            "description": "Qualité de production répondant aux exigences strictes de diffusion mondiale."
+        },
+        "fact2": {
+            "title": "FLOTTE HIGH-TECH",
+            "description": "Cars OB et caméras à la pointe de la technologie."
+        },
+        "fact3": {
+            "title": "ÉQUIPES EXPERTES",
+            "description": "Personnel technique hautement qualifié."
+        }
+    },
+    "services": {
+        "title": "Nos Services",
+        "subtitle": "Nous gérons le tournage des moindres détails techniques — des câbles aux connexions — jusqu'aux productions de grande envergure, garantissant des résultats fiables et professionnels.",
+        "viewAll": "Voir tous les services"
     },
     "bento": {
         "platform": {

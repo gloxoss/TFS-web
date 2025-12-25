@@ -48,6 +48,7 @@ export function Navbar({ lng }: { lng: string }) {
               fill
               className="object-contain object-left"
               priority
+              sizes="(max-width: 768px) 135px, 135px"
             />
           </div>
         </Link>
@@ -136,6 +137,7 @@ export function Navbar({ lng }: { lng: string }) {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2.5 text-white bg-white/10 rounded-full backdrop-blur-md hover:bg-white/20 transition-colors"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

@@ -66,7 +66,7 @@ export default function AboutStorySection({ lng }: AboutStorySectionProps) {
         visible: {
             y: 0,
             opacity: 1,
-            transition: { duration: 0.6, ease: "easeOut" },
+            transition: { duration: 0.6, ease: "easeOut" as const },
         },
     };
 
@@ -114,7 +114,7 @@ export default function AboutStorySection({ lng }: AboutStorySectionProps) {
         { icon: <Calendar />, value: 14, label: t("stats.years"), suffix: "+" }, // Started 2010 -> 2024 = 14+
         { icon: <Film />, value: 12000, label: t("stats.projects"), suffix: "+" },
         { icon: <Globe2 />, value: 200, label: t("stats.countries"), suffix: "+" }, // Using "Countries" label for Cities/Locations
-        { icon: <Users />, value: 98, label: "Client Satisfaction", suffix: "%" }, // Static for now
+        { icon: <Users />, value: 98, label: t("stats.satisfaction"), suffix: "%" }, // Static for now
     ];
 
     return (

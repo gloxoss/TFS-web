@@ -28,47 +28,50 @@ const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProps>(
 
         return (
             <div className={cn("flex w-full items-end gap-2", className)}>
-                <Textarea
-                    ref={ref}
-                    aria-label="Message input"
-                    classNames={{
-                        base: "flex-1",
-                        inputWrapper: cn(
-                            "bg-content2 border-default-200 hover:border-default-400",
-                            "data-[focus=true]:border-primary"
-                        ),
-                        input: "text-small text-default-600 placeholder:text-default-400",
-                    }}
-                    minRows={1}
-                    maxRows={4}
-                    placeholder={placeholder}
-                    radius="lg"
-                    value={value}
-                    variant="bordered"
-                    onKeyDown={handleKeyDown}
-                    onValueChange={onChange}
-                    endContent={
-                        <div className="flex items-center">
-                            <Tooltip content={isLoading ? "Sending..." : "Send message"}>
-                                <Button
-                                    isIconOnly
-                                    className={cn(
-                                        "min-w-8 h-8",
-                                        (value || '').trim() ? "bg-primary text-primary-foreground" : "bg-default-100 text-default-400"
-                                    )}
-                                    isDisabled={!(value || '').trim() || isLoading}
-                                    isLoading={isLoading}
-                                    radius="full"
-                                    size="sm"
-                                    spinner={<Loader2 className="w-4 h-4 animate-spin" />}
-                                    onPress={onSubmit}
-                                >
-                                    {!isLoading && <Send className="w-4 h-4" />}
-                                </Button>
-                            </Tooltip>
-                        </div>
-                    }
-                />
+                <div className="relative w-full group">
+                    <Textarea
+                        ref={ref}
+                        aria-label="Message input"
+                        classNames={{
+                            base: "flex-1",
+                            inputWrapper: cn(
+                                "bg-zinc-950/30 backdrop-blur-md shadow-inner !border-none ring-1 ring-white/5 group-hover:ring-white/10 transition-all duration-300",
+                                "!bg-zinc-950/30",
+                                "data-[focus=true]:!bg-black/40 data-[focus=true]:ring-white/10"
+                            ),
+                            input: "text-sm text-zinc-300 placeholder:text-zinc-600 font-light tracking-wide",
+                        }}
+                        minRows={1}
+                        maxRows={4}
+                        placeholder={placeholder}
+                        radius="lg"
+                        value={value}
+                        variant="flat"
+                        onKeyDown={handleKeyDown}
+                        onValueChange={onChange}
+                    />
+                    <div className="absolute right-2 bottom-2">
+                        <Tooltip content={isLoading ? "Sending..." : "Send message"} className="bg-zinc-900 border border-white/5 text-zinc-400">
+                            <Button
+                                isIconOnly
+                                className={cn(
+                                    "min-w-8 h-8 transition-all duration-300",
+                                    (value || '').trim()
+                                        ? "bg-[#D00000] text-white shadow-[0_0_15px_rgba(208,0,0,0.4)]"
+                                        : "bg-transparent text-zinc-700"
+                                )}
+                                isDisabled={!(value || '').trim() || isLoading}
+                                isLoading={isLoading}
+                                radius="full"
+                                size="sm"
+                                spinner={<Loader2 className="w-3 h-3 animate-spin text-white" />}
+                                onPress={onSubmit}
+                            >
+                                {!isLoading && <Send className={cn("w-3 h-3", (value || '').trim() ? "ml-0.5" : "")} />}
+                            </Button>
+                        </Tooltip>
+                    </div>
+                </div>
             </div>
         );
     }

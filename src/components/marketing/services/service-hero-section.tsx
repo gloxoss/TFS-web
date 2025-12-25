@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
+import { useTranslation } from '@/app/i18n/client'
+
 interface ServiceHeroSectionProps {
     title: string
     description?: string
@@ -12,6 +14,7 @@ interface ServiceHeroSectionProps {
 }
 
 export default function ServiceHeroSection({ title, description, heroImage, lng }: ServiceHeroSectionProps) {
+    const { t } = useTranslation(lng, 'services')
     // Default hero image if none provided
     const backgroundImage = heroImage || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2000&auto=format&fit=crop'
 
@@ -36,7 +39,7 @@ export default function ServiceHeroSection({ title, description, heroImage, lng 
                     className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                    <span>{lng === 'fr' ? 'Retour' : 'Back'}</span>
+                    <span>{t('hero.back')}</span>
                 </Link>
             </div>
 
@@ -48,7 +51,7 @@ export default function ServiceHeroSection({ title, description, heroImage, lng 
                     transition={{ duration: 0.5 }}
                     className="inline-block text-[#D00000] text-sm tracking-widest uppercase mb-6 font-medium"
                 >
-                    {lng === 'fr' ? 'Nos Services' : 'Our Services'}
+                    {t('hero.subtitle')}
                 </motion.span>
 
                 <motion.h1
@@ -80,7 +83,7 @@ export default function ServiceHeroSection({ title, description, heroImage, lng 
                         href={`/${lng}/equipment`}
                         className="inline-flex items-center gap-3 bg-[#D00000] hover:bg-[#B00000] text-white px-8 py-4 rounded-full font-medium transition-all duration-300 group"
                     >
-                        {lng === 'fr' ? 'Demander un Devis' : 'Request a Quote'}
+                        {t('hero.cta.quote')}
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </motion.div>

@@ -1,14 +1,55 @@
 {
   "title": "Location d'équipement",
   "description": "Parcourez notre équipement cinéma professionnel disponible à la location",
+  "hero": {
+    "pill": "Équipement Cinéma Professionnel"
+  },
   "search": {
     "placeholder": "Rechercher un équipement...",
+    "label": "Rechercher",
     "noResults": "Aucun équipement trouvé",
     "noResultsHint": "Essayez d'ajuster vos filtres ou votre recherche"
   },
   "filters": {
+    "title": "Filtres",
+    "active": "filtres actifs",
+    "more": "plus",
     "allCategories": "Toutes les catégories",
-    "clearFilters": "Effacer les filtres"
+    "all": "Tout",
+    "clear": "Effacer",
+    "clearAll": "Tout effacer",
+    "showResults": "Voir {{count}} résultats",
+    "clearFilters": "Effacer les filtres",
+    "items": "articles",
+    "in": "dans",
+    "brand": {
+      "label": "Marque",
+      "title": "Filtrer par Marque"
+    },
+    "type": {
+      "label": "Type",
+      "title": "Filtrer par Type"
+    },
+    "mount": {
+      "label": "Monture",
+      "title": "Filtrer par Monture"
+    },
+    "sensor": {
+      "label": "Capteur",
+      "title": "Filtrer par Capteur"
+    },
+    "resolution": {
+      "label": "Résolution",
+      "title": "Filtrer par Résolution"
+    }
+  },
+  "sort": {
+    "label": "Trier par",
+    "options": {
+      "name": "Nom (A-Z)",
+      "featured": "En vedette",
+      "category": "Catégorie"
+    }
   },
   "product": {
     "dailyRate": "Tarif journalier",
@@ -54,5 +95,31 @@
   "meta": {
     "title": "Location d'équipement | TFS Location Cinéma",
     "description": "Parcourez notre catalogue d'équipement cinéma professionnel. Caméras, objectifs, éclairage et plus disponibles à la location."
+  },
+  "kit": {
+    "manifest": {
+      "title": "Manifeste d'Équipement",
+      "subtitle": "Configurez les composants inclus dans votre kit",
+      "loading": "Chargement de la configuration du kit..."
+    },
+    "selection": {
+      "selectOne": "Sélectionner un",
+      "selectMultiple": "Sélection multiple",
+      "selected": "{{count}} sélectionné(s)"
+    },
+    "actions": {
+      "swap": "Changer",
+      "edit": "Modifier",
+      "viewGrid": "Vue grille",
+      "viewList": "Vue liste"
+    },
+    "defaultName": "Package Cinéma Complet"
+  },
+  "specs": {
+    "title": "Spécifications Caméra",
+    "sensor": "Capteur",
+    "resolution": "Résolution",
+    "mount": "Monture",
+    "recording": "Enregistrement"
   }
 }

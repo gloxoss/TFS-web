@@ -44,6 +44,7 @@ import { ResolvedKit } from '@/types/commerce'
 import { useCartStore, useUIStore } from '@/stores'
 import { cn } from '@/lib/utils'
 import { resolveKit } from '@/lib/actions/cart'
+import { useTranslation } from '@/app/i18n/client'
 
 // ============================================================================
 // ANIMATION VARIANTS - Staggered fade-in with blur
@@ -323,6 +324,7 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
 // ============================================================================
 
 export function ProductDetailClient({ product, lng }: ProductDetailClientProps) {
+  const { t } = useTranslation(lng, 'catalog')
   const addItem = useCartStore((state) => state.addItem)
   const openCartDrawer = useUIStore((state) => state.openCartDrawer)
   const addToast = useUIStore((state) => state.addToast)
@@ -527,7 +529,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Catalog
+              {t('detail.backToCatalog')}
             </Link>
           </motion.div>
 
@@ -569,7 +571,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                     {product.name}
                   </h1>
                   <p className="text-zinc-400 text-lg">
-                    {resolvedKit?.template.name || 'Complete Cinema Package'}
+                    {resolvedKit?.template.name || t('kit.defaultName')}
                   </p>
                 </div>
 
@@ -587,7 +589,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                   className="mt-6"
                 >
                   <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-5">
-                    <h3 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">Camera Specifications</h3>
+                    <h3 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">{t('specs.title')}</h3>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                       {product.specifications && Object.entries(product.specifications).slice(0, 8).map(([key, value]) => (
                         <div key={key} className="flex justify-between border-b border-zinc-800/50 pb-2">
@@ -598,19 +600,19 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                       {(!product.specifications || Object.keys(product.specifications).length === 0) && (
                         <>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">Sensor</span>
+                            <span className="text-xs text-zinc-500">{t('specs.sensor')}</span>
                             <span className="text-xs text-zinc-200 font-medium">Full Frame</span>
                           </div>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">Resolution</span>
+                            <span className="text-xs text-zinc-500">{t('specs.resolution')}</span>
                             <span className="text-xs text-zinc-200 font-medium">4K/6K</span>
                           </div>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">Mount</span>
+                            <span className="text-xs text-zinc-500">{t('specs.mount')}</span>
                             <span className="text-xs text-zinc-200 font-medium">PL / E-Mount</span>
                           </div>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">Recording</span>
+                            <span className="text-xs text-zinc-500">{t('specs.recording')}</span>
                             <span className="text-xs text-zinc-200 font-medium">RAW / ProRes</span>
                           </div>
                         </>
@@ -638,8 +640,8 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                       <Layers className="w-6 h-6 text-red-400" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-white">Equipment Manifest</h2>
-                      <p className="text-zinc-500 text-sm">Configure the components included with your kit</p>
+                      <h2 className="text-2xl font-bold text-white">{t('kit.manifest.title')}</h2>
+                      <p className="text-zinc-500 text-sm">{t('kit.manifest.subtitle')}</p>
                     </div>
                   </div>
 
@@ -653,7 +655,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                           ? 'bg-red-700 text-white'
                           : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
                       )}
-                      title="Grid view"
+                      title={t('kit.actions.viewGrid')}
                     >
                       <LayoutGrid className="w-4 h-4" />
                     </button>
@@ -665,7 +667,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                           ? 'bg-red-700 text-white'
                           : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
                       )}
-                      title="List view"
+                      title={t('kit.actions.viewList')}
                     >
                       <List className="w-4 h-4" />
                     </button>
@@ -675,7 +677,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                 {isLoadingKit ? (
                   <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center">
                     <div className="animate-spin w-8 h-8 border-2 border-zinc-600 border-t-red-500 rounded-full mx-auto mb-4" />
-                    <p className="text-zinc-400">Loading kit configuration...</p>
+                    <p className="text-zinc-400">{t('kit.manifest.loading')}</p>
                   </div>
                 ) : (
                   <motion.div
@@ -697,7 +699,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                             <div>
                               <h3 className="font-semibold text-white">{slot.slotName}</h3>
                               <span className="text-xs text-zinc-500">
-                                {slot.selectionMode === 'single' ? 'Select one' : 'Select multiple'} • {slot.selectedIds.length} selected
+                                {slot.selectionMode === 'single' ? t('kit.selection.selectOne') : t('kit.selection.selectMultiple')} • {t('kit.selection.selected', { count: slot.selectedIds.length })}
                               </span>
                             </div>
                           </div>
@@ -708,12 +710,12 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                             {slot.selectionMode === 'single' ? (
                               <>
                                 <Edit3 className="w-4 h-4" />
-                                Swap
+                                {t('kit.actions.swap')}
                               </>
                             ) : (
                               <>
                                 <Plus className="w-4 h-4" />
-                                Edit
+                                {t('kit.actions.edit')}
                               </>
                             )}
                           </button>

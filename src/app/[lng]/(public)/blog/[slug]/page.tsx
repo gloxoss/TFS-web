@@ -12,9 +12,11 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import parse from 'html-react-parser'
 import { ArrowLeft, Calendar, User, Tag } from 'lucide-react'
+import { useTranslation } from '@/app/i18n'
 
 export default async function BlogPostPage({ params }: { params: Promise<{ lng: string; slug: string }> }) {
     const { lng, slug } = await params
+    const { t } = await useTranslation(lng, 'blog')
 
     const pb = await createServerClient()
     const blogService = getBlogService(pb)
@@ -49,7 +51,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lng: 
                             className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-4"
                         >
                             <ArrowLeft className="w-4 h-4" />
-                            {lng === 'fr' ? 'Retour au Blog' : 'Back to Blog'}
+                            {t('detail.back')}
                         </Link>
 
                         {/* Category Badge */}
@@ -76,7 +78,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lng: 
                             </div>
                             <div className="flex items-center gap-2">
                                 <User className="w-4 h-4" />
-                                <span>TFS Team</span>
+                                <span>{t('detail.team')}</span>
                             </div>
                         </div>
                     </div>
@@ -97,7 +99,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lng: 
                     <div className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-headings:font-bold prose-p:text-zinc-300 prose-a:text-[#D00000] prose-strong:text-white prose-li:text-zinc-300 prose-img:rounded-xl">
                         {post.content ? parse(post.content) : (
                             <p className="text-zinc-400 italic">
-                                {lng === 'fr' ? 'Contenu à venir...' : 'Content coming soon...'}
+                                {t('detail.comingSoon')}
                             </p>
                         )}
                     </div>
@@ -110,7 +112,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lng: 
                             href={`/${lng}/contact`}
                             className="block px-8 py-3 bg-black rounded-full hover:bg-black/90 transition-colors text-white font-medium"
                         >
-                            {lng === 'fr' ? 'Vous avez un projet ? Contactez-nous' : 'Have a project in mind? Contact Us'}
+                            {t('detail.cta.text')}
                         </Link>
                     </div>
                 </div>

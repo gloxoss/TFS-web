@@ -226,7 +226,7 @@ export function HybridFilterBar({
                         {/* Left: Item count + Brand filter */}
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                             <span className="text-xs text-zinc-500 shrink-0 font-medium">
-                                {totalCount} items
+                                {totalCount} {t('filters.items')}
                             </span>
 
                             {/* Brand Dropdown */}
@@ -242,7 +242,7 @@ export function HybridFilterBar({
                                         )}
                                     >
                                         <SlidersHorizontal className="w-4 h-4" />
-                                        Brand
+                                        {t('filters.brand.label')}
                                         {selectedBrands.length > 0 && (
                                             <span className="w-5 h-5 bg-emerald-700 text-white rounded-full text-xs flex items-center justify-center font-bold">
                                                 {selectedBrands.length}
@@ -270,14 +270,14 @@ export function HybridFilterBar({
                                                 >
                                                     <div className="p-2 border-b border-zinc-800 flex items-center justify-between">
                                                         <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">
-                                                            Filter by Brand
+                                                            {t('filters.brand.title')}
                                                         </span>
                                                         {selectedBrands.length > 0 && (
                                                             <button
                                                                 onClick={() => onBrandsChange([])}
                                                                 className="text-xs text-zinc-500 hover:text-white px-2"
                                                             >
-                                                                Clear
+                                                                {t('filters.clear')}
                                                             </button>
                                                         )}
                                                     </div>
@@ -327,7 +327,7 @@ export function HybridFilterBar({
                                         )}
                                     >
                                         <Video className="w-4 h-4" />
-                                        Type
+                                        {t('filters.type.label')}
                                         {selectedTypes.length > 0 && (
                                             <span className="w-5 h-5 bg-blue-700 text-white rounded-full text-xs flex items-center justify-center font-bold">
                                                 {selectedTypes.length}
@@ -355,14 +355,14 @@ export function HybridFilterBar({
                                                 >
                                                     <div className="p-2 border-b border-zinc-800 flex items-center justify-between">
                                                         <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">
-                                                            Filter by Type
+                                                            {t('filters.type.title')}
                                                         </span>
                                                         {selectedTypes.length > 0 && (
                                                             <button
                                                                 onClick={() => onTypesChange([])}
                                                                 className="text-xs text-zinc-500 hover:text-white px-2"
                                                             >
-                                                                Clear
+                                                                {t('filters.clear')}
                                                             </button>
                                                         )}
                                                     </div>
@@ -412,7 +412,7 @@ export function HybridFilterBar({
                                         )}
                                     >
                                         <CircleDot className="w-4 h-4" />
-                                        Mount
+                                        {t('filters.mount.label')}
                                         {selectedMounts.length > 0 && (
                                             <span className="w-5 h-5 bg-purple-700 text-white rounded-full text-xs flex items-center justify-center font-bold">
                                                 {selectedMounts.length}
@@ -433,9 +433,9 @@ export function HybridFilterBar({
                                                     className="absolute top-full left-0 mt-2 w-64 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl z-50 overflow-hidden"
                                                 >
                                                     <div className="p-2 border-b border-zinc-800 flex items-center justify-between">
-                                                        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">Filter by Mount</span>
+                                                        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">{t('filters.mount.title')}</span>
                                                         {selectedMounts.length > 0 && (
-                                                            <button onClick={() => onMountsChange([])} className="text-xs text-zinc-500 hover:text-white px-2">Clear</button>
+                                                            <button onClick={() => onMountsChange([])} className="text-xs text-zinc-500 hover:text-white px-2">{t('filters.clear')}</button>
                                                         )}
                                                     </div>
                                                     <div className="max-h-64 overflow-y-auto p-2">
@@ -475,7 +475,7 @@ export function HybridFilterBar({
                                         )}
                                     >
                                         <Scan className="w-4 h-4" />
-                                        Sensor
+                                        {t('filters.sensor.label')}
                                         {selectedSensorSizes.length > 0 && (
                                             <span className="w-5 h-5 bg-amber-700 text-white rounded-full text-xs flex items-center justify-center font-bold">
                                                 {selectedSensorSizes.length}
@@ -495,9 +495,9 @@ export function HybridFilterBar({
                                                     className="absolute top-full left-0 mt-2 w-64 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl z-50 overflow-hidden"
                                                 >
                                                     <div className="p-2 border-b border-zinc-800 flex items-center justify-between">
-                                                        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">Filter by Sensor</span>
+                                                        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">{t('filters.sensor.title')}</span>
                                                         {selectedSensorSizes.length > 0 && (
-                                                            <button onClick={() => onSensorsChange([])} className="text-xs text-zinc-500 hover:text-white px-2">Clear</button>
+                                                            <button onClick={() => onSensorsChange([])} className="text-xs text-zinc-500 hover:text-white px-2">{t('filters.clear')}</button>
                                                         )}
                                                     </div>
                                                     <div className="max-h-64 overflow-y-auto p-2">
@@ -537,7 +537,7 @@ export function HybridFilterBar({
                                         )}
                                     >
                                         <Maximize className="w-4 h-4" />
-                                        Resolution
+                                        {t('filters.resolution.label')}
                                         {selectedResolutions.length > 0 && (
                                             <span className="w-5 h-5 bg-red-700 text-white rounded-full text-xs flex items-center justify-center font-bold">
                                                 {selectedResolutions.length}
@@ -557,9 +557,9 @@ export function HybridFilterBar({
                                                     className="absolute top-full left-0 mt-2 w-64 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl z-50 overflow-hidden"
                                                 >
                                                     <div className="p-2 border-b border-zinc-800 flex items-center justify-between">
-                                                        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">Filter by Resolution</span>
+                                                        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-2">{t('filters.resolution.title')}</span>
                                                         {selectedResolutions.length > 0 && (
-                                                            <button onClick={() => onResolutionsChange([])} className="text-xs text-zinc-500 hover:text-white px-2">Clear</button>
+                                                            <button onClick={() => onResolutionsChange([])} className="text-xs text-zinc-500 hover:text-white px-2">{t('filters.clear')}</button>
                                                         )}
                                                     </div>
                                                     <div className="max-h-64 overflow-y-auto p-2">
@@ -614,7 +614,7 @@ export function HybridFilterBar({
                                 ))}
                                 {(selectedBrands.length + selectedTypes.length) > 4 && (
                                     <span className="px-3 py-1 bg-zinc-800 rounded-full text-xs text-zinc-500">
-                                        +{(selectedBrands.length + selectedTypes.length) - 4} more
+                                        +{(selectedBrands.length + selectedTypes.length) - 4} {t('filters.more')}
                                     </span>
                                 )}
                             </div>
@@ -647,7 +647,7 @@ export function HybridFilterBar({
                                                         type="text"
                                                         value={searchQuery}
                                                         onChange={(e) => onSearchChange(e.target.value)}
-                                                        placeholder="Search..."
+                                                        placeholder={t('search.placeholder')}
                                                         autoFocus
                                                         className="w-44 pl-9 pr-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl text-sm focus:outline-none focus:border-red-500 text-white placeholder-zinc-500"
                                                     />
@@ -674,7 +674,7 @@ export function HybridFilterBar({
                                             className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm text-zinc-300 transition-colors"
                                         >
                                             <Search className="w-4 h-4" />
-                                            Search
+                                            {t('search.label')}
                                         </motion.button>
                                     )}
                                 </AnimatePresence>
@@ -715,7 +715,7 @@ export function HybridFilterBar({
                                     className="flex items-center gap-1 px-3 py-2 text-zinc-400 hover:text-white text-sm"
                                 >
                                     <X className="w-4 h-4" />
-                                    Clear all
+                                    {t('filters.clearAll')}
                                 </button>
                             )}
                         </div>
@@ -731,9 +731,9 @@ export function HybridFilterBar({
                 <div className="sticky top-16 z-30 px-4 mb-4">
                     <div className="flex items-center justify-between gap-3 py-3">
                         <span className="text-sm text-zinc-400">
-                            {totalCount} items
+                            {totalCount} {t('filters.items')}
                             {selectedCategory && (
-                                <span className="text-zinc-500"> in <span className="text-white">{categories.find(c => c.slug === selectedCategory)?.name}</span></span>
+                                <span className="text-zinc-500"> {t('filters.in')} <span className="text-white">{categories.find(c => c.slug === selectedCategory)?.name}</span></span>
                             )}
                         </span>
 
@@ -741,7 +741,7 @@ export function HybridFilterBar({
                         {activeFilterCount > 0 && (
                             <div className="flex items-center gap-2">
                                 <span className="px-2.5 py-1 bg-red-700/20 text-red-400 rounded-full text-xs font-medium">
-                                    {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
+                                    {activeFilterCount} {t('filters.active')}
                                 </span>
                                 <button onClick={clearAllFilters} className="text-zinc-500">
                                     <X className="w-4 h-4" />
@@ -801,8 +801,8 @@ export function HybridFilterBar({
                                 {/* Header */}
                                 <div className="flex items-center justify-between px-6 pb-4 border-b border-zinc-800">
                                     <div>
-                                        <h3 className="text-xl font-bold text-white">Filters</h3>
-                                        <p className="text-sm text-zinc-500">{totalCount} items available</p>
+                                        <h3 className="text-xl font-bold text-white">{t('filters.title')}</h3>
+                                        <p className="text-sm text-zinc-500">{totalCount} {t('filters.items')}</p>
                                     </div>
                                     <button
                                         onClick={() => setMobileSheetOpen(false)}
@@ -817,7 +817,7 @@ export function HybridFilterBar({
                                     {/* Search */}
                                     <div>
                                         <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 block">
-                                            Search
+                                            {t('search.label')}
                                         </label>
                                         <div className="relative">
                                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
@@ -825,7 +825,7 @@ export function HybridFilterBar({
                                                 type="text"
                                                 value={searchQuery}
                                                 onChange={(e) => onSearchChange(e.target.value)}
-                                                placeholder="Search equipment..."
+                                                placeholder={t('search.placeholder')}
                                                 className="w-full pl-12 pr-4 py-3.5 bg-zinc-800 border border-zinc-700 rounded-2xl text-base focus:outline-none focus:border-red-500 text-white placeholder-zinc-500"
                                             />
                                         </div>
@@ -834,11 +834,11 @@ export function HybridFilterBar({
                                     {/* Category */}
                                     <div>
                                         <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 block">
-                                            Category
+                                            {t('sort.options.category')}
                                         </label>
                                         <div className="grid grid-cols-3 gap-2">
                                             <MobileCategoryButton
-                                                label="All"
+                                                label={t('filters.all')}
                                                 icon={Package}
                                                 active={selectedCategory === null}
                                                 onClick={() => onCategoryChange(null)}
@@ -861,14 +861,14 @@ export function HybridFilterBar({
                                         <div>
                                             <div className="flex items-center justify-between mb-3">
                                                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                                                    Brand
+                                                    {t('filters.brand.label')}
                                                 </label>
                                                 {selectedBrands.length > 0 && (
                                                     <button
                                                         onClick={() => onBrandsChange([])}
                                                         className="text-xs text-zinc-500 hover:text-white"
                                                     >
-                                                        Clear
+                                                        {t('filters.clear')}
                                                     </button>
                                                 )}
                                             </div>
@@ -896,14 +896,14 @@ export function HybridFilterBar({
                                         <div>
                                             <div className="flex items-center justify-between mb-3">
                                                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                                                    Type
+                                                    {t('filters.type.label')}
                                                 </label>
                                                 {selectedTypes.length > 0 && (
                                                     <button
                                                         onClick={() => onTypesChange([])}
                                                         className="text-xs text-zinc-500 hover:text-white"
                                                     >
-                                                        Clear
+                                                        {t('filters.clear')}
                                                     </button>
                                                 )}
                                             </div>
@@ -930,9 +930,9 @@ export function HybridFilterBar({
                                     {mounts.length > 0 && onMountToggle && (
                                         <div>
                                             <div className="flex items-center justify-between mb-3">
-                                                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Mount</label>
+                                                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{t('filters.mount.label')}</label>
                                                 {selectedMounts.length > 0 && onMountsChange && (
-                                                    <button onClick={() => onMountsChange([])} className="text-xs text-zinc-500 hover:text-white">Clear</button>
+                                                    <button onClick={() => onMountsChange([])} className="text-xs text-zinc-500 hover:text-white">{t('filters.clear')}</button>
                                                 )}
                                             </div>
                                             <div className="flex flex-wrap gap-2">
@@ -956,9 +956,9 @@ export function HybridFilterBar({
                                     {sensorSizes.length > 0 && onSensorToggle && (
                                         <div>
                                             <div className="flex items-center justify-between mb-3">
-                                                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Sensor</label>
+                                                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{t('filters.sensor.label')}</label>
                                                 {selectedSensorSizes.length > 0 && onSensorsChange && (
-                                                    <button onClick={() => onSensorsChange([])} className="text-xs text-zinc-500 hover:text-white">Clear</button>
+                                                    <button onClick={() => onSensorsChange([])} className="text-xs text-zinc-500 hover:text-white">{t('filters.clear')}</button>
                                                 )}
                                             </div>
                                             <div className="flex flex-wrap gap-2">
@@ -982,9 +982,9 @@ export function HybridFilterBar({
                                     {resolutions.length > 0 && onResolutionToggle && (
                                         <div>
                                             <div className="flex items-center justify-between mb-3">
-                                                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Resolution</label>
+                                                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{t('filters.resolution.label')}</label>
                                                 {selectedResolutions.length > 0 && onResolutionsChange && (
-                                                    <button onClick={() => onResolutionsChange([])} className="text-xs text-zinc-500 hover:text-white">Clear</button>
+                                                    <button onClick={() => onResolutionsChange([])} className="text-xs text-zinc-500 hover:text-white">{t('filters.clear')}</button>
                                                 )}
                                             </div>
                                             <div className="flex flex-wrap gap-2">
@@ -1011,14 +1011,14 @@ export function HybridFilterBar({
                                         onClick={() => setMobileSheetOpen(false)}
                                         className="w-full py-4 bg-red-700 text-white font-bold rounded-2xl text-lg"
                                     >
-                                        Show {totalCount} Results
+                                        {t('filters.showResults', { count: totalCount })}
                                     </button>
                                     {activeFilterCount > 0 && (
                                         <button
                                             onClick={clearAllFilters}
                                             className="w-full py-3 bg-zinc-800 text-zinc-300 font-medium rounded-2xl"
                                         >
-                                            Clear All Filters
+                                            {t('filters.clearAll')}
                                         </button>
                                     )}
                                 </div>

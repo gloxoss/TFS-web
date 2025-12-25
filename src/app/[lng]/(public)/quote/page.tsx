@@ -35,6 +35,7 @@ import {
   LogIn,
 } from 'lucide-react'
 import PocketBase from 'pocketbase'
+import { useTranslation } from '@/app/i18n/client'
 
 import { useCartStore, useAuthStore } from '@/stores'
 import {
@@ -60,6 +61,7 @@ export default function QuotePage() {
   const params = useParams()
   const router = useRouter()
   const lng = (params?.lng as string) || 'en'
+  const { t } = useTranslation(lng, 'quote')
 
   const [currentStep, setCurrentStep] = useState<FormStep>('dates')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -160,13 +162,13 @@ export default function QuotePage() {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Your cart is empty</h1>
-          <p className="text-zinc-400 mb-6">Add some equipment to request a quote.</p>
+          <h1 className="text-2xl font-bold text-white mb-4">{t('empty.title')}</h1>
+          <p className="text-zinc-400 mb-6">{t('empty.subtitle')}</p>
           <Link
             href={`/${lng}/equipment`}
             className="px-6 py-3 bg-white text-zinc-900 font-semibold rounded-lg hover:bg-zinc-200 transition-colors"
           >
-            Browse Equipment
+            {t('empty.action')}
           </Link>
         </div>
       </div>
@@ -214,7 +216,7 @@ export default function QuotePage() {
             transition={{ delay: 0.3 }}
             className="text-3xl md:text-4xl font-bold text-white mb-4"
           >
-            Quote Request Submitted!
+            {t('success.title')}
           </motion.h1>
 
           <motion.p
@@ -223,7 +225,7 @@ export default function QuotePage() {
             transition={{ delay: 0.4 }}
             className="text-zinc-400 mb-8 max-w-md mx-auto"
           >
-            Thank you for your interest. We&apos;ll review your request and contact you within 24 hours with a detailed quote.
+            {t('success.message')}
           </motion.p>
 
           {/* Confirmation Card */}
@@ -235,7 +237,7 @@ export default function QuotePage() {
           >
             <div className="flex items-center justify-center gap-2 mb-4">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-sm text-zinc-400">Confirmation Number</span>
+              <span className="text-sm text-zinc-400">{t('success.confirmationLabel')}</span>
             </div>
             <p className="text-2xl md:text-3xl font-mono font-bold text-white tracking-wider">
               {submitResult.confirmationNumber}
@@ -254,16 +256,16 @@ export default function QuotePage() {
                 <FileText className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm text-purple-300 font-medium mb-2">
-                    Track Your Quote
+                    {t('magicLink.title')}
                   </p>
                   <p className="text-sm text-zinc-400 mb-3">
-                    Bookmark this link to check your quote status anytime:
+                    {t('magicLink.subtitle')}
                   </p>
                   <Link
                     href={`/${lng}/quote/${submitResult.quoteId}?token=${submitResult.accessToken}`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg text-purple-400 hover:bg-purple-500/20 transition-colors text-sm font-medium"
                   >
-                    View Quote Status →
+                    {t('magicLink.action')}
                   </Link>
                 </div>
               </div>
@@ -281,10 +283,10 @@ export default function QuotePage() {
               <Mail className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm text-blue-300 font-medium mb-1">
-                  Check your inbox
+                  {t('emailNotice.title')}
                 </p>
                 <p className="text-sm text-zinc-400">
-                  We&apos;ve sent a confirmation email with your quote details. If you don&apos;t see it, please check your spam folder.
+                  {t('emailNotice.subtitle')}
                 </p>
               </div>
             </div>
@@ -298,13 +300,13 @@ export default function QuotePage() {
             className="text-left mb-8"
           >
             <h3 className="text-sm font-medium text-zinc-300 mb-4 text-center">
-              What happens next?
+              {t('success.nextSteps.title')}
             </h3>
             <div className="space-y-3">
               {[
-                { step: '1', text: 'Our team reviews your equipment request' },
-                { step: '2', text: 'We check availability for your rental dates' },
-                { step: '3', text: "You'll receive a detailed quote via email within 24 hours" },
+                { step: '1', text: t('success.nextSteps.step1') },
+                { step: '2', text: t('success.nextSteps.step2') },
+                { step: '3', text: t('success.nextSteps.step3') },
               ].map((item, index) => (
                 <motion.div
                   key={item.step}
@@ -333,13 +335,13 @@ export default function QuotePage() {
               href={`/${lng}/equipment`}
               className="px-6 py-3 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-zinc-700 transition-colors inline-flex items-center justify-center gap-2"
             >
-              Continue Browsing
+              {t('success.continue')}
             </Link>
             <Link
               href={`/${lng}`}
               className="px-6 py-3 bg-white text-zinc-900 font-semibold rounded-lg hover:bg-zinc-200 transition-colors inline-flex items-center justify-center gap-2"
             >
-              Back to Home
+              {t('success.home')}
             </Link>
           </motion.div>
         </motion.div>
@@ -448,12 +450,12 @@ export default function QuotePage() {
           className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Cart
+          {t('navigation.backToCart')}
         </Link>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-white">Request a Quote</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-white">{t('title')}</h1>
         <p className="text-zinc-400 mt-2">
-          Complete the form below and we&apos;ll get back to you with pricing and availability.
+          {t('description')}
         </p>
       </div>
 
@@ -480,7 +482,7 @@ export default function QuotePage() {
                 index <= currentStepIndex ? 'text-white' : 'text-zinc-600'
               )}
             >
-              {step.label}
+              {t(`steps.${step.id}`)}
             </span>
           ))}
         </div>
@@ -502,11 +504,11 @@ export default function QuotePage() {
               >
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-zinc-400" />
-                  When do you need the equipment?
+                  {t('dates.title')}
                 </h2>
 
                 <p className="text-zinc-400 text-sm">
-                  Select your rental pickup and return dates. This helps us check availability and prepare your quote.
+                  {t('dates.subtitle')}
                 </p>
 
                 <DateRangePicker
@@ -518,7 +520,7 @@ export default function QuotePage() {
                 {/* Equipment Summary */}
                 <div className="bg-zinc-800/50 rounded-lg p-4 mt-6">
                   <h3 className="text-sm font-medium text-zinc-400 mb-3">
-                    Equipment in your quote ({items.length} items)
+                    {t('dates.summary', { count: items.length })}
                   </h3>
                   <ul className="space-y-2 max-h-48 overflow-y-auto">
                     {items.slice(0, 5).map((item) => (
@@ -556,13 +558,13 @@ export default function QuotePage() {
               >
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <User className="w-5 h-5 text-zinc-400" />
-                  Contact Information
+                  {t('contact.title')}
                 </h2>
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                      First Name *
+                      {t('contact.firstName')}
                     </label>
                     <input
                       {...register('firstName')}
@@ -572,7 +574,7 @@ export default function QuotePage() {
                         'focus:outline-none focus:ring-2 focus:ring-white/20',
                         errors.firstName ? 'border-red-500' : 'border-zinc-700'
                       )}
-                      placeholder="John"
+                      placeholder={t('contact.firstNamePlaceholder')}
                     />
                     {errors.firstName && (
                       <p className="text-sm text-red-400 mt-1">{errors.firstName.message}</p>
@@ -581,7 +583,7 @@ export default function QuotePage() {
 
                   <div>
                     <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                      Last Name *
+                      {t('contact.lastName')}
                     </label>
                     <input
                       {...register('lastName')}
@@ -591,7 +593,7 @@ export default function QuotePage() {
                         'focus:outline-none focus:ring-2 focus:ring-white/20',
                         errors.lastName ? 'border-red-500' : 'border-zinc-700'
                       )}
-                      placeholder="Doe"
+                      placeholder={t('contact.lastNamePlaceholder')}
                     />
                     {errors.lastName && (
                       <p className="text-sm text-red-400 mt-1">{errors.lastName.message}</p>
@@ -602,7 +604,7 @@ export default function QuotePage() {
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                     <Mail className="w-4 h-4 inline mr-1.5" />
-                    Email Address *
+                    {t('contact.email')}
                   </label>
                   <input
                     {...register('email')}
@@ -612,7 +614,7 @@ export default function QuotePage() {
                       'focus:outline-none focus:ring-2 focus:ring-white/20',
                       errors.email ? 'border-red-500' : 'border-zinc-700'
                     )}
-                    placeholder="john@production.com"
+                    placeholder={t('contact.emailPlaceholder')}
                   />
                   {errors.email && (
                     <p className="text-sm text-red-400 mt-1">{errors.email.message}</p>
@@ -650,7 +652,7 @@ export default function QuotePage() {
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                     <Phone className="w-4 h-4 inline mr-1.5" />
-                    Phone Number *
+                    {t('contact.phone')}
                   </label>
                   <input
                     {...register('phone')}
@@ -660,7 +662,7 @@ export default function QuotePage() {
                       'focus:outline-none focus:ring-2 focus:ring-white/20',
                       errors.phone ? 'border-red-500' : 'border-zinc-700'
                     )}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder={t('contact.phonePlaceholder')}
                   />
                   {errors.phone && (
                     <p className="text-sm text-red-400 mt-1">{errors.phone.message}</p>
@@ -670,7 +672,7 @@ export default function QuotePage() {
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                     <Building className="w-4 h-4 inline mr-1.5" />
-                    Company (Optional)
+                    {t('contact.company')}
                   </label>
                   <input
                     {...register('company')}
@@ -680,7 +682,7 @@ export default function QuotePage() {
                       'focus:outline-none focus:ring-2 focus:ring-white/20',
                       errors.company ? 'border-red-500' : 'border-zinc-700'
                     )}
-                    placeholder="Acme Productions"
+                    placeholder={t('contact.companyPlaceholder')}
                   />
                 </div>
               </motion.div>
@@ -698,12 +700,12 @@ export default function QuotePage() {
               >
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <Film className="w-5 h-5 text-zinc-400" />
-                  Project Details
+                  {t('project.title')}
                 </h2>
 
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-2">
-                    Project Type *
+                    {t('project.type.label')}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {Object.entries(projectTypeLabels).map(([value, label]) => (
@@ -734,7 +736,7 @@ export default function QuotePage() {
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                     <FileText className="w-4 h-4 inline mr-1.5" />
-                    Project Description (Optional)
+                    {t('project.description.label')}
                   </label>
                   <textarea
                     {...register('projectDescription')}
@@ -744,14 +746,14 @@ export default function QuotePage() {
                       'focus:outline-none focus:ring-2 focus:ring-white/20 resize-none',
                       errors.projectDescription ? 'border-red-500' : 'border-zinc-700'
                     )}
-                    placeholder="Brief description of your project..."
+                    placeholder={t('project.description.placeholder')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-2">
                     <Truck className="w-4 h-4 inline mr-1.5" />
-                    Pickup / Delivery *
+                    {t('project.delivery.label')}
                   </label>
                   <div className="grid sm:grid-cols-2 gap-2">
                     {Object.entries(deliveryPreferenceLabels).map(([value, label]) => (
@@ -782,7 +784,7 @@ export default function QuotePage() {
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                     <MessageSquare className="w-4 h-4 inline mr-1.5" />
-                    Additional Notes (Optional)
+                    {t('project.notes.label')}
                   </label>
                   <textarea
                     {...register('notes')}
@@ -792,7 +794,7 @@ export default function QuotePage() {
                       'focus:outline-none focus:ring-2 focus:ring-white/20 resize-none',
                       errors.notes ? 'border-red-500' : 'border-zinc-700'
                     )}
-                    placeholder="Any special requirements or questions..."
+                    placeholder={t('project.notes.placeholder')}
                   />
                 </div>
               </motion.div>

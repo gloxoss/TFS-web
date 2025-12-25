@@ -3,12 +3,14 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Download, Mail } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslation } from '@/app/i18n/client'
 
 interface ServiceContactSectionProps {
     lng: string
 }
 
 export default function ServiceContactSection({ lng }: ServiceContactSectionProps) {
+    const { t } = useTranslation(lng, 'services')
     return (
         <section className="py-20 md:py-28 bg-zinc-950">
             <div className="container mx-auto px-6 max-w-6xl">
@@ -21,12 +23,10 @@ export default function ServiceContactSection({ lng }: ServiceContactSectionProp
                         transition={{ duration: 0.5 }}
                     >
                         <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4 uppercase tracking-tight">
-                            {lng === 'fr' ? 'Prêt à Démarrer ?' : 'Ready to Get Started?'}
+                            {t('contact.title')}
                         </h2>
                         <p className="text-zinc-400 leading-relaxed">
-                            {lng === 'fr'
-                                ? 'Contactez notre équipe pour discuter de votre projet et obtenir un devis personnalisé.'
-                                : 'Contact our team to discuss your project and get a personalized quote.'}
+                            {t('contact.description')}
                         </p>
                     </motion.div>
 
@@ -43,7 +43,7 @@ export default function ServiceContactSection({ lng }: ServiceContactSectionProp
                             href={`/${lng}/equipment`}
                             className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-[#D00000] hover:bg-[#B00000] text-white font-medium rounded-full transition-all duration-300 group"
                         >
-                            {lng === 'fr' ? 'Demander un Devis' : 'Request a Quote'}
+                            {t('contact.cta.quote')}
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
 
@@ -54,7 +54,7 @@ export default function ServiceContactSection({ lng }: ServiceContactSectionProp
                             className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-transparent border border-white/20 hover:border-white/40 text-white font-medium rounded-lg transition-all duration-300 group"
                         >
                             <Download className="w-5 h-5" />
-                            {lng === 'fr' ? 'Télécharger le Catalogue' : 'Download Catalog'}
+                            {t('contact.cta.catalog')}
                         </a>
 
                         {/* Contact Us */}
@@ -63,7 +63,7 @@ export default function ServiceContactSection({ lng }: ServiceContactSectionProp
                             className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-transparent border border-white/20 hover:border-white/40 text-white font-medium rounded-lg transition-all duration-300 group"
                         >
                             <Mail className="w-5 h-5" />
-                            {lng === 'fr' ? 'Nous Contacter' : 'Contact Us'}
+                            {t('contact.cta.contact')}
                         </Link>
                     </motion.div>
                 </div>
