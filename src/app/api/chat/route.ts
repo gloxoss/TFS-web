@@ -5,35 +5,50 @@
  * Tools temporarily disabled to test Groq API connection.
  */
 
+// Rate Limiter (Simple In-Memory for VPS/Serverless)
+const RATE_LIMIT = new Map<string, { count: number; lastReset: number }>();
+const LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS = 10; // 10 messages per minute
+
 import { streamText, convertToModelMessages, UIMessage } from 'ai'
 import { getAIModel, CONCIERGE_SYSTEM_PROMPT, AI_MODEL } from '@/lib/ai/config'
+import { tools } from '@/lib/ai/tools'
 
 // POST /api/chat
 export async function POST(req: Request) {
     try {
         const { messages }: { messages: UIMessage[] } = await req.json()
-        const recentMessages = messages.slice(-10)
 
-        console.log('Chat API called - using model:', AI_MODEL)
-        console.log('Provider:', process.env.AI_PROVIDER || 'openrouter (default)')
+        // 1. Rate Limiting Check
+        const ip = req.headers.get('x-forwarded-for') || 'unknown';
+        const now = Date.now();
+        const userLimit = RATE_LIMIT.get(ip) || { count: 0, lastReset: now };
 
-        // Check if API key is configured
-        const hasGroqKey = Boolean(process.env.GROQ_API_KEY)
-        const hasOpenRouterKey = Boolean(process.env.OPENROUTER_API_KEY)
-        console.log('API Keys configured - Groq:', hasGroqKey, 'OpenRouter:', hasOpenRouterKey)
-
-        if (!hasGroqKey && !hasOpenRouterKey) {
-            console.error('No AI API key configured! Set OPENROUTER_API_KEY or GROQ_API_KEY in .env')
-            return new Response(
-                JSON.stringify({ error: 'No AI API key configured' }),
-                { status: 500, headers: { 'Content-Type': 'application/json' } }
-            )
+        if (now - userLimit.lastReset > LIMIT_WINDOW) {
+            userLimit.count = 0;
+            userLimit.lastReset = now;
         }
 
+        if (userLimit.count >= MAX_REQUESTS) {
+            console.warn(`Rate limit exceeded for IP: ${ip}`);
+            return new Response(JSON.stringify({ error: "Too many requests. Please wait a moment." }), { status: 429 });
+        }
+
+        userLimit.count++;
+        RATE_LIMIT.set(ip, userLimit);
+
+        // 2. Prepare Context (last 10 messages)
+        const recentMessages = messages.slice(-10)
+
+        console.log(`[Chat] IP:${ip} Model:${AI_MODEL} Tools:Enabled`);
+
+        // 3. Stream Text with Tools
         const result = await streamText({
             model: getAIModel(),
             system: CONCIERGE_SYSTEM_PROMPT,
             messages: convertToModelMessages(recentMessages),
+            maxSteps: 5, // Allow up to 5 steps (Tool -> Result -> Tool -> Result -> Text)
+            tools: tools,
         })
 
         return result.toUIMessageStreamResponse()

@@ -40,7 +40,7 @@ import { Providers } from "@/app/providers";
 import AuthListener from "@/components/auth/auth-listener";
 import { CartMergeHandler } from "@/components/cart/cart-merge-handler";
 import { CartSyncProvider } from "@/components/cart/cart-sync-provider";
-import { AnalyticsBeacon } from "@/components/analytics/beacon";
+
 import { ENABLE_CLIENT_PORTAL } from "@/lib/config";
 
 const geistSans = Geist({
@@ -98,6 +98,7 @@ export default async function RootLayout({
     >
       <head>
         <meta name="darkreader-lock" />
+
       </head>
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <I18nProvider lng={lng} namespaces={['common']}>
@@ -109,7 +110,7 @@ export default async function RootLayout({
               <AuthListener initialUser={user} />
               {ENABLE_CLIENT_PORTAL && <CartMergeHandler />}
               {ENABLE_CLIENT_PORTAL && <CartSyncProvider />}
-              <AnalyticsBeacon />
+
               {children}
             </Providers>
           </PocketBaseProvider>

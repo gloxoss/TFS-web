@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: false, // IP Protection: Disable source maps in production
   transpilePackages: ["three", "three-globe"],
   images: {
     // Enable unoptimized to bypass Next.js optimizer fetch failures on some VPS environments
@@ -62,6 +63,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
 };
 
 export default nextConfig;
