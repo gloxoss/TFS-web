@@ -1,0 +1,23 @@
+{
+    "hero": {
+        "back": "Retour",
+        "subtitle": "Nos Services",
+        "cta": {
+            "quote": "Demander un Devis"
+        }
+    },
+    "viewEquipment": "Voir Équipements",
+    "features": {
+        "title": "Ce Que Nous Offrons",
+        "subtitle": "Des solutions complètes pour vos besoins de production."
+    },
+    "contact": {
+        "title": "Prêt à Démarrer ?",
+        "description": "Contactez notre équipe pour discuter de votre projet et obtenir un devis personnalisé.",
+        "cta": {
+            "quote": "Demander un Devis",
+            "catalog": "Télécharger le Catalogue",
+            "contact": "Nous Contacter"
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "hero": {
+        "back": "Back",
+        "subtitle": "Our Services",
+        "cta": {
+            "quote": "Request a Quote"
+        }
+    },
+    "viewEquipment": "View Equipment",
+    "features": {
+        "title": "What We Offer",
+        "subtitle": "Comprehensive solutions for your production needs."
+    },
+    "contact": {
+        "title": "Ready to Get Started?",
+        "description": "Contact our team to discuss your project and get a personalized quote.",
+        "cta": {
+            "quote": "Request a Quote",
+            "catalog": "Download Catalog",
+            "contact": "Contact Us"
+        }
+    }
+}

@@ -1,3 +1,11 @@
+/**
+ * TFS Equipment Rental Platform
+ * © 2024-2025 All Rights Reserved.
+ * Licensed exclusively for authorized use.
+ * Unauthorized modification or redistribution prohibited.
+ * For support and modifications: contact developer.
+ * Build: v1.0.0
+ */
 
 import { PocketBaseProvider } from "@/components/pocketbase-provider";
 import { createServerClient, getCurrentUser } from "@/lib/pocketbase/server";

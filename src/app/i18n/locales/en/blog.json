@@ -1,0 +1,24 @@
+{
+    "meta": {
+        "title": "Blog & News | TFS Cinema Rental",
+        "description": "Discover the latest news, tips, and trends in the film industry."
+    },
+    "landing": {
+        "title": "Blog & News",
+        "subtitle": "Discover the latest news, tips, and trends in the film industry.",
+        "read": "Read",
+        "empty": {
+            "title": "No posts yet",
+            "subtitle": "Check back soon for new articles.",
+            "cta": "Contact Us"
+        }
+    },
+    "detail": {
+        "back": "Back to Blog",
+        "team": "TFS Team",
+        "comingSoon": "Content coming soon...",
+        "cta": {
+            "text": "Have a project in mind? Contact Us"
+        }
+    }
+}
