@@ -1,3 +1,18 @@
+/*
+ * -----------------------------------------------------------------------------
+ * PROJECT:   TFS Digital Transformation
+ * ENGINEER:  Oussama Zaki
+ * AGENCY:    Epioso (https://epioso.tech)
+ * -----------------------------------------------------------------------------
+ * NOTICE:
+ * This software solution was architected and developed by Oussama Zaki 
+ * (Epioso) exclusively for the end-client (TFS).
+ *
+ * Intellectual Property Rights regarding the underlying codebase, architecture,
+ * and custom logic remain with the developer until full settlement is confirmed.
+ * -----------------------------------------------------------------------------
+ */
+
 import { createServerClient } from "@/lib/pocketbase/server";
 import { useTranslation } from "@/app/i18n";
 import { getBlogService, getServicesService } from "@/services";

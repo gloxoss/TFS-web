@@ -152,7 +152,6 @@ export async function mergeGuestCart(guestItems: CartItem[]): Promise<{ success:
     revalidatePath('/', 'layout');
 
     return { success: true };
-    return { success: true };
   } catch (error: any) {
     console.error("Merge guest cart error details:", JSON.stringify(error.response || error, null, 2));
     return { success: false, error: "Failed to merge cart" };

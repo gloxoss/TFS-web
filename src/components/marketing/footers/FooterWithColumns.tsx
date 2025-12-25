@@ -60,14 +60,27 @@ export default function FooterWithColumns({ lng }: FooterProps) {
                     </div>
                 </div>
 
-                {/* Copyright */}
-                <div className="border-t border-zinc-800 mt-8 pt-8 text-center">
-                    <p className="text-zinc-500 text-sm">
-                        © {new Date().getFullYear()} TFS. All rights reserved.
-                    </p>
-                    <p className="text-zinc-700 text-xs mt-2">
-                        v1.0.0 • Build {process.env.NEXT_PUBLIC_BUILD_ID || 'release'}
-                    </p>
+                {/* Copyright & Credits */}
+                <div className="border-t border-zinc-800 mt-8 pt-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p className="text-zinc-500 text-sm">
+                            © {new Date().getFullYear()} TV Film Solutions. All rights reserved.
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-zinc-600">
+                            <span>Platform Engineering by{' '}
+                                <a
+                                    href="https://epioso.tech"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-zinc-500 hover:text-amber-500 transition-colors"
+                                >
+                                    Epioso
+                                </a>
+                            </span>
+                            <span className="text-zinc-700">|</span>
+                            <span>v1.0.0 • Build {process.env.NEXT_PUBLIC_BUILD_ID || 'release'}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>

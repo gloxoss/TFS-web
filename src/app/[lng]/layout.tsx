@@ -22,6 +22,7 @@ import AuthListener from "@/components/auth/auth-listener";
 import { CartMergeHandler } from "@/components/cart/cart-merge-handler";
 import { CartSyncProvider } from "@/components/cart/cart-sync-provider";
 import { AnalyticsBeacon } from "@/components/analytics/beacon";
+import { ENABLE_CLIENT_PORTAL } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -87,8 +88,8 @@ export default async function RootLayout({
           >
             <Providers>
               <AuthListener initialUser={user} />
-              <CartMergeHandler />
-              <CartSyncProvider />
+              {ENABLE_CLIENT_PORTAL && <CartMergeHandler />}
+              {ENABLE_CLIENT_PORTAL && <CartSyncProvider />}
               <AnalyticsBeacon />
               {children}
             </Providers>
