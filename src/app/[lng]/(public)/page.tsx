@@ -4,12 +4,25 @@
  * ENGINEER:  Oussama Zaki
  * AGENCY:    Epioso (https://epioso.tech)
  * -----------------------------------------------------------------------------
- * NOTICE:
- * This software solution was architected and developed by Oussama Zaki 
- * (Epioso) exclusively for the end-client (TFS).
+ * COPYRIGHT NOTICE:
+ * 
+ * 1. CLIENT OWNERSHIP: 
+ * TFS (The Client) retains full ownership of all specific content, 
+ * branding, client data, and UI design elements created for this instance.
  *
- * Intellectual Property Rights regarding the underlying codebase, architecture,
- * and custom logic remain with the developer until full settlement is confirmed.
+ * 2. DEVELOPER OWNERSHIP (Background Technology):
+ * The underlying software architecture, "Kit Builder" logic, database schemas,
+ * and generic code libraries remain the exclusive Intellectual Property 
+ * of Oussama Zaki (Epioso). 
+ *
+ * 3. LICENSE GRANT:
+ * Upon full payment, the Client is granted a perpetual, non-exclusive, 
+ * royalty-free license to use, modify, and maintain this software for 
+ * their own business operations.
+ *
+ * 4. REUSE RIGHTS:
+ * The Developer (Epioso) reserves the right to reuse the underlying 
+ * technical architecture and logic for other projects.
  * -----------------------------------------------------------------------------
  */
 
