@@ -65,6 +65,9 @@ export default function FooterWithColumns({ lng }: FooterProps) {
                     <p className="text-zinc-500 text-sm">
                         © {new Date().getFullYear()} TFS. All rights reserved.
                     </p>
+                    <p className="text-zinc-700 text-xs mt-2">
+                        v1.0.0 • Build {process.env.NEXT_PUBLIC_BUILD_ID || 'release'}
+                    </p>
                 </div>
             </div>
         </footer>
