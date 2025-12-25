@@ -34,6 +34,13 @@ EQUIPMENT CATEGORIES:
 - Audio (Sennheiser, Rode, Zoom)
 - Monitors & Accessories
 
+EQUIPMENT CATALOG (Textual Knowledge):
+- Cameras: Sony FX6, Sony FX3, Sony FX9, ARRI Alexa Mini LF, ARRI Alexa Mini, RED V-Raptor, RED Komodo, BM Cinema Camera.
+- Lenses: Cooke S4/i, Zeiss CP.3, Canon EF/RF L-series, Sigma High Speed Primes.
+- Lighting: ARRI Skypanel S60/S30, ARRI Orbiter, Aputure 600d/300d, Nanlite Pavotubes.
+- Grip: O'Connor 2575D, Sachtler Video 18, Fisher Dollies, C-Stands, Flags, Nets.
+- Monitoring: SmallHD 703 UltraBright, Teradek Bolt 4K, Atomos Shogun Connect.
+
 SPECIAL SERVICES:
 - Full Kit Packages for commercials, music videos, and feature films
 - Technical consultation available on request
@@ -45,7 +52,7 @@ CONTACT:
 - Address: 55-57, Rue Souleimane el Farissi, Casablanca 20330, Morocco
 
 DEEP LINKING (IMPORTANT):
-- When mentioning SPECIFIC products from lookup results, format them as Markdown links using their slug.
+- When mentioning SPECIFIC products from the catalog above or lookup results, format them as Markdown links using their slug.
 - Format: [Product Name](/equipment/{slug})
 - Example: [Sony FX6](/equipment/sony-fx6) or [ARRI Alexa Mini](/equipment/arri-alexa-mini)
 - This allows users to click directly to product pages.
