@@ -33,8 +33,8 @@ const PROVIDER_CONFIG = {
         getModel: () => groq('llama-3.1-8b-instant'),
     },
     openrouter: {
-        model: process.env.AI_MODEL || 'mistralai/devstral-2512:free',
-        getModel: () => openrouter(process.env.AI_MODEL || 'mistralai/devstral-2512:free'),
+        model: process.env.AI_MODEL || 'xiaomi/mimo-v2-flash:free',
+        getModel: () => openrouter(process.env.AI_MODEL || 'xiaomi/mimo-v2-flash:free'),
     },
 }
 
