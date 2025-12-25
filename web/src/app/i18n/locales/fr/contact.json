@@ -28,6 +28,21 @@
         "title": "Heures d'Ouverture",
         "weekdays": "Lundi - Vendredi: 9h00 - 18h00",
         "saturday": "Samedi: 10h00 - 14h00",
-        "sunday": "Dimanche: Fermé"
+        "sunday": "Dimanche: Fermé",
+        "split": {
+            "weekdays_label": "Lun - Ven",
+            "weekdays_time": "9h00 - 18h00",
+            "saturday_label": "Samedi",
+            "saturday_time": "10h00 - 14h00",
+            "sunday_label": "Dimanche",
+            "sunday_status": "Fermé"
+        }
+    },
+    "labels": {
+        "headquarters": "Siège",
+        "address": "Adresse",
+        "phone": "Téléphone",
+        "email": "Email",
+        "fax": "Fax"
     }
 }

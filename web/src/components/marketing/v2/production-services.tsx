@@ -8,6 +8,8 @@ import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { EvervaultCard, Icon } from "@/components/ui/evervault-card"
 import type { Service } from '@/services/services/interface'
+import { useTranslation } from "@/app/i18n/client";
+import React from 'react';
 
 // Icon mapping based on service slug
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -35,15 +37,15 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 // Default images for services without images
 const DEFAULT_IMAGES: Record<string, string> = {
-    'equipment-hire': 'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?q=80&w=2670&auto=format&fit=crop',
-    'film-shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2670&auto=format&fit=crop',
-    'film-permits': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2670&auto=format&fit=crop',
-    'crewing': 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop',
-    'scouting': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2670&auto=format&fit=crop',
-    'catering': 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2670&auto=format&fit=crop',
-    'accommodation': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2670&auto=format&fit=crop',
-    'transportation': 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2670&auto=format&fit=crop',
-    'casting': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2670&auto=format&fit=crop',
+    'equipment-hire': 'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?q=75&w=800&auto=format&fit=crop',
+    'film-shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=75&w=800&auto=format&fit=crop',
+    'film-permits': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=75&w=800&auto=format&fit=crop',
+    'crewing': 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=75&w=800&auto=format&fit=crop',
+    'scouting': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=75&w=800&auto=format&fit=crop',
+    'catering': 'https://images.unsplash.com/photo-1555244162-803834f70033?q=75&w=800&auto=format&fit=crop',
+    'accommodation': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=75&w=800&auto=format&fit=crop',
+    'transportation': 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=75&w=800&auto=format&fit=crop',
+    'casting': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=75&w=800&auto=format&fit=crop',
 }
 
 // Mapped service type for the component
@@ -63,7 +65,7 @@ function mapServicesToDisplay(services: Service[], lng: string): MappedService[]
         title: lng === 'fr' && service.titleFr ? service.titleFr : service.title,
         description: lng === 'fr' && service.briefDescriptionFr ? service.briefDescriptionFr : (service.briefDescription || ''),
         icon: ICON_MAP[service.slug] || <Camera className="w-6 h-6" />,
-        image: service.images?.[0] || DEFAULT_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2559&auto=format&fit=crop',
+        image: service.images?.[0] || DEFAULT_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=75&w=800&auto=format&fit=crop',
     }))
 }
 
@@ -91,7 +93,7 @@ function TrophyIcon(props: any) {
     )
 }
 
-function ExpandingCardRow({ items, startIndex, lng }: { items: MappedService[], startIndex: number, lng: string }) {
+const ExpandingCardRow = ({ items, startIndex, lng }: { items: MappedService[], startIndex: number, lng: string }) => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [centeredIndex, setCenteredIndex] = useState<number | null>(null);
     const [isMobile, setIsMobile] = useState(false);
@@ -216,34 +218,20 @@ function ExpandingCardRow({ items, startIndex, lng }: { items: MappedService[], 
     )
 }
 
-// Translations
-const translations = {
-    en: {
-        title: 'Our Services',
-        subtitle: 'We manage filming from the smallest technical details—down to cables and connections—to full-scale productions, delivering reliable, professional results.',
-        viewAll: 'View all services'
-    },
-    fr: {
-        title: 'Nos Services',
-        subtitle: 'Nous gérons le tournage des moindres détails techniques — des câbles aux connexions — jusqu\'aux productions de grande envergure, garantissant des résultats fiables et professionnels.',
-        viewAll: 'Voir tous les services'
-    }
-}
-
 interface ProductionServicesProps {
     lng?: string
     services?: Service[]
 }
 
 export function ProductionServices({ lng = 'en', services = [] }: ProductionServicesProps) {
+    const { t } = useTranslation(lng, 'home');
+
     // Map services to display format with icons and images
     const mappedServices = mapServicesToDisplay(services, lng);
 
     // Split into rows (up to 5 per row)
     const row1 = mappedServices.slice(0, 5);
     const row2 = mappedServices.slice(5, 10);
-
-    const t = translations[lng as keyof typeof translations] || translations.en;
 
     // If no services, don't render the section
     if (mappedServices.length === 0) {
@@ -259,9 +247,9 @@ export function ProductionServices({ lng = 'en', services = [] }: ProductionServ
             <div className="max-w-[1400px] mx-auto relative z-10">
                 <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-2xl">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t.title}</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t('services.title')}</h2>
                         <p className="text-zinc-400 text-lg">
-                            {t.subtitle}
+                            {t('services.subtitle')}
                         </p>
                     </div>
 

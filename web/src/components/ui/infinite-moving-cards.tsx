@@ -92,55 +92,53 @@ export const InfiniteMovingCards = ({
             >
                 {items.map((item, idx) => {
                     const cardContent = (
+                        <div className="relative z-20 flex flex-col h-full justify-between">
+                            <div>
+                                {item.image && (
+                                    <div className="relative h-48 w-full mb-6 overflow-hidden rounded-lg">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.quote}
+                                            fill
+                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 border-inset border border-white/5 rounded-lg pointer-events-none" />
+                                    </div>
+                                )}
+
+                                <div className="flex items-center gap-2 mb-3">
+                                    <span className="text-xs font-mono uppercase text-[#D00000] tracking-widest">{item.name}</span>
+                                </div>
+
+                                <h3 className="text-xl font-display font-bold text-white uppercase leading-tight mb-4 min-h-[3rem]">
+                                    {item.quote}
+                                </h3>
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+                                <span className="text-sm text-zinc-500 font-light flex items-center gap-2 group-hover:text-white transition-colors">
+                                    Read Article <ArrowUpRight className="w-3 h-3" />
+                                </span>
+                            </div>
+                        </div>
+                    );
+
+                    return (
                         <li
                             className="w-[350px] max-w-full relative rounded-2xl border border-white/10 bg-zinc-950/50 flex-shrink-0 px-8 py-6 md:w-[450px] transition-colors hover:border-red-600/30 hover:bg-zinc-900 group cursor-pointer"
                             key={idx}
                         >
-                            {/* Content */}
-                            <div className="relative z-20 flex flex-col h-full justify-between">
-                                <div>
-                                    {item.image && (
-                                        <div className="relative h-48 w-full mb-6 overflow-hidden rounded-lg">
-                                            <Image
-                                                src={item.image}
-                                                alt={item.quote}
-                                                fill
-                                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                            />
-                                            {/* Overlay for better text readability if we were putting text over it, but here it's separate. 
-                                    Let's add a subtle border inner.
-                                 */}
-                                            <div className="absolute inset-0 border-inset border border-white/5 rounded-lg pointer-events-none" />
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className="text-xs font-mono uppercase text-[#D00000] tracking-widest">{item.name}</span>
-                                    </div>
-
-                                    <h3 className="text-xl font-display font-bold text-white uppercase leading-tight mb-4 min-h-[3rem]">
-                                        {item.quote}
-                                    </h3>
-                                </div>
-
-                                <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
-                                    <span className="text-sm text-zinc-500 font-light flex items-center gap-2 group-hover:text-white transition-colors">
-                                        Read Article <ArrowUpRight className="w-3 h-3" />
-                                    </span>
-                                </div>
-                            </div>
+                            {item.href ? (
+                                <Link href={item.href} className="block h-full w-full">
+                                    {cardContent}
+                                </Link>
+                            ) : (
+                                cardContent
+                            )}
                         </li>
                     );
-
-                    return item.href ? (
-                        <Link href={item.href} key={idx}>
-                            {cardContent}
-                        </Link>
-                    ) : (
-                        cardContent
-                    );
                 })}
-            </ul>
-        </div>
+            </ul >
+        </div >
     );
 };

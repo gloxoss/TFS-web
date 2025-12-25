@@ -2,7 +2,7 @@ import PocketBase, { RecordModel } from 'pocketbase';
 import { IProductService, ProductFilters, PaginatedResult } from './interface';
 import { Product, Category } from './types';
 
-const PB_URL = process.env.NEXT_PUBLIC_PB_URL || 'http://127.0.0.1:8090';
+const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
 
 /**
  * Map raw DB record to clean Product type

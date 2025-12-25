@@ -3,7 +3,12 @@
 import React from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { World as Globe, GlobeConfig } from "@/components/ui/globe";
+import dynamic from "next/dynamic";
+const Globe = dynamic(() => import("@/components/ui/globe").then((m) => m.World), {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-neutral-900 animate-pulse rounded-xl" />
+});
+import type { GlobeConfig } from "@/components/ui/globe";
 import { motion } from "framer-motion";
 import {
     IconGlobe,
@@ -76,24 +81,24 @@ export default function GlobalOperationsGrid({ lng }: GlobalOperationsGridProps)
         },
         // 2. Casablanca Hub (The specific "One Big Dot" context in text)
         {
-            title: "Casablanca HQ",
-            description: "Our central logistics hub connects international productions with local expertise.",
+            title: t("operations.cards.hq.title"),
+            description: t("operations.cards.hq.description"),
             header: <SkeletonOne />,
             className: "md:col-span-1",
             icon: <IconBuildingSkyscraper className="h-4 w-4 text-neutral-500" />,
         },
         // 3. Logistics & Customs
         {
-            title: "Seamless Logistics",
-            description: "We handle ATA carnets, customs clearance, and secure transport across Morocco.",
+            title: t("operations.cards.logistics.title"),
+            description: t("operations.cards.logistics.description"),
             header: <SkeletonTwo />,
             className: "md:col-span-1",
             icon: <IconTruckDelivery className="h-4 w-4 text-neutral-500" />,
         },
         // 4. Crew & Talent
         {
-            title: "World-Class Crew",
-            description: "Bilingual technicians and operators experienced with diverse international teams.",
+            title: t("operations.cards.crew.title"),
+            description: t("operations.cards.crew.description"),
             header: <SkeletonThree />,
             className: "md:col-span-3", // Full width
             icon: <IconUsersGroup className="h-4 w-4 text-neutral-500" />,

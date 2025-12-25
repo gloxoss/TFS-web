@@ -1,0 +1,24 @@
+{
+    "meta": {
+        "title": "Blog & Actualités | TFS Location Cinéma",
+        "description": "Découvrez les dernières actualités, conseils et tendances de l'industrie cinématographique."
+    },
+    "landing": {
+        "title": "Blog & Actualités",
+        "subtitle": "Découvrez les dernières actualités, conseils et tendances de l'industrie cinématographique.",
+        "read": "Lire",
+        "empty": {
+            "title": "Aucun article pour le moment",
+            "subtitle": "Revenez bientôt pour découvrir nos articles.",
+            "cta": "Contactez-nous"
+        }
+    },
+    "detail": {
+        "back": "Retour au Blog",
+        "team": "Équipe TFS",
+        "comingSoon": "Contenu à venir...",
+        "cta": {
+            "text": "Vous avez un projet ? Contactez-nous"
+        }
+    }
+}

@@ -28,6 +28,21 @@
         "title": "Opening Hours",
         "weekdays": "Monday - Friday: 9:00 - 18:00",
         "saturday": "Saturday: 10:00 - 14:00",
-        "sunday": "Sunday: Closed"
+        "sunday": "Sunday: Closed",
+        "split": {
+            "weekdays_label": "Mon - Fri",
+            "weekdays_time": "9:00 - 18:00",
+            "saturday_label": "Saturday",
+            "saturday_time": "10:00 - 14:00",
+            "sunday_label": "Sunday",
+            "sunday_status": "Closed"
+        }
+    },
+    "labels": {
+        "headquarters": "Headquarters",
+        "address": "Address",
+        "phone": "Phone",
+        "email": "Email",
+        "fax": "Fax"
     }
 }

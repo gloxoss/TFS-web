@@ -1,10 +1,10 @@
-"use client"
 
 import { Service } from '@/services/services/interface'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslation } from '@/app/i18n/client'
 
 // Section Components
 import ServiceHeroSection from '@/components/marketing/services/service-hero-section'
@@ -20,6 +20,7 @@ interface ServiceDetailClientProps {
 }
 
 export default function ServiceDetailClient({ service, lng }: ServiceDetailClientProps) {
+    const { t } = useTranslation(lng, 'services')
     const [showFloatingButton, setShowFloatingButton] = useState(false)
 
     // Localized content
@@ -59,7 +60,7 @@ export default function ServiceDetailClient({ service, lng }: ServiceDetailClien
                             href={`/${lng}/equipment`}
                             className="inline-flex items-center gap-2 px-5 py-3 bg-[#D00000] rounded-full text-white text-sm font-medium hover:bg-[#B00000] transition-all duration-300 group shadow-[0_0_20px_rgba(208,0,0,0.4)]"
                         >
-                            {lng === 'fr' ? 'Voir Équipements' : 'View Equipment'}
+                            {t('viewEquipment')}
                             <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
                         </Link>
                     </motion.div>

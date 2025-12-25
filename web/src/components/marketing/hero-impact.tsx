@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence, useSpring, useVelocity } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { homePage, t } from "@/data/site-content";
+import Image from "next/image";
+import { useTranslation } from "@/app/i18n/client";
 
 // TFS Cinema Rental Hero Images - Local optimized images
 const HERO_IMAGES = [
@@ -14,16 +15,6 @@ const HERO_IMAGES = [
 ];
 
 // Word Stagger Animation Variants for Headline
-const wordVariants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
-    visible: {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }
-    }
-};
-
 const fadeInBlur = {
     hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
     visible: {
@@ -39,16 +30,13 @@ interface HeroImpactProps {
 }
 
 export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
+    const { t } = useTranslation(lng, 'home');
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentSlide, setCurrentSlide] = useState(0);
     const { scrollY } = useScroll();
 
-    const content = homePage.heroImpact;
-
-    // Velocity-Based Blur (Motion Blur)
-    const scrollVelocity = useVelocity(scrollY);
-    const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
-    const blurPx = useTransform(smoothVelocity, (latest) => `blur(${Math.min(Math.abs(latest / 50), 8)}px)`);
+    // Velocity-Based Blur (Disabled for performance/TBT)
+    const blurPx = "blur(0px)";
 
     // Parallax Position
     const scale = useTransform(scrollY, [0, 1000], [1, 1.2]);
@@ -62,41 +50,32 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
         return () => clearInterval(timer);
     }, []);
 
-    // Helper to split text into word components
-    const AnimatedText = ({ text, className, delayOffset = 0 }: { text: string, className?: string, delayOffset?: number }) => (
-        <span className={className}>
-            {text.split(" ").map((word, i) => (
-                <motion.span
-                    key={i}
-                    variants={wordVariants}
-                    custom={i}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: delayOffset + i * 0.1 }}
-                    className="inline-block mr-[0.2em]"
-                >
-                    {word}
-                </motion.span>
-            ))}
-        </span>
-    );
-
     return (
         <div ref={containerRef} className="relative h-[80vh] min-h-[600px] sm:min-h-[700px] lg:h-screen lg:min-h-[1100px] w-full isolation-isolate overflow-hidden font-sans selection:bg-red-600 selection:text-white">
-
             {/* Background Slideshow */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.div style={{ scale }} className="absolute inset-0">
-                    <AnimatePresence mode="popLayout">
+                    <AnimatePresence mode="popLayout" initial={false}>
                         <motion.div
                             key={currentSlide}
-                            className="absolute inset-0 bg-cover bg-center"
-                            style={{ backgroundImage: `url(${HERO_IMAGES[currentSlide]})` }}
-                            initial={{ opacity: 0, scale: 1.1 }}
+                            className="absolute inset-0"
+                            initial={currentSlide === 0 ? { opacity: 1 } : { opacity: 0, scale: 1.1 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1.5 }}
-                        />
+                        >
+                            <Image
+                                src={HERO_IMAGES[currentSlide]}
+                                alt="Cinema production set"
+                                fill
+                                priority={currentSlide === 0}
+                                loading="eager"
+                                className="object-cover"
+                                sizes="100vw"
+                                quality={90}
+                                {...(currentSlide === 0 ? { fetchPriority: "high" } : {})}
+                            />
+                        </motion.div>
                     </AnimatePresence>
                 </motion.div>
             </div>
@@ -113,8 +92,16 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                 <div className="flex flex-col items-end text-right max-w-xl">
                     {/* Headline */}
                     <h2 className="text-6xl md:text-8xl font-display font-bold text-white uppercase leading-[0.85] tracking-tight mb-6">
-                        <div className="block"><AnimatedText text={t(content.headline.line1, lng)} delayOffset={0.2} /></div>
-                        <div className="block text-white/70"><AnimatedText text={t(content.headline.line2, lng)} delayOffset={0.5} /></div>
+                        <div className="block">
+                            <span className="opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards] blur-0 block">
+                                {t('hero.headline.line1')}
+                            </span>
+                        </div>
+                        <div className="block text-white/70">
+                            <span className="opacity-0 animate-[fadeIn_0.8s_ease-out_0.5s_forwards] blur-0 block">
+                                {t('hero.headline.line2')}
+                            </span>
+                        </div>
                     </h2>
 
                     {/* Description */}
@@ -122,16 +109,16 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                         initial="hidden" animate="visible" variants={fadeInBlur} transition={{ delay: 0.8 }}
                         className="text-gray-300 text-lg leading-relaxed mb-8 max-w-sm"
                     >
-                        {t(content.description, lng)}
+                        {t('hero.description')}
                     </motion.p>
 
                     {/* Button */}
                     <motion.div initial="hidden" animate="visible" variants={fadeInBlur} transition={{ delay: 1.1 }}>
                         <Link
-                            href={`/${lng}${content.cta.href}`}
+                            href={`/${lng}/contact`}
                             className="group flex items-center gap-3 bg-[#D00000] text-white px-8 py-4 rounded-full font-bold uppercase tracking-wide transition-all hover:bg-[#A00000] hover:scale-105"
                         >
-                            {t(content.cta.text, lng)}
+                            {t('hero.cta')}
                             <ArrowUpRight className="h-5 w-5 transition-transform group-hover:rotate-45" />
                         </Link>
                     </motion.div>
@@ -147,7 +134,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                     className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase"
                     style={{ x: xLeft, filter: blurPx }}
                 >
-                    {t(content.megaText.line1, lng)}
+                    {t('hero.megaText.line1')}
                 </motion.h1>
 
                 <motion.h1
@@ -157,7 +144,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                     className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw]"
                     style={{ x: xRight, filter: blurPx }}
                 >
-                    {t(content.megaText.line2, lng)}
+                    {t('hero.megaText.line2')}
                 </motion.h1>
             </div>
 

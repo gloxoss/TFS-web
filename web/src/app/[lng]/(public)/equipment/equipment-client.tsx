@@ -346,7 +346,7 @@ export function EquipmentCatalogClient({
             className="text-center"
           >
             <span className="inline-block px-4 py-1.5 bg-red-700/15 text-red-400 rounded-full text-sm font-medium mb-6">
-              Professional Film Equipment
+              {t('hero.pill')}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               {t('title')}

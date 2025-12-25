@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import type { ServiceFeature } from '@/services/services/interface'
+import { useTranslation } from '@/app/i18n/client'
 
 interface ServiceFeaturesSectionProps {
     features: ServiceFeature[]
@@ -10,6 +11,7 @@ interface ServiceFeaturesSectionProps {
 }
 
 export default function ServiceFeaturesSection({ features, tags, lng }: ServiceFeaturesSectionProps) {
+    const { t } = useTranslation(lng, 'services')
     if (!features || features.length === 0) return null
 
     return (
@@ -51,12 +53,10 @@ export default function ServiceFeaturesSection({ features, tags, lng }: ServiceF
                     className="text-center mb-16"
                 >
                     <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4 uppercase tracking-tight">
-                        {lng === 'fr' ? 'Ce Que Nous Offrons' : 'What We Offer'}
+                        {t('features.title')}
                     </h2>
                     <p className="text-zinc-400 max-w-2xl mx-auto">
-                        {lng === 'fr'
-                            ? 'Des solutions complètes pour vos besoins de production.'
-                            : 'Comprehensive solutions for your production needs.'}
+                        {t('features.subtitle')}
                     </p>
                 </motion.div>
 
