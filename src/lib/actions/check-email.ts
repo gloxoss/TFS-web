@@ -64,15 +64,15 @@ export async function checkEmailExists(email: string): Promise<boolean> {
 
         // Authenticate as superuser to query users
         // This runs server-side so we can use admin credentials
-        if (process.env.PB_ADMIN_EMAIL && process.env.PB_ADMIN_PASSWORD) {
-            console.log('[checkEmailExists] Authenticating as admin:', process.env.PB_ADMIN_EMAIL?.substring(0, 3) + '***')
+        if (process.env.POCKETBASE_ADMIN_EMAIL && process.env.POCKETBASE_ADMIN_PASSWORD) {
+            console.log('[checkEmailExists] Authenticating as admin:', process.env.POCKETBASE_ADMIN_EMAIL?.substring(0, 3) + '***')
             await pb.collection('_superusers').authWithPassword(
-                process.env.PB_ADMIN_EMAIL,
-                process.env.PB_ADMIN_PASSWORD
+                process.env.POCKETBASE_ADMIN_EMAIL,
+                process.env.POCKETBASE_ADMIN_PASSWORD
             )
             console.log('[checkEmailExists] Admin auth successful')
         } else {
-            console.log('[checkEmailExists] WARNING: No admin credentials in env (PB_ADMIN_EMAIL, PB_ADMIN_PASSWORD)')
+            console.log('[checkEmailExists] WARNING: No admin credentials in env (POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD)')
             return false
         }
 
