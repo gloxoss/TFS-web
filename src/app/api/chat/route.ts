@@ -19,36 +19,36 @@ import { STORE_INFO, SITE_PAGES } from '@/lib/ai/company-data';
 // Tool Definitions Reserved for Route
 const availableTools = {
     lookup_equipment: tool({
-        description: 'Search the PocketBase catalog for equipment, kits, or services.',
+        description: 'Search the PocketBase equipment catalog for cameras, lenses, lighting, grip, and accessories.',
         parameters: z.object({
-            query: z.string().describe('The search term (e.g., "Sony Venice", "Lighting Kit", "Lens").'),
-            category: z.string().optional().describe('Optional category filter (e.g., "Camera", "Lighting").'),
+            query: z.string().describe('The search term (e.g., "Sony FX6", "Alexa Mini", "Aputure").'),
+            category: z.string().optional().describe('Optional category filter (e.g., "Cameras", "Lenses", "Lighting").'),
         }),
         execute: async ({ query, category }: { query: string; category?: string }) => {
             console.log(`[Tool] lookup_equipment called with query: "${query}"`);
             try {
                 const pb = await createServerClient();
-                let filter = `(title ~ "${query}" || tags ~ "${query}" || full_description ~ "${query}")`;
-                if (category) filter += ` && tags ~ "${category}"`;
-                filter += ` && is_active=true`;
+                // Query the 'equipment' collection (110+ items) - NOT 'services'
+                let filter = `(name ~ "${query}" || brand ~ "${query}" || category ~ "${query}" || description ~ "${query}")`;
+                if (category) filter += ` && category ~ "${category}"`;
 
-                const records = await pb.collection('services').getList(1, 10, { filter, sort: '-created' });
+                const records = await pb.collection('equipment').getList(1, 10, { filter, sort: '-created' });
 
-                if (records.items.length === 0) return { products: [], message: "No exact matches found." };
+                if (records.items.length === 0) return { products: [], message: "No exact matches found. Try a broader term like 'camera' or 'lighting'." };
 
                 const products = records.items.map(record => ({
                     id: record.id,
-                    name: record.title,
+                    name: record.name,
                     slug: record.slug,
-                    category: record.tags?.[0] || 'Equipment',
-                    description: record.brief_description || record.full_description?.substring(0, 100),
-                    imageUrl: record.hero_image ? `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${record.collectionId}/${record.id}/${record.hero_image}` : undefined,
-                    isAvailable: true
+                    category: record.category || 'Equipment',
+                    description: record.description?.substring(0, 150) || '',
+                    imageUrl: record.image ? `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${record.collectionId}/${record.id}/${record.image}` : undefined,
+                    isAvailable: record.available !== false
                 }));
                 return { equipment: products };
             } catch (error) {
                 console.error('[Tool Error]', error);
-                return { error: "Failed to search equipment." };
+                return { error: "Failed to search equipment catalog." };
             }
         },
     }),
