@@ -8,8 +8,6 @@ import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { EvervaultCard, Icon } from "@/components/ui/evervault-card"
 import type { Service } from '@/services/services/interface'
-import { useTranslation } from "@/app/i18n/client";
-import React from 'react';
 
 // Icon mapping based on service slug
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -93,7 +91,7 @@ function TrophyIcon(props: any) {
     )
 }
 
-const ExpandingCardRow = ({ items, startIndex, lng }: { items: MappedService[], startIndex: number, lng: string }) => {
+function ExpandingCardRow({ items, startIndex, lng }: { items: MappedService[], startIndex: number, lng: string }) {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [centeredIndex, setCenteredIndex] = useState<number | null>(null);
     const [isMobile, setIsMobile] = useState(false);
@@ -218,20 +216,34 @@ const ExpandingCardRow = ({ items, startIndex, lng }: { items: MappedService[], 
     )
 }
 
+// Translations
+const translations = {
+    en: {
+        title: 'Our Services',
+        subtitle: 'We manage filming from the smallest technical details—down to cables and connections—to full-scale productions, delivering reliable, professional results.',
+        viewAll: 'View all services'
+    },
+    fr: {
+        title: 'Nos Services',
+        subtitle: 'Nous gérons le tournage des moindres détails techniques — des câbles aux connexions — jusqu\'aux productions de grande envergure, garantissant des résultats fiables et professionnels.',
+        viewAll: 'Voir tous les services'
+    }
+}
+
 interface ProductionServicesProps {
     lng?: string
     services?: Service[]
 }
 
 export function ProductionServices({ lng = 'en', services = [] }: ProductionServicesProps) {
-    const { t } = useTranslation(lng, 'home');
-
     // Map services to display format with icons and images
     const mappedServices = mapServicesToDisplay(services, lng);
 
     // Split into rows (up to 5 per row)
     const row1 = mappedServices.slice(0, 5);
     const row2 = mappedServices.slice(5, 10);
+
+    const t = translations[lng as keyof typeof translations] || translations.en;
 
     // If no services, don't render the section
     if (mappedServices.length === 0) {
@@ -247,9 +259,9 @@ export function ProductionServices({ lng = 'en', services = [] }: ProductionServ
             <div className="max-w-[1400px] mx-auto relative z-10">
                 <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-2xl">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t('services.title')}</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t.title}</h2>
                         <p className="text-zinc-400 text-lg">
-                            {t('services.subtitle')}
+                            {t.subtitle}
                         </p>
                     </div>
 

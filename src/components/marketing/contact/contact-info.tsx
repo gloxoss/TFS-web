@@ -45,7 +45,7 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                         <h3 className="text-2xl font-bold text-white font-display uppercase tracking-wide">
                             {t("info.casablanca.city")}
                         </h3>
-                        <p className="text-sm text-zinc-500">{t("labels.headquarters")}</p>
+                        <p className="text-sm text-zinc-500">Headquarters</p>
                     </div>
                 </div>
 
@@ -57,7 +57,7 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                             <MapPin className="w-5 h-5 text-zinc-400" />
                         </div>
                         <div>
-                            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">{t("labels.address")}</p>
+                            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">Address</p>
                             <p className="text-white leading-relaxed">{company.address.street}</p>
                         </div>
                     </div>
@@ -68,7 +68,7 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                             <Phone className="w-5 h-5 text-zinc-400" />
                         </div>
                         <div>
-                            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">{t("labels.phone")}</p>
+                            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">Phone</p>
                             <a
                                 href={`tel:${company.phone.link}`}
                                 className="text-white hover:text-[#D00000] transition-colors"
@@ -76,9 +76,12 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                                 {company.phone.display}
                             </a>
                             {company.fax && (
-                                <p className="text-zinc-500 text-sm mt-1">
-                                    {t("labels.fax")}: {company.fax.display}
-                                </p>
+                                <a
+                                    href={`tel:${company.fax.link}`}
+                                    className="block text-white hover:text-[#D00000] transition-colors mt-1"
+                                >
+                                    {company.fax.display}
+                                </a>
                             )}
                         </div>
                     </div>
@@ -89,7 +92,7 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
                             <Mail className="w-5 h-5 text-zinc-400" />
                         </div>
                         <div>
-                            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">{t("labels.email")}</p>
+                            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">Email</p>
                             <a
                                 href={`mailto:${company.email}`}
                                 className="text-white hover:text-[#D00000] transition-colors"
@@ -119,16 +122,16 @@ export default function ContactInfo({ lng }: ContactInfoProps) {
 
                 <div className="space-y-3">
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
-                        <span className="text-zinc-400">{t("hours.split.weekdays_label")}</span>
-                        <span className="text-white font-medium">{t("hours.split.weekdays_time")}</span>
+                        <span className="text-zinc-400">Mon - Fri</span>
+                        <span className="text-white font-medium">9:00 - 18:00</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
-                        <span className="text-zinc-400">{t("hours.split.saturday_label")}</span>
-                        <span className="text-white font-medium">{t("hours.split.saturday_time")}</span>
+                        <span className="text-zinc-400">Saturday</span>
+                        <span className="text-white font-medium">10:00 - 14:00</span>
                     </div>
                     <div className="flex justify-between items-center py-2">
-                        <span className="text-zinc-400">{t("hours.split.sunday_label")}</span>
-                        <span className="text-zinc-500">{t("hours.split.sunday_status")}</span>
+                        <span className="text-zinc-400">Sunday</span>
+                        <span className="text-zinc-500">Closed</span>
                     </div>
                 </div>
             </motion.div>

@@ -174,8 +174,8 @@ export class PocketBaseQuoteService implements IQuoteService {
       // if it happens to be a user client.
       const adminPb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
       await adminPb.collection('_superusers').authWithPassword(
-        process.env.PB_ADMIN_EMAIL || '',
-        process.env.PB_ADMIN_PASSWORD || ''
+        process.env.POCKETBASE_ADMIN_EMAIL || '',
+        process.env.POCKETBASE_ADMIN_PASSWORD || ''
       )
 
       // Fetch quote by ID using admin client

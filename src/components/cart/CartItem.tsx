@@ -169,6 +169,19 @@ export const CartItemComponent = memo(function CartItemComponent({
           </p>
         )}
 
+        {/* Kit Accessories Display */}
+        {item.kitDetails && item.kitDetails.length > 0 && (
+          <div className="mt-3 space-y-1 bg-zinc-800/30 p-2 rounded-md border border-zinc-800/50">
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Includes</p>
+            {item.kitDetails.map((detail, idx) => (
+              <div key={`${item.id}-detail-${idx}`} className="flex items-center gap-2 text-xs text-zinc-300">
+                <div className="w-1 h-1 rounded-full bg-red-500 flex-shrink-0" />
+                <span className="opacity-80 line-clamp-1">{detail.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Quantity Controls - No price shown (BLIND QUOTE) */}
         <div className="flex items-center justify-between mt-3">
           {/* Quantity Controls */}

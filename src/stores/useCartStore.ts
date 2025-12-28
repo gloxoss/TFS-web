@@ -26,33 +26,47 @@ export interface CartItemDates {
   end: string
 }
 
+export interface KitDetailItem {
+  id: string
+  name: string
+  slug?: string
+  imageUrl?: string
+  slotName: string
+}
+
 export interface CartItem {
   id: string
   product: Product
   quantity: number
   dates: CartItemDates
-  groupId?: string // Links bundle items together
-  kitTemplateId?: string // Tracks which kit created this group
-  kitSelections?: { [slotId: string]: string[] } // Selected item IDs per slot
+  groupId?: string
+  kitTemplateId?: string
+  kitSelections?: { [slotId: string]: string[] }
+  kitDetails?: KitDetailItem[] // Visual snapshot of selected accessories
 }
 
 export interface CartState {
   items: CartItem[]
-  globalDates: CartItemDates | null // Optional global rental period
-  
+  globalDates: CartItemDates | null
+
   // Actions
-  addItem: (product: Product, quantity: number, dates: CartItemDates, kitSelections?: { [slotId: string]: string[] }) => void
+  addItem: (
+    product: Product,
+    quantity: number,
+    dates: CartItemDates,
+    kitSelections?: { [slotId: string]: string[] },
+    kitDetails?: KitDetailItem[]
+  ) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
   updateItemDates: (itemId: string, dates: CartItemDates) => void
   updateKitSelections: (itemId: string, kitSelections: { [slotId: string]: string[] }) => void
   setGlobalDates: (dates: CartItemDates | null) => void
-  setItems: (items: CartItem[]) => void // NEW: For syncing with DB
+  setItems: (items: CartItem[]) => void
   clearCart: () => void
-  
+
   // Computed helpers
   getItemCount: () => number
-  /** @deprecated Blind Quote mode - no client-side pricing. Returns 0. */
   getSubtotal: () => number
   getItemById: (itemId: string) => CartItem | undefined
 }
@@ -78,35 +92,65 @@ export const useCartStore = create<CartState>()(
       items: [],
       globalDates: null,
 
-      addItem: (product, quantity, dates, kitSelections) => {
+      addItem: (product, quantity, dates, kitSelections, kitDetails) => {
+        console.log('[CartStore] Adding item:', product.name, quantity, kitSelections)
         set((state) => {
           // Check if item with same product and dates already exists
           const existingIndex = state.items.findIndex(
             (item) =>
               item.product.id === product.id &&
               item.dates.start === dates.start &&
-              item.dates.end === dates.end
+              item.dates.end === dates.end &&
+              // Only merge if kit selections match perfectly (or both undefined)
+              JSON.stringify(item.kitSelections) === JSON.stringify(kitSelections)
           )
 
+          let nextItems = [...state.items];
+
           if (existingIndex >= 0) {
+            console.log('[CartStore] Merging with existing item index:', existingIndex)
             // Update quantity of existing item
-            const newItems = [...state.items]
-            newItems[existingIndex] = {
-              ...newItems[existingIndex],
-              quantity: newItems[existingIndex].quantity + quantity,
+            nextItems[existingIndex] = {
+              ...nextItems[existingIndex],
+              quantity: nextItems[existingIndex].quantity + quantity,
             }
-            return { items: newItems }
+          } else {
+            // Add new item
+            const newItem: CartItem = {
+              id: generateCartItemId(),
+              product,
+              quantity,
+              dates,
+              kitSelections,
+              kitDetails,
+            }
+            console.log('[CartStore] Created new item:', newItem)
+            nextItems = [...state.items, newItem]
+            console.log('[CartStore] New items array length:', nextItems.length)
           }
 
-          // Add new item
-          const newItem: CartItem = {
-            id: generateCartItemId(),
-            product,
-            quantity,
-            dates,
-            kitSelections,
-          }
-          return { items: [...state.items, newItem] }
+          // SERVER SYNC: Push new items to server for authenticated users
+          import('@/stores/auth-store').then(async ({ useAuthStore }) => {
+            const user = useAuthStore.getState().user;
+            if (user) {
+              console.log('[CartStore] Syncing item to server for user:', user.email)
+              const formData = new FormData();
+              formData.append("productId", product.id);
+              formData.append("quantity", quantity.toString());
+              formData.append("startDate", dates.start || '');
+              formData.append("endDate", dates.end || '');
+              if (kitSelections) formData.append("kitSelections", JSON.stringify(kitSelections));
+              try {
+                const { addToCart } = await import('@/lib/actions/cart');
+                const result = await addToCart(formData);
+                console.log('[CartStore] Server sync result:', result.success ? 'OK' : result.error);
+              } catch (err) {
+                console.error('[CartStore] Server sync failed', err);
+              }
+            }
+          });
+
+          return { items: nextItems }
         })
       },
 

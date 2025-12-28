@@ -1,11 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: false, // IP Protection: Disable source maps in production
+  transpilePackages: ["three", "three-globe"],
   images: {
-    // Disable optimization for local development (private IPs blocked by Next.js)
-    unoptimized: process.env.NODE_ENV === 'development',
+    // Enable unoptimized to bypass Next.js optimizer fetch failures on some VPS environments
+    unoptimized: true,
     dangerouslyAllowSVG: true,
     remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '72.62.27.47',
+        port: '8090',
+      },
       {
         protocol: 'http',
         hostname: '127.0.0.1',
@@ -40,6 +47,7 @@ const nextConfig: NextConfig = {
       'lodash',
       '@heroui/react',
       'framer-motion',
+      '@tabler/icons-react',
     ],
   },
 
@@ -55,6 +63,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
 };
 
 export default nextConfig;

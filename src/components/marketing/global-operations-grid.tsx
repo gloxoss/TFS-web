@@ -81,24 +81,24 @@ export default function GlobalOperationsGrid({ lng }: GlobalOperationsGridProps)
         },
         // 2. Casablanca Hub (The specific "One Big Dot" context in text)
         {
-            title: t("operations.cards.hq.title"),
-            description: t("operations.cards.hq.description"),
+            title: "Casablanca HQ",
+            description: "Our central logistics hub connects international productions with local expertise.",
             header: <SkeletonOne />,
             className: "md:col-span-1",
             icon: <IconBuildingSkyscraper className="h-4 w-4 text-neutral-500" />,
         },
         // 3. Logistics & Customs
         {
-            title: t("operations.cards.logistics.title"),
-            description: t("operations.cards.logistics.description"),
+            title: "Seamless Logistics",
+            description: "We handle ATA carnets, customs clearance, and secure transport across Morocco.",
             header: <SkeletonTwo />,
             className: "md:col-span-1",
             icon: <IconTruckDelivery className="h-4 w-4 text-neutral-500" />,
         },
         // 4. Crew & Talent
         {
-            title: t("operations.cards.crew.title"),
-            description: t("operations.cards.crew.description"),
+            title: "World-Class Crew",
+            description: "Bilingual technicians and operators experienced with diverse international teams.",
             header: <SkeletonThree />,
             className: "md:col-span-3", // Full width
             icon: <IconUsersGroup className="h-4 w-4 text-neutral-500" />,

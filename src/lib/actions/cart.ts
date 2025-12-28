@@ -34,9 +34,13 @@ export async function addToCart(formData: FormData): Promise<AddToCartResult> {
     const productId = formData.get("productId") as string;
     const quantity = parseInt(formData.get("quantity") as string) || 1;
     const kitSelections = formData.get("kitSelections") ? JSON.parse(formData.get("kitSelections") as string) : undefined;
+    const startDate = formData.get("startDate") as string;
+    const endDate = formData.get("endDate") as string;
 
-    // Use the service (this is a placeholder - implement actual logic)
-    // await cartService.addItem(productId, quantity, kitSelections);
+    const dates = startDate && endDate ? { start: startDate, end: endDate } : undefined;
+
+    // Use the service
+    await cartService.addItem(productId, quantity, dates, kitSelections);
 
     return { success: true };
   } catch (error) {
@@ -151,7 +155,6 @@ export async function mergeGuestCart(guestItems: CartItem[]): Promise<{ success:
     // Revalidate cart-related paths
     revalidatePath('/', 'layout');
 
-    return { success: true };
     return { success: true };
   } catch (error: any) {
     console.error("Merge guest cart error details:", JSON.stringify(error.response || error, null, 2));

@@ -19,17 +19,16 @@ interface SortDropdownProps {
     value: SortOption
     onChange: (value: SortOption) => void
     className?: string
-    t: (key: string) => string
 }
 
-export function SortDropdown({ value, onChange, className, t }: SortDropdownProps) {
-    const [isOpen, setIsOpen] = useState(false)
+const sortOptions = [
+    { value: 'name' as const, label: 'Name (A-Z)' },
+    { value: 'featured' as const, label: 'Featured First' },
+    { value: 'category' as const, label: 'Category' },
+]
 
-    const sortOptions = [
-        { value: 'name' as const, label: t('sort.options.name') },
-        { value: 'featured' as const, label: t('sort.options.featured') },
-        { value: 'category' as const, label: t('sort.options.category') },
-    ]
+export function SortDropdown({ value, onChange, className }: SortDropdownProps) {
+    const [isOpen, setIsOpen] = useState(false)
 
     const currentOption = sortOptions.find(opt => opt.value === value)
 
@@ -48,7 +47,7 @@ export function SortDropdown({ value, onChange, className, t }: SortDropdownProp
                 )}
             >
                 <ArrowUpDown className="w-3.5 h-3.5 shrink-0" />
-                <span className="max-w-[8rem] truncate">{currentOption?.label}</span>
+                <span className="max-w-[5rem] truncate">{currentOption?.label}</span>
                 <motion.div
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}

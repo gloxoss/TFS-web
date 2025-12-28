@@ -211,4 +211,18 @@ export class CartService {
       return null;
     }
   }
+  // 4. ADD SINGLE ITEM (Wrapper for simplified usage)
+  async addItem(productId: string, quantity: number, dates?: { start: string; end: string }, kitSelections?: any) {
+    // If we have dates, use them, otherwise defaults
+    const validDates = dates ?
+      { start: new Date(dates.start), end: new Date(dates.end) } :
+      { start: new Date(), end: new Date(Date.now() + 86400000) };
+
+    // We can use addBundleToCart for a single item too
+    // Ideally we get userId from authStore
+    const userId = this.pb.authStore.model?.id;
+    if (!userId) throw new Error("User not authenticated");
+
+    return this.addBundleToCart(userId, [{ productId, quantity }], validDates);
+  }
 }

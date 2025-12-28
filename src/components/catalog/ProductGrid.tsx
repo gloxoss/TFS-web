@@ -29,18 +29,12 @@ const containerVariants = {
   },
 }
 
-import { useTranslation } from '@/app/i18n/client'
-
-// ... existing imports ...
-
 export function ProductGrid({
   products,
   lng,
   isLoading = false,
   className,
 }: ProductGridProps) {
-  const { t } = useTranslation(lng, 'catalog')
-
   if (isLoading) {
     return (
       <div className={cn('grid gap-6', 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4', className)}>
@@ -69,9 +63,9 @@ export function ProductGrid({
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-zinc-300 mb-1">{t('search.noResults')}</h3>
+        <h3 className="text-lg font-semibold text-zinc-300 mb-1">No equipment found</h3>
         <p className="text-zinc-500 max-w-sm">
-          {t('search.noResultsHint')}
+          Try adjusting your filters or search terms to find what you&apos;re looking for.
         </p>
       </div>
     )

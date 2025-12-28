@@ -13,7 +13,7 @@ import { Calendar, ArrowRight } from 'lucide-react'
 
 export default async function BlogPage({ params }: { params: Promise<{ lng: string }> }) {
     const { lng } = await params
-    const { t } = await useTranslation(lng, 'blog')
+    const { t } = await useTranslation(lng, 'common')
 
     const pb = await createServerClient()
     const blogService = getBlogService(pb)
@@ -24,10 +24,13 @@ export default async function BlogPage({ params }: { params: Promise<{ lng: stri
             {/* Header */}
             <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-16">
                 <h1 className="text-4xl md:text-6xl font-bold font-display uppercase tracking-tight text-white mb-4">
-                    {t('landing.title')}
+                    {lng === 'fr' ? 'Blog & Actualités' : 'Blog & News'}
                 </h1>
                 <p className="text-lg md:text-xl text-zinc-400 max-w-2xl">
-                    {t('landing.subtitle')}
+                    {lng === 'fr'
+                        ? 'Découvrez les dernières actualités, conseils et tendances de l\'industrie cinématographique.'
+                        : 'Discover the latest news, tips, and trends in the film industry.'
+                    }
                 </p>
             </div>
 
@@ -91,7 +94,7 @@ export default async function BlogPage({ params }: { params: Promise<{ lng: stri
                                             </time>
                                         </div>
                                         <span className="text-[#D00000] text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                                            {t('landing.read')}
+                                            {lng === 'fr' ? 'Lire' : 'Read'}
                                             <ArrowRight className="w-4 h-4" />
                                         </span>
                                     </div>
@@ -106,16 +109,19 @@ export default async function BlogPage({ params }: { params: Promise<{ lng: stri
                             <Calendar className="w-12 h-12 text-zinc-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-white mb-2">
-                            {t('landing.empty.title')}
+                            {lng === 'fr' ? 'Aucun article pour le moment' : 'No posts yet'}
                         </h2>
                         <p className="text-zinc-400 mb-8">
-                            {t('landing.empty.subtitle')}
+                            {lng === 'fr'
+                                ? 'Revenez bientôt pour découvrir nos articles.'
+                                : 'Check back soon for new articles.'
+                            }
                         </p>
                         <Link
                             href={`/${lng}/contact`}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-[#D00000] text-white rounded-full font-medium hover:bg-[#A00000] transition-colors"
                         >
-                            {t('landing.empty.cta')}
+                            {lng === 'fr' ? 'Contactez-nous' : 'Contact Us'}
                         </Link>
                     </div>
                 )}

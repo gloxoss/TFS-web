@@ -98,14 +98,5 @@
     "projectTypeRequired": "Veuillez sélectionner un type de projet",
     "deliveryRequired": "Veuillez sélectionner une préférence de livraison",
     "termsRequired": "Vous devez accepter les conditions pour continuer"
-  },
-  "magicLink": {
-    "title": "Suivez votre devis",
-    "subtitle": "Marquez ce lien pour vérifier l'état de votre devis à tout moment :",
-    "action": "Voir l'état du devis →"
-  },
-  "emailNotice": {
-    "title": "Vérifiez votre boîte de réception",
-    "subtitle": "Nous avons envoyé un e-mail de confirmation avec les détails de votre devis. Si vous ne le voyez pas, veuillez vérifier votre dossier spam."
   }
 }

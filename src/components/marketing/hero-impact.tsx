@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring, useVelocity } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useTranslation } from "@/app/i18n/client";
+import { homePage, t } from "@/data/site-content";
 
 // TFS Cinema Rental Hero Images - Local optimized images
 const HERO_IMAGES = [
@@ -15,6 +15,16 @@ const HERO_IMAGES = [
 ];
 
 // Word Stagger Animation Variants for Headline
+const wordVariants = {
+    hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
+    visible: {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }
+    }
+};
+
 const fadeInBlur = {
     hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
     visible: {
@@ -30,13 +40,24 @@ interface HeroImpactProps {
 }
 
 export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
-    const { t } = useTranslation(lng, 'home');
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentSlide, setCurrentSlide] = useState(0);
     const { scrollY } = useScroll();
 
-    // Velocity-Based Blur (Disabled for performance/TBT)
-    const blurPx = "blur(0px)";
+    const content = homePage.heroImpact;
+
+    // Velocity-Based Motion Blur (Optimized for performance)
+    // Uses lower stiffness/damping for smoother updates and reduced repaints
+    const scrollVelocity = useVelocity(scrollY);
+    const smoothVelocity = useSpring(scrollVelocity, {
+        damping: 80,      // Higher damping = slower response = fewer updates
+        stiffness: 200,   // Lower stiffness = smoother interpolation
+        restDelta: 0.5    // Stop animating when velocity is very low
+    });
+    const blurPx = useTransform(
+        smoothVelocity,
+        (latest) => `blur(${Math.min(Math.abs(latest / 80), 6)}px)`  // Capped at 6px, less sensitive
+    );
 
     // Parallax Position
     const scale = useTransform(scrollY, [0, 1000], [1, 1.2]);
@@ -49,6 +70,13 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
         }, 5000);
         return () => clearInterval(timer);
     }, []);
+
+    // Helper to split text into word components
+    const AnimatedText = ({ text, className, delayOffset = 0 }: { text: string, className?: string, delayOffset?: number }) => (
+        <span className={className}>
+            {text}
+        </span>
+    );
 
     return (
         <div ref={containerRef} className="relative h-[80vh] min-h-[600px] sm:min-h-[700px] lg:h-screen lg:min-h-[1100px] w-full isolation-isolate overflow-hidden font-sans selection:bg-red-600 selection:text-white">
@@ -92,16 +120,8 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                 <div className="flex flex-col items-end text-right max-w-xl">
                     {/* Headline */}
                     <h2 className="text-6xl md:text-8xl font-display font-bold text-white uppercase leading-[0.85] tracking-tight mb-6">
-                        <div className="block">
-                            <span className="opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards] blur-0 block">
-                                {t('hero.headline.line1')}
-                            </span>
-                        </div>
-                        <div className="block text-white/70">
-                            <span className="opacity-0 animate-[fadeIn_0.8s_ease-out_0.5s_forwards] blur-0 block">
-                                {t('hero.headline.line2')}
-                            </span>
-                        </div>
+                        <div className="block"><AnimatedText text={t(content.headline.line1, lng)} delayOffset={0.2} /></div>
+                        <div className="block text-white/70"><AnimatedText text={t(content.headline.line2, lng)} delayOffset={0.5} /></div>
                     </h2>
 
                     {/* Description */}
@@ -109,42 +129,42 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                         initial="hidden" animate="visible" variants={fadeInBlur} transition={{ delay: 0.8 }}
                         className="text-gray-300 text-lg leading-relaxed mb-8 max-w-sm"
                     >
-                        {t('hero.description')}
+                        {t(content.description, lng)}
                     </motion.p>
 
                     {/* Button */}
                     <motion.div initial="hidden" animate="visible" variants={fadeInBlur} transition={{ delay: 1.1 }}>
                         <Link
-                            href={`/${lng}/contact`}
+                            href={`/${lng}${content.cta.href}`}
                             className="group flex items-center gap-3 bg-[#D00000] text-white px-8 py-4 rounded-full font-bold uppercase tracking-wide transition-all hover:bg-[#A00000] hover:scale-105"
                         >
-                            {t('hero.cta')}
+                            {t(content.cta.text, lng)}
                             <ArrowUpRight className="h-5 w-5 transition-transform group-hover:rotate-45" />
                         </Link>
                     </motion.div>
                 </div>
             </div>
 
-            {/* MEGA TEXT (Bottom Split) */}
+            {/* MEGA TEXT (Bottom Split) - GPU accelerated with will-change */}
             <div className="absolute -bottom-0 left-0 w-full z-50 flex flex-col items-center justify-end pointer-events-none select-none mix-blend-difference text-white">
                 <motion.h1
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase"
-                    style={{ x: xLeft, filter: blurPx }}
+                    className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase will-change-[transform,filter]"
+                    style={{ x: xLeft, filter: blurPx, transform: 'translate3d(0,0,0)' }}
                 >
-                    {t('hero.megaText.line1')}
+                    {t(content.megaText.line1, lng)}
                 </motion.h1>
 
                 <motion.h1
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 1.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw]"
-                    style={{ x: xRight, filter: blurPx }}
+                    className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw] will-change-[transform,filter]"
+                    style={{ x: xRight, filter: blurPx, transform: 'translate3d(0,0,0)' }}
                 >
-                    {t('hero.megaText.line2')}
+                    {t(content.megaText.line2, lng)}
                 </motion.h1>
             </div>
 

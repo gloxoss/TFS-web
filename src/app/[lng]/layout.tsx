@@ -1,3 +1,30 @@
+/*
+ * -----------------------------------------------------------------------------
+ * PROJECT:   TFS Digital Transformation
+ * ENGINEER:  Oussama Zaki
+ * AGENCY:    Epioso (https://epioso.tech)
+ * -----------------------------------------------------------------------------
+ * COPYRIGHT NOTICE:
+ * 
+ * 1. CLIENT OWNERSHIP: 
+ * TFS (The Client) retains full ownership of all specific content, 
+ * branding, client data, and UI design elements created for this instance.
+ *
+ * 2. DEVELOPER OWNERSHIP (Background Technology):
+ * The underlying software architecture, "Kit Builder" logic, database schemas,
+ * and generic code libraries remain the exclusive Intellectual Property 
+ * of Oussama Zaki (Epioso). 
+ *
+ * 3. LICENSE GRANT:
+ * Upon full payment, the Client is granted a perpetual, non-exclusive, 
+ * royalty-free license to use, modify, and maintain this software for 
+ * their own business operations.
+ *
+ * 4. REUSE RIGHTS:
+ * The Developer (Epioso) reserves the right to reuse the underlying 
+ * technical architecture and logic for other projects.
+ * -----------------------------------------------------------------------------
+ */
 
 import { PocketBaseProvider } from "@/components/pocketbase-provider";
 import { createServerClient, getCurrentUser } from "@/lib/pocketbase/server";
@@ -13,6 +40,8 @@ import { Providers } from "@/app/providers";
 import AuthListener from "@/components/auth/auth-listener";
 import { CartMergeHandler } from "@/components/cart/cart-merge-handler";
 import { CartSyncProvider } from "@/components/cart/cart-sync-provider";
+
+import { ENABLE_CLIENT_PORTAL } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +98,7 @@ export default async function RootLayout({
     >
       <head>
         <meta name="darkreader-lock" />
+
       </head>
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <I18nProvider lng={lng} namespaces={['common']}>
@@ -78,8 +108,9 @@ export default async function RootLayout({
           >
             <Providers>
               <AuthListener initialUser={user} />
-              <CartMergeHandler />
-              <CartSyncProvider />
+              {ENABLE_CLIENT_PORTAL && <CartMergeHandler />}
+              {ENABLE_CLIENT_PORTAL && <CartSyncProvider />}
+
               {children}
             </Providers>
           </PocketBaseProvider>

@@ -20,7 +20,7 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -37,14 +37,17 @@ import {
   X,
   Search,
   LayoutGrid,
-  List
+  List,
+  Minus,
+  ExternalLink,
+  Info,
+  Trash2
 } from 'lucide-react'
 import { Product } from '@/services/products/types'
 import { ResolvedKit } from '@/types/commerce'
-import { useCartStore, useUIStore } from '@/stores'
+import { useCartStore, useUIStore, KitDetailItem, useKitStore } from '@/stores'
 import { cn } from '@/lib/utils'
 import { resolveKit } from '@/lib/actions/cart'
-import { useTranslation } from '@/app/i18n/client'
 
 // ============================================================================
 // ANIMATION VARIANTS - Staggered fade-in with blur
@@ -86,10 +89,7 @@ const fadeInBlurFast = {
 // ============================================================================
 
 
-interface ProductDetailClientProps {
-  product: Product
-  lng: string
-}
+
 
 // Mock kit data for cameras when DB returns empty
 interface MockKitItem {
@@ -320,14 +320,42 @@ function ProductDetailSkeleton({ isKit = false }: { isKit?: boolean }) {
 }
 
 // ============================================================================
+// TYPES
+// ============================================================================
+
+export interface SlotDisplayData {
+  slotName: string
+  selectionMode: 'single' | 'multi'
+  items: {
+    id: string
+    name: string
+    slug?: string
+    category?: string
+    imageUrl?: string
+  }[]
+  selectedIds: string[]
+}
+
+interface ProductDetailClientProps {
+  product: Product
+  lng: string
+}
+
+// ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
+// Main Component
 export function ProductDetailClient({ product, lng }: ProductDetailClientProps) {
-  const { t } = useTranslation(lng, 'catalog')
   const addItem = useCartStore((state) => state.addItem)
   const openCartDrawer = useUIStore((state) => state.openCartDrawer)
   const addToast = useUIStore((state) => state.addToast)
+
+  // Kit Store Hook
+  const { selections, setSelections, updateSlotSelection, clearSelections, viewPreference, setViewPreference } = useKitStore()
+
+  // Get selections for this specific product or empty object
+  const kitSelections = selections[product.id] || {}
 
   // Page ready state - prevents 404 flicker
   const [isPageReady, setIsPageReady] = useState(false)
@@ -336,9 +364,8 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
 
-  // Kit state
+  // Kit state - Resolved Template
   const [resolvedKit, setResolvedKit] = useState<ResolvedKit | null>(null)
-  const [kitSelections, setKitSelections] = useState<KitSelections>({})
   const [isLoadingKit, setIsLoadingKit] = useState(true)
 
   // Mock kit state (fallback for cameras)
@@ -348,80 +375,118 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
   // Slot editing modal state
   const [editingSlot, setEditingSlot] = useState<string | null>(null)
 
-  // View mode state (grid or list)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-
   // Check for kit on mount
   useEffect(() => {
     async function loadKit() {
       try {
-        // Use server action for kit resolution
         console.log('[KIT DEBUG] Loading kit for product:', product.id, product.name);
         const result = await resolveKit(product.id)
-        console.log('[KIT DEBUG] resolveKit result:', result);
-        console.log('[KIT DEBUG] result.success:', result.success);
-        console.log('[KIT DEBUG] result.kit:', result.kit);
-        console.log('[KIT DEBUG] result.kit?.slots:', result.kit?.slots);
-        console.log('[KIT DEBUG] result.kit?.slots.length:', result.kit?.slots?.length);
 
         if (result.success && result.kit && result.kit.slots.length > 0) {
           console.log('[KIT DEBUG] Setting resolvedKit with', result.kit.slots.length, 'slots');
           setResolvedKit(result.kit)
-          // Initialize default selections from resolved kit
-          const defaultSelections: Record<string, string[]> = {}
-          for (const slot of result.kit.slots) {
-            // KitItem has product_id, not id
-            defaultSelections[slot.slotName] = slot.defaultItems.map(item => item.product_id)
+
+          // Only initialize defaults if NO persisted selections exist in store
+          if (!selections[product.id] || Object.keys(selections[product.id]).length === 0) {
+            const defaultSelections: Record<string, string[]> = {}
+            for (const slot of result.kit.slots) {
+              // KitItem has product_id, not id
+              defaultSelections[slot.slotName] = slot.defaultItems.map(item => item.product_id)
+            }
+            // Save defaults to global store
+            setSelections(product.id, defaultSelections)
           }
-          setKitSelections(defaultSelections)
-          console.log('[KIT DEBUG] Kit set successfully!');
-        } else {
-          console.log('[KIT DEBUG] Kit NOT set - conditions not met');
         }
-        // DISABLED: Mock kit fallback removed - only show real kit data
-        // else if (isCameraProduct(product)) {
-        //   setUseMockKit(true)
-        //   const defaultMock: Record<string, string[]> = {}
-        //   for (const slot of MOCK_CAMERA_KIT) {
-        //     defaultMock[slot.slotName] = slot.defaultSelected
-        //   }
-        //   setMockSelections(defaultMock)
-        // }
       } catch (error) {
         console.error('Failed to load kit:', error)
-        // DISABLED: Mock fallback removed
-        // if (isCameraProduct(product)) {
-        //   setUseMockKit(true)
-        //   const defaultMock: Record<string, string[]> = {}
-        //   for (const slot of MOCK_CAMERA_KIT) {
-        //     defaultMock[slot.slotName] = slot.defaultSelected
-        //   }
-        //   setMockSelections(defaultMock)
-        // }
       } finally {
         setIsLoadingKit(false)
-        // Small delay to ensure smooth transition
         setTimeout(() => setIsPageReady(true), 100)
       }
     }
     loadKit()
-  }, [product.id, product])
+  }, [product.id, product, setSelections, selections]) // Removed kitSelections from dep to prevent loop
 
-  // Handle add to cart - dates will be set at checkout
+  // Handle add to cart - UNBUNDLED VERSION
   const handleAddToCart = useCallback(async () => {
     setIsAdding(true)
-
-    // Brief delay for UX feedback
     await new Promise((resolve) => setTimeout(resolve, 300))
 
-    // Add item without dates - they'll be set at checkout
     const placeholderDates = { start: '', end: '' }
 
-    // Use real kit selections or mock selections
-    const selectionsToUse = resolvedKit ? kitSelections : (useMockKit ? mockSelections : undefined)
-    addItem(product, quantity, placeholderDates, selectionsToUse)
+    // 1. Add the MAIN PRODUCT (Camera Body)
+    // We add it first as the "anchor" of the kit
+    addItem(product, quantity, placeholderDates)
 
-    const itemLabel = (resolvedKit || useMockKit) ? `${product.name} (Kit)` : product.name
+    // Use stored selections
+    const selectionsToUse = resolvedKit ? kitSelections : (useMockKit ? mockSelections : undefined)
+
+    if (resolvedKit && selectionsToUse) {
+      // REAL KIT: Iterate through all slots and find selected items
+      resolvedKit.slots.forEach(slot => {
+        const selectedIds = selectionsToUse[slot.slotName] || []
+
+        // Count occurrences of each ID to handle quantity
+        // e.g. ['bat-1', 'bat-1', 'bat-2'] -> { 'bat-1': 2, 'bat-2': 1 }
+        const idCounts: Record<string, number> = {}
+        selectedIds.forEach(id => {
+          idCounts[id] = (idCounts[id] || 0) + 1
+        })
+
+        // Iterate unique IDs and add them to cart with calculated quantity
+        Object.entries(idCounts).forEach(([id, count]) => {
+          // Find the full Product option
+          const itemProduct = slot.availableOptions.find(opt => opt.id === id) || slot.defaultItems.find(def => def.product_id === id)
+
+          if (itemProduct) {
+            // Add accessory as individual item
+            // Multiply by main kit quantity (e.g. 2 Cameras -> 2 sets of accessories)
+            const totalQuantity = count * quantity
+            addItem(itemProduct, totalQuantity, placeholderDates)
+          }
+        })
+      })
+    } else if (useMockKit && selectionsToUse) {
+      // MOCK KIT: Fallback logic for demo
+      MOCK_CAMERA_KIT.forEach(slot => {
+        const selectedIds = selectionsToUse[slot.slotName] || []
+
+        const idCounts: Record<string, number> = {}
+        selectedIds.forEach(id => {
+          idCounts[id] = (idCounts[id] || 0) + 1
+        })
+
+        Object.entries(idCounts).forEach(([id, count]) => {
+          const item = slot.items.find(i => i.id === id)
+
+          if (item) {
+            // Construct a "fake" Product object for the mock item
+            const mockProduct: Product = {
+              id: item.id,
+              name: item.name,
+              // Fallback values for required Product fields
+              nameEn: item.name,
+              nameFr: item.name,
+              slug: item.id, // Mock items don't have real slugs usually
+              categoryId: 'mock-category',
+              category: { id: 'mock', name: item.category || 'Accessory', slug: 'accessory' },
+              isAvailable: true,
+              imageUrl: item.imageUrl
+            }
+
+            const totalQuantity = count * quantity
+            addItem(mockProduct, totalQuantity, placeholderDates)
+          }
+        })
+      })
+    }
+
+    // Client Requirement: "The application MUST preserve the state... (on navigation)"
+    // But usually on "Add to Cart", reset is standard. However, allow re-adding same config? 
+    // Let's keep it for now to be safe, user can manually change if they want another kit.
+    clearSelections(product.id)
+
+    const itemLabel = (resolvedKit || useMockKit) ? `${product.name} + Accessories` : product.name
     addToast({
       type: 'success',
       message: `${itemLabel} added to your quote request`,
@@ -429,27 +494,13 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
 
     setIsAdding(false)
     openCartDrawer()
-  }, [product, quantity, addItem, addToast, openCartDrawer, resolvedKit, kitSelections, useMockKit, mockSelections])
+  }, [product, quantity, addItem, addToast, openCartDrawer, resolvedKit, kitSelections, useMockKit, mockSelections, clearSelections])
 
-  // Determine which layout to use
+  // ... (isCameraProduct helper usage)
   const hasKit = resolvedKit || useMockKit
   const isCamera = isCameraProduct(product)
 
-  // Unified slot data type
-  type SlotDisplayItem = {
-    id: string
-    name: string
-    slug?: string
-    category?: string
-    imageUrl?: string
-  }
-
-  type SlotDisplayData = {
-    slotName: string
-    selectionMode: 'single' | 'multi'
-    items: SlotDisplayItem[]
-    selectedIds: string[]
-  }
+  // ... (SlotDisplayItem types)
 
   // Get current slot data (either from real kit or mock)
   const getSlotData = useCallback((): SlotDisplayData[] => {
@@ -464,8 +515,8 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           category: product.category?.name,
           imageUrl: product.imageUrl
         })),
-        // Use kitSelections if available, otherwise get product IDs from defaultItems
-        selectedIds: kitSelections[slot.slotName] || slot.defaultItems.map(item => item.product_id),
+        // Read from STORE selections
+        selectedIds: kitSelections[slot.slotName] || [], // Default to empty if logic hasn't run yet
       }))
     }
     if (useMockKit) {
@@ -479,23 +530,88 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
     return []
   }, [resolvedKit, useMockKit, kitSelections, mockSelections])
 
-  // Get item details by id
-  const getItemDetails = useCallback((slotName: string, itemId: string): SlotDisplayItem | null => {
-    const slots = getSlotData()
-    const slot = slots.find(s => s.slotName === slotName)
-    if (!slot) return null
-    return slot.items.find((i) => i.id === itemId) || null
-  }, [getSlotData])
+  // ... (getItemDetails)
 
-  // Handle slot selection update
+  // Helper to get item details for display
+  const getItemDetails = useCallback((slotName: string, itemId: string) => {
+    if (resolvedKit) {
+      const slot = resolvedKit.slots.find(s => s.slotName === slotName)
+      if (!slot) return null
+      // Try finding in available options first (full product data)
+      const option = slot.availableOptions.find(opt => opt.id === itemId)
+      if (option) return option
+
+      // Fallback to default items if not found (though defaults should be options)
+      // Note: defaultItems might be lighter objects, but for now returned undefined if not in options
+      return null
+    }
+    if (useMockKit) {
+      const slot = MOCK_CAMERA_KIT.find(s => s.slotName === slotName)
+      if (!slot) return null
+      return slot.items.find(i => i.id === itemId)
+    }
+    return null
+  }, [resolvedKit, useMockKit])
+
+  // Handle slot selection update VIA STORE
   const handleSlotUpdate = useCallback((slotName: string, selectedIds: string[]) => {
     if (resolvedKit) {
-      setKitSelections(prev => ({ ...prev, [slotName]: selectedIds }))
+      // Update global store
+      updateSlotSelection(product.id, slotName, selectedIds)
     } else if (useMockKit) {
       setMockSelections(prev => ({ ...prev, [slotName]: selectedIds }))
     }
     setEditingSlot(null)
-  }, [resolvedKit, useMockKit])
+  }, [resolvedKit, useMockKit, product.id, updateSlotSelection])
+
+  // Navigation Confirmation State
+  const { skipNavigationConfirm, setSkipNavigationConfirm } = useKitStore()
+  const [navConfirmUrl, setNavConfirmUrl] = useState<string | null>(null)
+  const [dontAskAgain, setDontAskAgain] = useState(false)
+
+  // Handle Item Navigation Click
+  const handleItemNavClick = (url: string) => {
+    if (skipNavigationConfirm) {
+      window.location.href = url
+    } else {
+      setNavConfirmUrl(url)
+      setDontAskAgain(false)
+    }
+  }
+
+  const handleConfirmNav = () => {
+    if (dontAskAgain) {
+      setSkipNavigationConfirm(true)
+    }
+    if (navConfirmUrl) {
+      window.location.href = navConfirmUrl
+    }
+    setNavConfirmUrl(null)
+  }
+
+  // Handle Quantity Change for Kit Item
+  const handleItemQuantity = (slotName: string, itemId: string, change: number, currentSelectedIds: string[]) => {
+    let newSelectedIds = [...currentSelectedIds]
+
+    if (change > 0) {
+      // Add one more of this ID
+      newSelectedIds.push(itemId)
+    } else {
+      // Remove one instance of this ID
+      // Find the LAST instance to remove (arbitrary, but standard)
+      const index = newSelectedIds.lastIndexOf(itemId)
+      if (index > -1) {
+        newSelectedIds.splice(index, 1)
+      }
+    }
+
+    // Update store
+    if (resolvedKit) {
+      updateSlotSelection(product.id, slotName, newSelectedIds)
+    } else if (useMockKit) {
+      setMockSelections(prev => ({ ...prev, [slotName]: newSelectedIds }))
+    }
+  }
 
   // ============================================================================
   // RENDER: KIT LAYOUT (Cameras / Complex Products)
@@ -517,6 +633,46 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           animate={{ opacity: 1 }}
           className="min-h-screen bg-zinc-950"
         >
+          {/* Navigation Confirmation Dialog */}
+          {navConfirmUrl && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">Leave Kit Builder?</h3>
+                </div>
+
+                <p className="text-zinc-400 mb-6 leading-relaxed">
+                  You are about to navigate to the product page. This will not clear your current kit selections, but you will leave this builder view.
+                </p>
+
+                <div className="flex items-center gap-2 mb-6 cursor-pointer" onClick={() => setDontAskAgain(!dontAskAgain)}>
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${dontAskAgain ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-600 bg-zinc-800'}`}>
+                    {dontAskAgain && <Check className="w-3.5 h-3.5 text-white" />}
+                  </div>
+                  <span className="text-sm text-zinc-300 select-none">Don't show this again</span>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setNavConfirmUrl(null)}
+                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmNav}
+                    className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors"
+                  >
+                    Continue to Product
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Back Navigation */}
           <motion.div
             variants={fadeInBlur}
@@ -529,7 +685,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              {t('detail.backToCatalog')}
+              Back to Catalog
             </Link>
           </motion.div>
 
@@ -571,7 +727,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                     {product.name}
                   </h1>
                   <p className="text-zinc-400 text-lg">
-                    {resolvedKit?.template.name || t('kit.defaultName')}
+                    {resolvedKit?.template.name || 'Complete Cinema Package'}
                   </p>
                 </div>
 
@@ -589,7 +745,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                   className="mt-6"
                 >
                   <motion.div variants={fadeInBlurFast} className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-5">
-                    <h3 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">{t('specs.title')}</h3>
+                    <h3 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">Camera Specifications</h3>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                       {product.specifications && Object.entries(product.specifications).slice(0, 8).map(([key, value]) => (
                         <div key={key} className="flex justify-between border-b border-zinc-800/50 pb-2">
@@ -600,19 +756,19 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                       {(!product.specifications || Object.keys(product.specifications).length === 0) && (
                         <>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">{t('specs.sensor')}</span>
+                            <span className="text-xs text-zinc-500">Sensor</span>
                             <span className="text-xs text-zinc-200 font-medium">Full Frame</span>
                           </div>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">{t('specs.resolution')}</span>
+                            <span className="text-xs text-zinc-500">Resolution</span>
                             <span className="text-xs text-zinc-200 font-medium">4K/6K</span>
                           </div>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">{t('specs.mount')}</span>
+                            <span className="text-xs text-zinc-500">Mount</span>
                             <span className="text-xs text-zinc-200 font-medium">PL / E-Mount</span>
                           </div>
                           <div className="flex justify-between border-b border-zinc-800/50 pb-2">
-                            <span className="text-xs text-zinc-500">{t('specs.recording')}</span>
+                            <span className="text-xs text-zinc-500">Recording</span>
                             <span className="text-xs text-zinc-200 font-medium">RAW / ProRes</span>
                           </div>
                         </>
@@ -640,34 +796,34 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                       <Layers className="w-6 h-6 text-red-400" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-white">{t('kit.manifest.title')}</h2>
-                      <p className="text-zinc-500 text-sm">{t('kit.manifest.subtitle')}</p>
+                      <h2 className="text-2xl font-bold text-white">Accessories</h2>
+                      <p className="text-zinc-500 text-sm">Configure the components included with your kit</p>
                     </div>
                   </div>
 
                   {/* View Toggle */}
                   <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1 border border-zinc-700/50">
                     <button
-                      onClick={() => setViewMode('grid')}
+                      onClick={() => setViewPreference('grid')}
                       className={cn(
                         'p-2 rounded-md transition-all',
-                        viewMode === 'grid'
+                        viewPreference === 'grid'
                           ? 'bg-red-700 text-white'
                           : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
                       )}
-                      title={t('kit.actions.viewGrid')}
+                      title="Grid view"
                     >
                       <LayoutGrid className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => setViewMode('list')}
+                      onClick={() => setViewPreference('list')}
                       className={cn(
                         'p-2 rounded-md transition-all',
-                        viewMode === 'list'
+                        viewPreference === 'list'
                           ? 'bg-red-700 text-white'
                           : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
                       )}
-                      title={t('kit.actions.viewList')}
+                      title="List view"
                     >
                       <List className="w-4 h-4" />
                     </button>
@@ -677,7 +833,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                 {isLoadingKit ? (
                   <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 text-center">
                     <div className="animate-spin w-8 h-8 border-2 border-zinc-600 border-t-red-500 rounded-full mx-auto mb-4" />
-                    <p className="text-zinc-400">{t('kit.manifest.loading')}</p>
+                    <p className="text-zinc-400">Loading kit configuration...</p>
                   </div>
                 ) : (
                   <motion.div
@@ -699,7 +855,7 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                             <div>
                               <h3 className="font-semibold text-white">{slot.slotName}</h3>
                               <span className="text-xs text-zinc-500">
-                                {slot.selectionMode === 'single' ? t('kit.selection.selectOne') : t('kit.selection.selectMultiple')} • {t('kit.selection.selected', { count: slot.selectedIds.length })}
+                                {slot.selectionMode === 'single' ? 'Select one' : 'Select multiple'} • {slot.selectedIds.length} selected
                               </span>
                             </div>
                           </div>
@@ -707,124 +863,221 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
                             onClick={() => setEditingSlot(slot.slotName)}
                             className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-600 rounded-lg text-sm font-medium text-zinc-200 transition-colors"
                           >
-                            {slot.selectionMode === 'single' ? (
-                              <>
-                                <Edit3 className="w-4 h-4" />
-                                {t('kit.actions.swap')}
-                              </>
-                            ) : (
-                              <>
-                                <Plus className="w-4 h-4" />
-                                {t('kit.actions.edit')}
-                              </>
-                            )}
+                            <Edit3 className="w-4 h-4" />
+                            Models
                           </button>
                         </div>
 
                         {/* Selected Items - Grid or List View */}
                         <div className="p-4">
                           {slot.selectedIds.length > 0 ? (
-                            viewMode === 'grid' ? (
+                            viewPreference === 'grid' ? (
                               /* Grid View */
                               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                                {slot.selectedIds.map(id => {
-                                  const itemDetails = getItemDetails(slot.slotName, id)
-                                  if (!itemDetails) return null
-                                  return (
-                                    <Link
-                                      key={id}
-                                      href={`/${lng}/equipment/${itemDetails.slug || id}`}
-                                      className="group relative bg-zinc-800/50 rounded-xl border border-zinc-700/50 overflow-hidden hover:border-red-500/50 hover:bg-zinc-800 transition-all cursor-pointer"
-                                    >
-                                      {/* Item Image */}
-                                      <div className="relative aspect-square bg-zinc-900">
-                                        {itemDetails.imageUrl ? (
-                                          <Image
-                                            src={itemDetails.imageUrl}
-                                            alt={itemDetails.name}
-                                            fill
-                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                          />
-                                        ) : (
-                                          <div className="w-full h-full flex items-center justify-center">
-                                            <Package className="w-10 h-10 text-zinc-700" />
+                                {/* Group IDs to show quantities */}
+                                {(() => {
+                                  const idCounts: Record<string, number> = {}
+                                  slot.selectedIds.forEach(id => { idCounts[id] = (idCounts[id] || 0) + 1 })
+
+                                  return Object.entries(idCounts).map(([id, count]) => {
+                                    const itemDetails = getItemDetails(slot.slotName, id)
+                                    if (!itemDetails) return null
+
+                                    const slug = 'slug' in itemDetails ? itemDetails.slug : undefined
+                                    // Make sure we have a valid slug fallback if undefined
+                                    const targetUrl = `/${lng}/equipment/${slug || id}`
+
+                                    return (
+
+                                      <div
+                                        key={id}
+                                        className="group relative bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition-all"
+                                      >
+                                        {/* Clickable Area for Navigation */}
+                                        <div
+                                          className="cursor-pointer"
+                                          onClick={() => handleItemNavClick(targetUrl)}
+                                        >
+                                          {/* Item Image */}
+                                          <div className="relative aspect-square bg-zinc-950">
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation()
+                                                handleItemNavClick(targetUrl)
+                                              }}
+                                              className="absolute top-2 left-2 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-zinc-300 hover:text-white border border-white/10 hover:border-white/20 transition-all opacity-0 group-hover:opacity-100"
+                                            >
+                                              <Info className="w-4 h-4" />
+                                            </button>
+                                            {itemDetails.imageUrl ? (
+                                              <Image
+                                                src={itemDetails.imageUrl}
+                                                alt={itemDetails.name}
+                                                fill
+                                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                                className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                                              />
+                                            ) : (
+                                              <div className="w-full h-full flex items-center justify-center">
+                                                <Package className="w-10 h-10 text-zinc-800" />
+                                              </div>
+                                            )}
+
+                                            {/* Quantity Overlay - Clean & Minimal */}
+                                            {slot.selectionMode === 'multi' && (
+                                              <div
+                                                className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 p-1 shadow-xl z-10"
+                                                onClick={(e) => e.stopPropagation()} // Prevent nav
+                                              >
+                                                <button
+                                                  onClick={() => handleItemQuantity(slot.slotName, id, -1, slot.selectedIds)}
+                                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-zinc-400 hover:text-white transition-colors"
+                                                >
+                                                  <Minus className="w-3 h-3" />
+                                                </button>
+                                                <span className="w-6 text-center text-xs font-semibold text-white tabular-nums">{count}</span>
+                                                <button
+                                                  onClick={() => handleItemQuantity(slot.slotName, id, 1, slot.selectedIds)}
+                                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-zinc-400 hover:text-white transition-colors"
+                                                >
+                                                  <Plus className="w-3 h-3" />
+                                                </button>
+                                              </div>
+                                            )}
                                           </div>
-                                        )}
-                                        {/* Selection Badge */}
-                                        <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-                                          <Check className="w-4 h-4 text-white" />
+
+                                          {/* Item Info */}
+                                          <div className="p-3">
+                                            <p className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors line-clamp-1">
+                                              {itemDetails.name}
+                                            </p>
+                                          </div>
                                         </div>
                                       </div>
-                                      {/* Item Info */}
-                                      <div className="p-3">
-                                        <p className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight group-hover:text-red-400 transition-colors">
-                                          {itemDetails.name}
-                                        </p>
-                                        {itemDetails.category && (
-                                          <p className="text-xs text-zinc-500 mt-1">{itemDetails.category}</p>
-                                        )}
-                                      </div>
-                                    </Link>
-                                  )
-                                })}
+                                    )
+
+                                  })
+                                })()}
                               </div>
                             ) : (
                               /* List View */
                               <div className="space-y-2">
-                                {slot.selectedIds.map(id => {
-                                  const itemDetails = getItemDetails(slot.slotName, id)
-                                  if (!itemDetails) return null
-                                  return (
-                                    <Link
-                                      key={id}
-                                      href={`/${lng}/equipment/${itemDetails.slug || id}`}
-                                      className="flex items-center gap-4 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50 hover:border-amber-500/50 hover:bg-zinc-800 transition-all cursor-pointer group"
-                                    >
-                                      {/* Item Image */}
-                                      <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
-                                        {itemDetails.imageUrl ? (
-                                          <Image
-                                            src={itemDetails.imageUrl}
-                                            alt={itemDetails.name}
-                                            fill
-                                            sizes="64px"
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                          />
+                                {(() => {
+                                  const idCounts: Record<string, number> = {}
+                                  slot.selectedIds.forEach(id => { idCounts[id] = (idCounts[id] || 0) + 1 })
+
+                                  return Object.entries(idCounts).map(([id, count]) => {
+                                    const itemDetails = getItemDetails(slot.slotName, id)
+                                    if (!itemDetails) return null
+
+                                    const slug = 'slug' in itemDetails ? itemDetails.slug : undefined
+                                    const targetUrl = `/${lng}/equipment/${slug || id}`
+                                    const categoryName = typeof itemDetails.category === 'object' && itemDetails.category ? itemDetails.category.name : itemDetails.category
+
+                                    return (
+                                      <div
+                                        key={id}
+                                        className="flex items-center gap-4 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50 hover:border-amber-500/50 hover:bg-zinc-800 transition-all group"
+                                      >
+                                        {/* Clickable Area */}
+                                        <div
+                                          className="flex items-center gap-4 flex-1 cursor-pointer min-w-0"
+                                          onClick={() => handleItemNavClick(targetUrl)}
+                                        >
+                                          {/* Item Image */}
+                                          <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
+                                            {itemDetails.imageUrl ? (
+                                              <Image
+                                                src={itemDetails.imageUrl}
+                                                alt={itemDetails.name}
+                                                fill
+                                                sizes="64px"
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                              />
+                                            ) : (
+                                              <div className="w-full h-full flex items-center justify-center">
+                                                <Package className="w-6 h-6 text-zinc-700" />
+                                              </div>
+                                            )}
+                                          </div>
+                                          {/* Item Info */}
+                                          <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2">
+                                              <p className="text-sm font-medium text-zinc-200 truncate group-hover:text-amber-400 transition-colors">
+                                                {itemDetails.name}
+                                              </p>
+                                              <ExternalLink className="w-3 h-3 text-zinc-600 group-hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all" />
+                                            </div>
+                                            {categoryName && (
+                                              <p className="text-xs text-zinc-500 mt-0.5">{String(categoryName)}</p>
+                                            )}
+                                          </div>
+                                        </div>
+
+                                        {/* Quantity Controls */}
+                                        {slot.selectionMode === 'multi' ? (
+                                          <div className="flex items-center gap-3 bg-zinc-900/50 rounded-lg p-1.5 border border-zinc-800">
+                                            <button
+                                              onClick={() => handleItemQuantity(slot.slotName, id, -1, slot.selectedIds)}
+                                              className="w-7 h-7 flex items-center justify-center hover:bg-zinc-800 rounded bg-zinc-800/50 text-zinc-400 hover:text-white transition-colors"
+                                            >
+                                              <Minus className="w-3.5 h-3.5" />
+                                            </button>
+                                            <span className="text-sm font-medium text-white w-4 text-center">{count}</span>
+                                            <button
+                                              onClick={() => handleItemQuantity(slot.slotName, id, 1, slot.selectedIds)}
+                                              className="w-7 h-7 flex items-center justify-center hover:bg-zinc-800 rounded bg-zinc-800/50 text-zinc-400 hover:text-white transition-colors"
+                                            >
+                                              <Plus className="w-3.5 h-3.5" />
+                                            </button>
+                                          </div>
                                         ) : (
-                                          <div className="w-full h-full flex items-center justify-center">
-                                            <Package className="w-6 h-6 text-zinc-700" />
+                                          <div className="px-4 text-xs text-zinc-500 font-medium bg-zinc-900/50 py-1.5 rounded-full border border-zinc-800">
+                                            1x
                                           </div>
                                         )}
                                       </div>
-                                      {/* Item Info */}
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-zinc-200 truncate group-hover:text-amber-400 transition-colors">
-                                          {itemDetails.name}
-                                        </p>
-                                        {itemDetails.category && (
-                                          <p className="text-xs text-zinc-500 mt-0.5">{itemDetails.category}</p>
-                                        )}
-                                      </div>
-                                      {/* Selection Badge */}
-                                      <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-4 h-4 text-white" />
-                                      </div>
-                                    </Link>
-                                  )
-                                })}
+                                    )
+                                  })
+                                })()}
                               </div>
                             )
                           ) : (
-                            <div className="text-center py-8">
-                              <Package className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-                              <p className="text-zinc-500 text-sm">No items selected</p>
-                              <button
-                                onClick={() => setEditingSlot(slot.slotName)}
-                                className="mt-3 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
-                              >
-                                Add items →
-                              </button>
+                            /* Empty State with Background Image */
+                            <div className="relative w-full h-48 overflow-hidden rounded-xl">
+                              {/* Background Image (First Item) */}
+                              {(() => {
+                                // Try to find a representative image from the first available option
+                                const repImage = slot.items.find(i => i.imageUrl)?.imageUrl
+
+                                if (repImage) {
+                                  return (
+                                    <div className="absolute inset-0 opacity-10 grayscale">
+                                      <Image
+                                        src={repImage}
+                                        alt="background"
+                                        fill
+                                        className="object-cover"
+                                      />
+                                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
+                                    </div>
+                                  )
+                                }
+                                return null
+                              })()}
+
+                              {/* Content Overlay */}
+                              <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+                                <Package className="w-10 h-10 text-zinc-600 mb-3" />
+                                <p className="text-zinc-500 text-sm font-medium">No items selected</p>
+                                <button
+                                  onClick={() => setEditingSlot(slot.slotName)}
+                                  className="mt-3 text-red-500 hover:text-red-400 text-sm font-semibold transition-colors flex items-center gap-1 group"
+                                >
+                                  Add items
+                                  <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+                                </button>
+                              </div>
                             </div>
                           )}
                         </div>
@@ -1177,6 +1430,16 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
   const [localSelection, setLocalSelection] = useState<string[]>(slotData.selectedIds)
   const [searchQuery, setSearchQuery] = useState('')
   const [modalViewMode, setModalViewMode] = useState<'grid' | 'list'>('grid')
+  const modalContentRef = useRef<HTMLDivElement>(null)
+
+  // Handle wheel events manually to ensure scroll works in modal
+  const handleModalWheel = (e: React.WheelEvent) => {
+    e.stopPropagation()
+    if (modalContentRef.current) {
+      modalContentRef.current.scrollTop += e.deltaY
+      e.preventDefault()
+    }
+  }
 
   // Filter items based on search
   const filteredItems = slotData.items.filter(item => {
@@ -1188,16 +1451,27 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
     )
   })
 
-  const handleToggle = (itemId: string) => {
+  // Helper to get count of an item in selection
+  const getItemCount = (itemId: string) => localSelection.filter(id => id === itemId).length
+
+  // Helper to change quantity
+  const handleQuantity = (itemId: string, delta: number) => {
     if (slotData.selectionMode === 'single') {
-      setLocalSelection([itemId])
-    } else {
-      setLocalSelection(prev =>
-        prev.includes(itemId)
-          ? prev.filter(id => id !== itemId)
-          : [...prev, itemId]
-      )
+      // Single mode: delta > 0 sets this item as unique selection
+      if (delta > 0) setLocalSelection([itemId])
+      return
     }
+
+    setLocalSelection(prev => {
+      const currentCount = prev.filter(id => id === itemId).length
+      const others = prev.filter(id => id !== itemId)
+
+      let newCount = currentCount + delta
+      if (newCount < 0) newCount = 0
+
+      // Reconstruct array: others + newCount * itemId
+      return [...others, ...Array(newCount).fill(itemId)]
+    })
   }
 
   return (
@@ -1220,7 +1494,7 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
           <div>
             <h3 className="text-xl font-semibold text-white">{slotName}</h3>
             <p className="text-sm text-zinc-500">
-              {slotData.selectionMode === 'single' ? 'Select one item' : 'Select multiple items'} • {localSelection.length} selected
+              {slotData.selectionMode === 'single' ? 'Select one item' : 'Adjust quantities'} • {localSelection.length} total items
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1283,7 +1557,11 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
         </div>
 
         {/* Items - Grid or List View */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div
+          ref={modalContentRef}
+          onWheel={handleModalWheel}
+          className="flex-1 min-h-0 overflow-y-auto p-4"
+        >
           {filteredItems.length === 0 ? (
             <div className="text-center py-12">
               <Search className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
@@ -1293,20 +1571,23 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
             /* Grid View */
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {filteredItems.map((item) => {
-                const isSelected = localSelection.includes(item.id)
+                const count = getItemCount(item.id)
+                const isSelected = count > 0
                 return (
-                  <button
+                  <div
                     key={item.id}
-                    onClick={() => handleToggle(item.id)}
                     className={cn(
-                      'group relative rounded-xl border overflow-hidden transition-all text-left',
+                      'group relative rounded-xl border overflow-hidden transition-all text-left flex flex-col',
                       isSelected
-                        ? 'bg-amber-500/10 border-amber-500/50 ring-2 ring-amber-500/30'
+                        ? 'bg-amber-500/10 border-amber-500/50 ring-1 ring-amber-500/30'
                         : 'bg-zinc-800/30 border-zinc-700/50 hover:bg-zinc-800/50 hover:border-zinc-600'
                     )}
                   >
-                    {/* Image */}
-                    <div className="relative aspect-square bg-zinc-900">
+                    {/* Image Area - Click to Increment or Select */}
+                    <button
+                      onClick={() => handleQuantity(item.id, 1)}
+                      className="relative w-full aspect-square bg-zinc-900 block"
+                    >
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
@@ -1324,34 +1605,62 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
                         </div>
                       )}
 
-                      {/* Selection Indicator */}
-                      <div className={cn(
-                        'absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center transition-all',
-                        isSelected
-                          ? 'bg-amber-500 scale-100'
-                          : 'bg-zinc-800/80 border border-zinc-600 scale-90 group-hover:scale-100'
-                      )}>
-                        {isSelected ? (
+                      {/* Selection Badge if Single Mode or just Indicator */}
+                      {isSelected && slotData.selectionMode === 'single' && (
+                        <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center">
                           <Check className="w-4 h-4 text-zinc-900" />
-                        ) : (
-                          <Plus className="w-4 h-4 text-zinc-400" />
+                        </div>
+                      )}
+                    </button>
+
+                    {/* Info Area & Controls */}
+                    <div className="p-3 flex items-end justify-between gap-2 mt-auto">
+                      <div className="min-w-0 flex-1">
+                        <p className={cn(
+                          "text-sm font-medium line-clamp-2 leading-tight transition-colors",
+                          isSelected ? "text-white" : "text-zinc-300"
+                        )}>
+                          {item.name}
+                        </p>
+                        {item.category && (
+                          <p className="text-xs text-zinc-500 mt-1">{item.category}</p>
                         )}
                       </div>
-                    </div>
 
-                    {/* Info */}
-                    <div className="p-3">
-                      <p className={cn(
-                        "text-sm font-medium line-clamp-2 leading-tight transition-colors",
-                        isSelected ? "text-white" : "text-zinc-300"
-                      )}>
-                        {item.name}
-                      </p>
-                      {item.category && (
-                        <p className="text-xs text-zinc-500 mt-1">{item.category}</p>
+                      {/* Quantity Controls (Only Multi) */}
+                      {slotData.selectionMode === 'multi' && (
+                        <div className="flex items-center gap-1 bg-zinc-900/80 rounded-lg p-0.5 border border-zinc-700">
+                          {count > 0 && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleQuantity(item.id, -count) }} // Remove all
+                              className="w-7 h-7 flex items-center justify-center rounded-md text-red-500 hover:bg-zinc-700 hover:text-red-400 transition-colors mr-1"
+                              title="Remove all"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleQuantity(item.id, -1) }}
+                            className={cn(
+                              "w-7 h-7 flex items-center justify-center rounded-md transition-colors",
+                              count > 0 ? "text-zinc-300 hover:bg-zinc-700 hover:text-white" : "text-zinc-600 cursor-default"
+                            )}
+                          >
+                            −
+                          </button>
+                          <span className={cn("w-6 text-center text-sm font-medium", count > 0 ? "text-amber-500" : "text-zinc-600")}>
+                            {count}
+                          </span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleQuantity(item.id, 1) }}
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
                       )}
                     </div>
-                  </button>
+                  </div>
                 )
               })}
             </div>
@@ -1359,20 +1668,23 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
             /* List View */
             <div className="space-y-2">
               {filteredItems.map((item) => {
-                const isSelected = localSelection.includes(item.id)
+                const count = getItemCount(item.id)
+                const isSelected = count > 0
                 return (
-                  <button
+                  <div
                     key={item.id}
-                    onClick={() => handleToggle(item.id)}
                     className={cn(
-                      'w-full flex items-center gap-4 p-3 rounded-xl border transition-all text-left',
+                      'w-full flex items-center gap-4 p-3 rounded-xl border transition-all',
                       isSelected
-                        ? 'bg-amber-500/10 border-amber-500/50 ring-2 ring-amber-500/30'
+                        ? 'bg-amber-500/10 border-amber-500/50 ring-1 ring-amber-500/30'
                         : 'bg-zinc-800/30 border-zinc-700/50 hover:bg-zinc-800/50 hover:border-zinc-600'
                     )}
                   >
                     {/* Image */}
-                    <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900">
+                    <button
+                      onClick={() => handleQuantity(item.id, 1)}
+                      className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-900"
+                    >
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
@@ -1386,7 +1698,7 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
                           <Package className="w-6 h-6 text-zinc-700" />
                         </div>
                       )}
-                    </div>
+                    </button>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
@@ -1401,20 +1713,46 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
                       )}
                     </div>
 
-                    {/* Selection Indicator */}
-                    <div className={cn(
-                      'w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all',
-                      isSelected
-                        ? 'bg-amber-500'
-                        : 'bg-zinc-800/80 border border-zinc-600'
-                    )}>
-                      {isSelected ? (
-                        <Check className="w-4 h-4 text-zinc-900" />
-                      ) : (
-                        <Plus className="w-4 h-4 text-zinc-400" />
-                      )}
-                    </div>
-                  </button>
+                    {/* Quantity Controls */}
+                    {slotData.selectionMode === 'multi' ? (
+                      <div className="flex items-center gap-1 bg-zinc-900/50 rounded-lg p-1 border border-zinc-700">
+                        {count > 0 && (
+                          <button
+                            onClick={() => handleQuantity(item.id, -count)}
+                            className="w-8 h-8 flex items-center justify-center rounded-md text-red-500 hover:bg-zinc-700 hover:text-red-400 transition-colors mr-1"
+                            title="Remove all"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleQuantity(item.id, -1)}
+                          className={cn(
+                            "w-8 h-8 flex items-center justify-center rounded-md transition-colors",
+                            count > 0 ? "text-zinc-300 hover:bg-zinc-700" : "text-zinc-600"
+                          )}
+                        >
+                          −
+                        </button>
+                        <span className={cn("w-8 text-center text-sm font-medium", count > 0 ? "text-amber-500" : "text-zinc-600")}>
+                          {count}
+                        </span>
+                        <button
+                          onClick={() => handleQuantity(item.id, 1)}
+                          className="w-8 h-8 flex items-center justify-center rounded-md text-zinc-300 hover:bg-zinc-700 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    ) : (
+                      // Single Mode - Just Checkmark
+                      isSelected && (
+                        <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0">
+                          <Check className="w-5 h-5 text-zinc-900" />
+                        </div>
+                      )
+                    )}
+                  </div>
                 )
               })}
             </div>
@@ -1424,7 +1762,7 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
         {/* Footer */}
         <div className="flex items-center justify-between gap-4 px-6 py-4 border-t border-zinc-800 bg-zinc-900/80 flex-shrink-0">
           <p className="text-sm text-zinc-500">
-            {localSelection.length} of {slotData.items.length} items selected
+            {localSelection.length} total items selected
           </p>
           <div className="flex items-center gap-3">
             <button
@@ -1432,6 +1770,12 @@ function SlotEditModal({ slotName, slotData, onClose, onSave }: SlotEditModalPro
               className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
             >
               Cancel
+            </button>
+            <button
+              onClick={() => setLocalSelection([])} // Clear Selection
+              className="px-4 py-2 text-sm font-medium text-red-500 hover:text-red-400 transition-colors mr-auto"
+            >
+              Clear
             </button>
             <button
               onClick={() => onSave(localSelection)}

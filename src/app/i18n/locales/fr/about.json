@@ -32,24 +32,7 @@
     "stats": {
         "years": "Ans d'Expérience",
         "projects": "Productions Servies",
-        "countries": "Villes au Maroc",
-        "satisfaction": "Satisfaction Client"
-    },
-    "operations": {
-        "cards": {
-            "hq": {
-                "title": "QG Casablanca",
-                "description": "Notre hub logistique central connecte les productions internationales à l'expertise locale."
-            },
-            "logistics": {
-                "title": "Logistique Sans Faille",
-                "description": "Nous gérons les carnets ATA, le dédouanement et le transport sécurisé partout au Maroc."
-            },
-            "crew": {
-                "title": "Équipe de Classe Mondiale",
-                "description": "Techniciens et opérateurs bilingues expérimentés avec des équipes internationales diverses."
-            }
-        }
+        "countries": "Villes au Maroc"
     },
     "expertise": {
         "label": "DÉCOUVREZ NOTRE HISTOIRE",

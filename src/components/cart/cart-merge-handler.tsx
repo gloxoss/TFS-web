@@ -12,11 +12,11 @@ import { useEffect, useRef } from 'react'
 import { useAuthStore } from '@/stores/auth-store'
 import { useCartStore } from '@/stores/useCartStore'
 import { useUIStore } from '@/stores'
-import { mergeGuestCart } from '@/lib/actions/cart'
+import { mergeGuestCart, getUserCart } from '@/lib/actions/cart'
 
 export function CartMergeHandler() {
   const { user } = useAuthStore()
-  const { items, clearCart } = useCartStore()
+  const { items, setItems } = useCartStore()
   const { addToast } = useUIStore()
 
   // Use ref to prevent multiple merge attempts
@@ -30,34 +30,33 @@ export function CartMergeHandler() {
     if (user && items.length > 0 && !hasMergedRef.current) {
       hasMergedRef.current = true // Prevent duplicate merges
 
-      mergeGuestCart(items)
-        .then((result) => {
-          if (result.success) {
-            // Clear local cart after successful merge
-            clearCart()
+      console.log('[CartMergeHandler] Syncing items to server...')
 
-            // Show success message
-            addToast({
-              type: 'success',
-              message: 'Your cart has been synced with your account!',
-            })
+      mergeGuestCart(items)
+        .then(async (result) => {
+          if (result.success) {
+            // Update local cart with server state to ensure consistency
+            const cartResult = await getUserCart()
+            if (cartResult.success && cartResult.items) {
+              console.log('[CartMergeHandler] Sync complete, updating local store w/ ', cartResult.items.length)
+              setItems(cartResult.items)
+            }
+
+            // Show success message only if it was a significant merge?
+            // constant toasts might be annoying if this runs on every add. 
+            // For now, removing the toast to be less intrusive or only logging it.
+            console.log('Cart synced with server')
           } else {
             console.error('Failed to merge cart:', result.error)
-            addToast({
-              type: 'error',
-              message: 'Failed to sync your cart. Please try refreshing the page.',
-            })
           }
         })
         .catch((error) => {
           console.error('Cart merge error:', error)
-          addToast({
-            type: 'error',
-            message: 'Failed to sync your cart. Please try refreshing the page.',
-          })
+          // Reset ref so we can try again? Or better to fail silently?
+          // hasMergedRef.current = false 
         })
     }
-  }, [user, items, clearCart, addToast])
+  }, [user, items, setItems, addToast])
 
   // This component renders nothing - it's purely functional
   return null

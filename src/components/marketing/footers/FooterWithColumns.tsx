@@ -1,135 +1,89 @@
 "use client";
 
-import React from "react";
-import { Divider, Link } from "@heroui/react";
-import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
-import { t } from "@/data/site-content";
+import Link from "next/link";
+import { useTranslation } from "@/app/i18n/client";
 import { useSiteSettings } from "@/components/providers/site-settings-provider";
+import { t as translate } from "@/data/site-content";
 
-interface FooterWithColumnsProps {
+interface FooterProps {
     lng: string;
 }
 
-export default function FooterWithColumns({ lng }: FooterWithColumnsProps) {
-    const { company, footer } = useSiteSettings();
-
-    const renderList = React.useCallback(
-        ({ title, items }: { title: string; items: { href: string; label: { en: string; fr: string } }[] }) => (
-            <div>
-                <h3 className="text-small font-semibold text-default-600">{title}</h3>
-                <ul className="mt-6 space-y-4">
-                    {items.map((item) => (
-                        <li key={item.href}>
-                            <Link className="text-default-400" href={`/${lng}${item.href}`} size="sm">
-                                {t(item.label, lng)}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        ),
-        [lng],
-    );
+export default function FooterWithColumns({ lng }: FooterProps) {
+    const { t } = useTranslation(lng, "common");
+    const { company } = useSiteSettings();
 
     return (
-        <footer className="flex w-full flex-col bg-background pb-12">
-            <div className="max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
-                <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-                    <div className="space-y-8 md:pr-8">
-                        {/* Logo */}
-                        <div className="flex items-center justify-start">
-                            <span className="text-2xl font-bold font-display tracking-tight text-foreground">
-                                {company.name}<span className="text-primary">.</span>
-                            </span>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-small text-default-500">
-                            {t(footer.description, lng)}
+        <footer className="bg-black border-t border-zinc-800">
+            <div className="max-w-7xl mx-auto px-6 py-12">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    {/* Brand */}
+                    <div className="col-span-1 md:col-span-2">
+                        <h3 className="text-xl font-bold text-white mb-4">{company.name}</h3>
+                        <p className="text-zinc-400 text-sm max-w-sm">
+                            {translate(company.tagline, lng)}
                         </p>
-
-                        {/* Contact Info */}
-                        <div className="space-y-3 text-small text-default-500">
-                            <div className="flex items-start gap-2">
-                                <MapPin className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                                <span>
-                                    {company.address.street}
-                                    {(company.address.city || company.address.country) && (
-                                        <>
-                                            <br />
-                                            {company.address.postalCode} {company.address.city}
-                                            {company.address.country && `, ${lng === 'fr' ? company.address.countryFr : company.address.country}`}
-                                        </>
-                                    )}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4 text-primary" />
-                                <a href={`tel:${company.phone.link}`} className="hover:text-foreground transition-colors">
-                                    {company.phone.display}
-                                </a>
-                            </div>
-                            {company.fax && company.fax.display && (
-                                <div className="flex items-center gap-2">
-                                    <div className="h-4 w-4 flex items-center justify-center text-primary font-bold text-[10px]">FAX</div>
-                                    <a href={`tel:${company.fax.link}`} className="hover:text-foreground transition-colors">
-                                        {company.fax.display}
-                                    </a>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Social Links */}
-                        <div className="flex space-x-6">
-                            {company.social.facebook && (
-                                <Link isExternal className="text-default-400 hover:text-foreground" href={company.social.facebook}>
-                                    <span className="sr-only">Facebook</span>
-                                    <Facebook aria-hidden="true" className="w-5 h-5" />
-                                </Link>
-                            )}
-                            {company.social.instagram && (
-                                <Link isExternal className="text-default-400 hover:text-foreground" href={company.social.instagram}>
-                                    <span className="sr-only">Instagram</span>
-                                    <Instagram aria-hidden="true" className="w-5 h-5" />
-                                </Link>
-                            )}
-                            {company.social.linkedin && (
-                                <Link isExternal className="text-default-400 hover:text-foreground" href={company.social.linkedin}>
-                                    <span className="sr-only">LinkedIn</span>
-                                    <Linkedin aria-hidden="true" className="w-5 h-5" />
-                                </Link>
-                            )}
-                            <Link className="text-default-400 hover:text-foreground" href={`mailto:${company.email}`}>
-                                <span className="sr-only">Email</span>
-                                <Mail aria-hidden="true" className="w-5 h-5" />
-                            </Link>
-                        </div>
                     </div>
 
-                    {/* Navigation Columns */}
-                    <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-                        <div className="md:grid md:grid-cols-2 md:gap-8">
-                            <div>{renderList({ title: t(footer.sections.services, lng), items: footer.services })}</div>
-                            <div className="mt-10 md:mt-0">
-                                {renderList({ title: t(footer.sections.support, lng), items: footer.support })}
-                            </div>
-                        </div>
-                        <div className="md:grid md:grid-cols-2 md:gap-8">
-                            <div>{renderList({ title: t(footer.sections.company, lng), items: footer.companyLinks })}</div>
-                            <div className="mt-10 md:mt-0">
-                                {renderList({ title: t(footer.sections.legal, lng), items: footer.legal })}
-                            </div>
-                        </div>
+                    {/* Quick Links */}
+                    <div>
+                        <h4 className="text-white font-semibold mb-4">Links</h4>
+                        <ul className="space-y-2">
+                            <li>
+                                <Link href={`/${lng}/equipment`} className="text-zinc-400 hover:text-white text-sm transition-colors">
+                                    Equipment
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/${lng}/services`} className="text-zinc-400 hover:text-white text-sm transition-colors">
+                                    Services
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/${lng}/about`} className="text-zinc-400 hover:text-white text-sm transition-colors">
+                                    About
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/${lng}/contact`} className="text-zinc-400 hover:text-white text-sm transition-colors">
+                                    Contact
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Contact */}
+                    <div>
+                        <h4 className="text-white font-semibold mb-4">Contact</h4>
+                        <ul className="space-y-2 text-zinc-400 text-sm">
+                            <li>{company.email}</li>
+                            <li>{company.phone.display}</li>
+                            <li>{company.address.street} {company.address.city}</li>
+                        </ul>
                     </div>
                 </div>
 
-                <Divider className="mt-16 sm:mt-20 lg:mt-24" />
-
-                {/* Copyright */}
-                <div className="flex flex-wrap justify-between gap-2 pt-8">
-                    <p className="text-small text-default-400">
-                        {t(footer.copyright, lng)}
-                    </p>
+                {/* Copyright & Credits */}
+                <div className="border-t border-zinc-800 mt-8 pt-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p className="text-zinc-500 text-sm">
+                            © {new Date().getFullYear()} TV Film Solutions. All rights reserved.
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-zinc-600">
+                            <span>Platform Engineering by{' '}
+                                <a
+                                    href="https://epioso.tech"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-zinc-500 hover:text-amber-500 transition-colors"
+                                >
+                                    Epioso
+                                </a>
+                            </span>
+                            <span className="text-zinc-700">|</span>
+                            <span>v1.0.0 • Build {process.env.NEXT_PUBLIC_BUILD_ID || 'release'}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>

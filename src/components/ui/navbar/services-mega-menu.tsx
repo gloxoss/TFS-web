@@ -67,9 +67,8 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
         async function fetchServices() {
             try {
                 const allServices = await getServicesForNav();
-                // Filter to only core TFS services
-                const coreServices = allServices.filter(s => CORE_SERVICE_SLUGS.includes(s.slug));
-                setServices(coreServices);
+                // Show ALL active services, do not filter by hardcoded list
+                setServices(allServices);
             } catch (error) {
                 console.error('Failed to fetch services:', error);
             } finally {
@@ -107,21 +106,48 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
         return service.title;
     };
 
-    // Get services by category
-    const getServicesByCategory = (slugs: string[]) => {
-        return services.filter(s => slugs.includes(s.slug));
+    // Get services by category with fallbacks
+    const getCategorizedServices = () => {
+        const categorized: Record<string, ServiceItem[]> = {
+            production: [],
+            equipment: [],
+            support: [],
+            other: []
+        };
+
+        const usedIds = new Set<string>();
+
+        // Fill known categories
+        Object.entries(SERVICE_CATEGORIES).forEach(([catKey, catDef]) => {
+            const found = services.filter(s => catDef.slugs.includes(s.slug));
+            found.forEach(s => usedIds.add(s.id));
+            categorized[catKey] = found;
+        });
+
+        // Find uncategorized
+        const others = services.filter(s => !usedIds.has(s.id));
+        if (others.length > 0) {
+            categorized.other = others;
+        }
+
+        return categorized;
     };
+
+    const categorizedServices = getCategorizedServices();
+    const hasOther = categorizedServices.other.length > 0;
 
     const t = lng === 'fr' ? {
         allServices: 'Tous les services',
         needCustom: 'Besoin d\'une solution sur mesure?',
         contactUs: 'Contactez-nous pour des services personnalisés',
-        getQuote: 'Obtenir un devis'
+        getQuote: 'Obtenir un devis',
+        other: 'Autres Services'
     } : {
         allServices: 'All Services',
         needCustom: 'Need a custom solution?',
         contactUs: 'Contact us for tailored production services',
-        getQuote: 'Get Quote'
+        getQuote: 'Get Quote',
+        other: 'Other Services'
     };
 
     return (
@@ -154,7 +180,7 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[680px] bg-zinc-900/98 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl"
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[850px] bg-zinc-900/98 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl"
                     >
                         {/* Arrow */}
                         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-zinc-900 border-l border-t border-white/10 rotate-45" />
@@ -167,11 +193,17 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
                                 </div>
                             ) : (
                                 <>
-                                    {/* Categories Grid */}
-                                    <div className="grid grid-cols-3 gap-8">
+                                    {/* Categories Grid - Adaptive Columns */}
+                                    <div className={cn(
+                                        "grid gap-8",
+                                        hasOther ? "grid-cols-4" : "grid-cols-3"
+                                    )}>
+                                        {/* Standard Categories */}
                                         {Object.entries(SERVICE_CATEGORIES).map(([key, category]) => {
-                                            const categoryServices = getServicesByCategory(category.slugs);
-                                            if (categoryServices.length === 0) return null;
+                                            const items = categorizedServices[key];
+                                            // Render even if empty to maintain grid structure? Or hide? 
+                                            // Maintaining structure is usually better for layout stability
+                                            if (items.length === 0 && !hasOther) return null;
 
                                             return (
                                                 <div key={key}>
@@ -179,10 +211,10 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
                                                         {category.label[lng as 'en' | 'fr'] || category.label.en}
                                                     </h3>
                                                     <div className="space-y-1">
-                                                        {categoryServices.map((service) => {
+                                                        {items.map((service) => {
                                                             const href = getServiceHref(service.slug);
                                                             const isActive = pathname === href || pathname.startsWith(`${href}/`);
-                                                            const Icon = SERVICE_ICONS[service.slug] || Package;
+                                                            const Icon = SERVICE_ICONS[service.slug] || Package; // Fallback icon
 
                                                             return (
                                                                 <Link
@@ -204,7 +236,7 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
                                                                     )}>
                                                                         <Icon className="w-4 h-4" />
                                                                     </span>
-                                                                    <span className="text-sm font-medium">
+                                                                    <span className="text-sm font-medium line-clamp-1">
                                                                         {getTitle(service)}
                                                                     </span>
                                                                 </Link>
@@ -214,6 +246,48 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
                                                 </div>
                                             );
                                         })}
+
+                                        {/* Other Services - Only if exists */}
+                                        {hasOther && (
+                                            <div>
+                                                <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
+                                                    {t.other}
+                                                </h3>
+                                                <div className="space-y-1">
+                                                    {categorizedServices.other.map((service) => {
+                                                        const href = getServiceHref(service.slug);
+                                                        const isActive = pathname === href || pathname.startsWith(`${href}/`);
+                                                        const Icon = SERVICE_ICONS[service.slug] || Package;
+
+                                                        return (
+                                                            <Link
+                                                                key={service.id}
+                                                                href={href}
+                                                                className={cn(
+                                                                    "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group",
+                                                                    isActive
+                                                                        ? "bg-white/10 text-white"
+                                                                        : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                                                                )}
+                                                                onClick={() => setIsOpen(false)}
+                                                            >
+                                                                <span className={cn(
+                                                                    "shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
+                                                                    isActive
+                                                                        ? "bg-[#D00000]/20 text-[#D00000]"
+                                                                        : "bg-white/5 text-zinc-400 group-hover:bg-[#D00000]/10 group-hover:text-[#D00000]"
+                                                                )}>
+                                                                    <Icon className="w-4 h-4" />
+                                                                </span>
+                                                                <span className="text-sm font-medium line-clamp-1">
+                                                                    {getTitle(service)}
+                                                                </span>
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Bottom CTA */}

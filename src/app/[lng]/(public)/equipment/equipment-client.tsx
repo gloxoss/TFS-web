@@ -11,6 +11,7 @@
  */
 'use client'
 
+import { Download } from 'lucide-react'
 import { useState, useCallback, useTransition, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -346,14 +347,31 @@ export function EquipmentCatalogClient({
             className="text-center"
           >
             <span className="inline-block px-4 py-1.5 bg-red-700/15 text-red-400 rounded-full text-sm font-medium mb-6">
-              {t('hero.pill')}
+              Professional Film Equipment
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               {t('title')}
             </h1>
-            <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-8">
               {t('description')}
             </p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="flex justify-center"
+            >
+              <a
+                href="/TFS_Catalog_2025.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-all group border border-zinc-700 hover:border-zinc-500"
+              >
+                <Download className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
+                <span>Download Our Catalog</span>
+              </a>
+            </motion.div>
           </motion.div>
         </div>
       </section>
