@@ -1,7 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 migrate((app) => {
-    const ID_KIT_SLOTS = "pbc_kitslots000001";
+    const ID_KIT_SLOTS = "kit_slots";
 
     try {
         const slots = app.findRecordsByFilter(ID_KIT_SLOTS, "slot_name != ''", "", 100, 0);
