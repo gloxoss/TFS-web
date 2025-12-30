@@ -113,7 +113,10 @@ export default function ServiceDetailClient({ service, lng }: ServiceDetailClien
             )}
 
             {/* Contact Actions Section */}
-            <ServiceContactSection lng={lng} />
+            <ServiceContactSection
+                lng={lng}
+                showCatalog={['equipment-hire', 'film-shipping', 'transportation'].includes(service.slug)}
+            />
         </main>
     )
 }

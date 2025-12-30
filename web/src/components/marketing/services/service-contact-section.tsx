@@ -6,9 +6,10 @@ import Link from 'next/link'
 
 interface ServiceContactSectionProps {
     lng: string
+    showCatalog?: boolean
 }
 
-export default function ServiceContactSection({ lng }: ServiceContactSectionProps) {
+export default function ServiceContactSection({ lng, showCatalog = false }: ServiceContactSectionProps) {
     return (
         <section className="py-20 md:py-28 bg-zinc-950">
             <div className="container mx-auto px-6 max-w-6xl">
@@ -47,15 +48,17 @@ export default function ServiceContactSection({ lng }: ServiceContactSectionProp
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
 
-                        {/* Download Catalog */}
-                        <a
-                            href="/catalog.pdf"
-                            download
-                            className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-transparent border border-white/20 hover:border-white/40 text-white font-medium rounded-lg transition-all duration-300 group"
-                        >
-                            <Download className="w-5 h-5" />
-                            {lng === 'fr' ? 'Télécharger le Catalogue' : 'Download Catalog'}
-                        </a>
+                        {/* Download Catalog - Conditional */}
+                        {showCatalog && (
+                            <a
+                                href="/catalog.pdf"
+                                download
+                                className="flex items-center justify-center gap-3 w-full px-8 py-4 bg-transparent border border-white/20 hover:border-white/40 text-white font-medium rounded-lg transition-all duration-300 group"
+                            >
+                                <Download className="w-5 h-5" />
+                                {lng === 'fr' ? 'Télécharger le Catalogue' : 'Download Catalog'}
+                            </a>
+                        )}
 
                         {/* Contact Us */}
                         <Link

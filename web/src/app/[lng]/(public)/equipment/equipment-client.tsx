@@ -363,9 +363,8 @@ export function EquipmentCatalogClient({
               className="flex justify-center"
             >
               <a
-                href="/TFS_Catalog_2025.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/catalog.pdf"
+                download
                 className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-all group border border-zinc-700 hover:border-zinc-500"
               >
                 <Download className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
