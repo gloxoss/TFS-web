@@ -119,7 +119,7 @@ const MOCK_CAMERA_KIT: MockKitSlot[] = [
       { id: 'lens-2', name: 'Sony 70-200mm f/2.8 GM II', category: 'Telephoto', imageUrl: '/images/equipment/lens-70-200.jpg' },
       { id: 'lens-3', name: 'Sony 50mm f/1.2 GM', category: 'Prime', imageUrl: '/images/equipment/lens-50.jpg' },
     ],
-    defaultSelected: ['lens-1'],
+    defaultSelected: [],
   },
   {
     slotName: 'Power Solution',
@@ -129,7 +129,7 @@ const MOCK_CAMERA_KIT: MockKitSlot[] = [
       { id: 'bat-2', name: 'BP-A60 Battery Pack (×2)', category: 'Battery', imageUrl: '/images/equipment/bp-a60.jpg' },
       { id: 'bat-3', name: 'D-Tap Power Cable', category: 'Accessory', imageUrl: '/images/equipment/d-tap.jpg' },
     ],
-    defaultSelected: ['bat-1', 'bat-3'],
+    defaultSelected: [],
   },
   {
     slotName: 'Media & Storage',
@@ -138,7 +138,7 @@ const MOCK_CAMERA_KIT: MockKitSlot[] = [
       { id: 'media-1', name: 'CFexpress Type B 512GB (×2)', category: 'Media', imageUrl: '/images/equipment/cfexpress.jpg' },
       { id: 'media-2', name: 'CFexpress Card Reader', category: 'Accessory', imageUrl: '/images/equipment/card-reader.jpg' },
     ],
-    defaultSelected: ['media-1', 'media-2'],
+    defaultSelected: [],
   },
   {
     slotName: 'Monitoring',
@@ -147,7 +147,7 @@ const MOCK_CAMERA_KIT: MockKitSlot[] = [
       { id: 'mon-1', name: 'SmallHD Cine 7" Monitor', category: 'Monitor', imageUrl: '/images/equipment/smallhd-7.jpg' },
       { id: 'mon-2', name: 'Atomos Ninja V+ 5"', category: 'Monitor/Recorder', imageUrl: '/images/equipment/atomos-ninja.jpg' },
     ],
-    defaultSelected: ['mon-1'],
+    defaultSelected: [],
   },
   {
     slotName: 'Support & Rigging',
@@ -157,7 +157,7 @@ const MOCK_CAMERA_KIT: MockKitSlot[] = [
       { id: 'rig-2', name: 'Top Handle with NATO Rail', category: 'Handle', imageUrl: '/images/equipment/top-handle.jpg' },
       { id: 'rig-3', name: 'Follow Focus System', category: 'Focus', imageUrl: '/images/equipment/follow-focus.jpg' },
     ],
-    defaultSelected: ['rig-1', 'rig-2'],
+    defaultSelected: [],
   },
 ]
 
@@ -390,8 +390,9 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
           if (!selections[product.id] || Object.keys(selections[product.id]).length === 0) {
             const defaultSelections: Record<string, string[]> = {}
             for (const slot of result.kit.slots) {
-              // KitItem has product_id, not id
-              defaultSelections[slot.slotName] = slot.defaultItems.map(item => item.product_id)
+              // Client Request: Start with NO accessories selected (empty array)
+              // defaultSelections[slot.slotName] = slot.defaultItems.map(item => item.product_id)
+              defaultSelections[slot.slotName] = []
             }
             // Save defaults to global store
             setSelections(product.id, defaultSelections)
