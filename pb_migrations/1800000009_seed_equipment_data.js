@@ -664,45 +664,45 @@ migrate((app) => {
             template_name: "Sony Venice 2 Cine Package",
             slot_name: "Fluid Head",
             category: "Support",
-            recommended_slugs: ["oconnor-2575d-fluid-head"]
+            recommended_slugs: []
         },
         {
             template_name: "Sony Venice 2 Cine Package",
             slot_name: "Tripod",
             category: "Support",
-            recommended_slugs: ["sachtler-system-25"]
+            recommended_slugs: []
         },
         {
             template_name: "Sony Venice 2 Cine Package",
             slot_name: "Monitor",
             category: "Monitors",
-            recommended_slugs: ["smallhd-ultra-7-bolt-6", "sony-pvma170-oled"]
+            recommended_slugs: []
         },
         // Alexa 35 Package
         {
             template_name: "ARRI Alexa 35 Production Package",
             slot_name: "Lens Control",
             category: "Lens Control",
-            recommended_slugs: ["arri-hi-5-wireless-set", "arri-wcu-4"]
+            recommended_slugs: []
         },
         {
             template_name: "ARRI Alexa 35 Production Package",
             slot_name: "Monitor",
             category: "Monitors",
-            recommended_slugs: ["smallhd-ultra-7-bolt-6"]
+            recommended_slugs: []
         },
         // FX3 Kit
         {
             template_name: "Sony FX3 Run & Gun Kit",
             slot_name: "Lens Control",
             category: "Lens Control",
-            recommended_slugs: ["tilta-nucleus-m"]
+            recommended_slugs: []
         },
         {
             template_name: "Sony FX3 Run & Gun Kit",
             slot_name: "Stabilization",
             category: "Stabilization",
-            recommended_slugs: ["dji-ronin-2-professional"]
+            recommended_slugs: []
         }
     ];
 
