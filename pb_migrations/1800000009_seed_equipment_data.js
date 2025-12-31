@@ -101,7 +101,7 @@ migrate((app) => {
                 mount: "PL / E-mount",
                 codec: "X-OCN, ProRes",
                 max_fps: "90fps max",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/sony_mpc_3628_venice_2_digital_motion_1636969601_1672825.jpg"
+
             },
             stock_available: 2,
             is_featured: true
@@ -122,7 +122,7 @@ migrate((app) => {
                 mount: "PL",
                 codec: "ProRes, ARRIRAW",
                 max_fps: "120fps max",
-                image_url: "https://static.bhphoto.com/images/multiple_images/images500x500/1754407216_IMG_2544984.jpg"
+
             },
             stock_available: 2,
             is_featured: true
@@ -143,7 +143,7 @@ migrate((app) => {
                 mount: "LPL / PL",
                 codec: "ProRes, ARRIRAW",
                 max_fps: "100fps max",
-                image_url: "https://static.bhphoto.com/images/multiple_images/images500x500/1717001182_IMG_2256540.jpg"
+
             },
             stock_available: 1,
             is_featured: true
@@ -164,7 +164,7 @@ migrate((app) => {
                 mount: "PL",
                 codec: "ProRes, ARRIRAW",
                 max_fps: "200fps max",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/arri_k0_0024310_alexa_mini_lf_and_1553752231_1470347.jpg"
+
             },
             stock_available: 2,
             is_featured: false
@@ -185,7 +185,7 @@ migrate((app) => {
                 mount: "E-mount",
                 codec: "ProRes (via extension)",
                 max_fps: "60fps",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/sony_pxw_fx9v_pxw_fx9_xdcam_6k_full_frame_1568344897_1506002.jpg"
+
             },
             stock_available: 3,
             is_featured: false
@@ -206,7 +206,7 @@ migrate((app) => {
                 mount: "E-mount",
                 codec: "XAVC S-I",
                 max_fps: "120fps (4K)",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/sony_ilme_fx3a_fx3_full_frame_cinema_camera_1746547141_1894322.jpg"
+
             },
             stock_available: 4,
             is_featured: false
@@ -227,7 +227,7 @@ migrate((app) => {
                 mount: "PL / Canon",
                 codec: "R3D, ProRes, DNxHD",
                 max_fps: "60fps full sensor",
-                image_url: "https://static.bhphoto.com/images/multiple_images/images500x500/1458487193_IMG_604767.jpg"
+
             },
             stock_available: 1,
             is_featured: true
@@ -248,7 +248,7 @@ migrate((app) => {
                 aperture: "T2",
                 coverage: "Super 35",
                 focal_range: "12-180mm",
-                image_url: "https://res.cloudinary.com/offshoot/q_50,w_1920,c_limit,f_auto/REIS/products/5fb741a435394a631fe5a51f/cooke_mini_s4_i_lens_set_alt_2"
+
             },
             stock_available: 1,
             is_featured: true
@@ -267,7 +267,7 @@ migrate((app) => {
                 aperture: "T1.9",
                 coverage: "Super 35",
                 focal_range: "28-135mm",
-                image_url: "https://cinevo.com/wp-content/uploads/2022/08/ARRI-Zeiss-Master-Anamorphic-Set-a.jpg"
+
             },
             stock_available: 1,
             is_featured: true
@@ -286,7 +286,7 @@ migrate((app) => {
                 aperture: "T2",
                 coverage: "Super 35",
                 focal_range: "32-100mm",
-                image_url: "https://res.cloudinary.com/offshoot/q_70,w_3840,c_limit,f_auto/REIS/products/5fba0435a9eb364eeb7b54c1/atlas_orion_2x_anamorphic_a_set_hr_3"
+
             },
             stock_available: 1,
             is_featured: false
@@ -305,7 +305,7 @@ migrate((app) => {
                 aperture: "T1.8",
                 coverage: "Large Format / Full Frame",
                 focal_range: "12-280mm",
-                image_url: "https://images.squarespace-cdn.com/content/v1/5e72aea433a7b935087f9d5d/5b69e981-9bea-4ff0-bf2d-ddfaa2152c5a/Screenshot+2024-06-02+at+1.17.06%E2%80%AFPM.jpg?format=1000w"
+
             },
             stock_available: 1,
             is_featured: true
@@ -323,7 +323,7 @@ migrate((app) => {
                 mount: "PL",
                 aperture: "T1.5",
                 coverage: "Full Frame",
-                image_url: "https://cinevo.com/wp-content/uploads/2023/01/cnv-arri-supreme-primes-a-980x652.jpg"
+
             },
             stock_available: 1,
             is_featured: false
@@ -342,7 +342,7 @@ migrate((app) => {
                 aperture: "T2.6",
                 coverage: "Super 35",
                 focal_length: "45-250mm",
-                image_url: "https://static.bhphoto.com/images/images750x750/1487692047_1287817.jpg"
+
             },
             stock_available: 1,
             is_featured: false
@@ -361,7 +361,7 @@ migrate((app) => {
                 aperture: "T2.95-3.9",
                 coverage: "Super 35",
                 focal_length: "17-120mm",
-                image_url: "https://static.bhphoto.com/images/images500x500/1717598768_1833736.jpg"
+
             },
             stock_available: 2,
             is_featured: false
@@ -380,7 +380,7 @@ migrate((app) => {
                 channels: "3 Axis",
                 wireless_module: "RF-2400",
                 compatibility: "ARRI Cameras",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/arri_kk_0041793_hi_5_rx_tx_2400_set_1655120170_1710021.jpg"
+
             },
             stock_available: 2,
             is_featured: false
@@ -396,7 +396,7 @@ migrate((app) => {
             specs: {
                 channels: "3 Axis",
                 features: "Vibrating Markers, Backlit Knob",
-                image_url: "https://static.bhphoto.com/images/multiple_images/images500x500/1486487704_IMG_749127.jpg"
+
             },
             stock_available: 3,
             is_featured: false
@@ -413,7 +413,7 @@ migrate((app) => {
                 range: "1000 ft",
                 motors: "2 Included",
                 gear_pitch: "0.8 MOD",
-                image_url: "https://static.bhphoto.com/images/multiple_images/images500x500/1526318171_IMG_988009.jpg"
+
             },
             stock_available: 5,
             is_featured: false
@@ -433,7 +433,7 @@ migrate((app) => {
                 payload: "90 lbs",
                 base: "Mitchell / 150mm",
                 tilt_range: "+/- 90°",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/oconnor_c1234_0005_ultimate_2575d_fluid_head_1466607922_1232548.jpg"
+
             },
             stock_available: 3,
             is_featured: false
@@ -451,7 +451,7 @@ migrate((app) => {
                 payload: "77 lbs",
                 bowl: "150mm",
                 legs: "Carbon Fiber",
-                image_url: "https://static.bhphoto.com/images/multiple_images/images500x500/1668707156_IMG_1876954.jpg"
+
             },
             stock_available: 2,
             is_featured: false
@@ -472,7 +472,7 @@ migrate((app) => {
                 brightness: "2300 nits",
                 resolution: "1920 x 1080",
                 wireless: "Bolt 6 RX Built-in",
-                image_url: "https://static.bhphoto.com/images/images500x500/1715266825_1806333.jpg"
+
             },
             stock_available: 4,
             is_featured: false
@@ -491,7 +491,7 @@ migrate((app) => {
                 panel_type: "OLED",
                 resolution: "1920 x 1080",
                 inputs: "SDI, HDMI, Composite",
-                image_url: "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/sony_pvm_a170b_pvm_a170_17_pro_oled_1490022375_1320839.jpg"
+
             },
             stock_available: 3,
             is_featured: false
@@ -510,7 +510,7 @@ migrate((app) => {
                 range: "1500 ft",
                 resolution: "Up to 4K30",
                 inputs: "3G-SDI / HDMI",
-                image_url: "https://static.bhphoto.com/images/images500x500/1662681512_1723714.jpg"
+
             },
             stock_available: 3,
             is_featured: false
@@ -529,7 +529,7 @@ migrate((app) => {
                 payload: "30 lbs",
                 battery: "Dual Hot-Swappable",
                 compatibility: "Cinema Cameras",
-                image_url: "https://static.bhphoto.com/images/images500x500/1558517704_1479666.jpg"
+
             },
             stock_available: 2,
             is_featured: false
@@ -548,7 +548,7 @@ migrate((app) => {
                 capacity: "1176Wh",
                 outputs: "12V, 24V, 48V, USB",
                 weight: "19.7 lbs",
-                image_url: "https://static.bhphoto.com/images/images500x500/1527082640_1409393.jpg"
+
             },
             stock_available: 2,
             is_featured: false
@@ -567,7 +567,7 @@ migrate((app) => {
                 type: "Clip-on / Rod mounted",
                 filters: "4x5.65 / 4x4",
                 stages: "3",
-                image_url: "https://static.bhphoto.com/images/images500x500/1496676931_1341045.jpg"
+
             },
             stock_available: 4,
             is_featured: false
