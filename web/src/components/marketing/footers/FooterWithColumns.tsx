@@ -70,18 +70,9 @@ export default function FooterWithColumns({ lng }: FooterProps) {
                             © {new Date().getFullYear()} TV Film Solutions. All rights reserved.
                         </p>
                         <div className="flex items-center gap-3 text-xs text-zinc-600">
-                            <span>Platform Engineering by{' '}
-                                <a
-                                    href="https://epioso.tech"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-zinc-500 hover:text-amber-500 transition-colors"
-                                >
-                                    Epioso
-                                </a>
-                            </span>
+                            <span>By <a href="https://www.instagram.com/z_dream_f" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-white transition-colors">Z Dream-F</a></span>
                             <span className="text-zinc-700">|</span>
-                            <span>v1.0.0 • Build {process.env.NEXT_PUBLIC_BUILD_ID || 'release'}</span>
+                            <span>v1.0.0</span>
                         </div>
                     </div>
                 </div>

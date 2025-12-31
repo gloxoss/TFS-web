@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePocketBase } from '@/components/pocketbase-provider';
 
 interface NavigationItem {
@@ -36,7 +36,15 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const pathname = usePathname();
-    const { user, logout } = usePocketBase();
+    const pb = usePocketBase();
+    const router = useRouter();
+    const user = pb.authStore.model;
+
+    const logout = () => {
+        pb.authStore.clear();
+        document.cookie = "pb_auth=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"; // Clear cookie as well 
+        router.push(`/${lng}/login`);
+    };
 
     const navigation: NavigationItem[] = [
         { name: 'Overview', href: `/${lng}/admin`, icon: LayoutDashboard },
@@ -160,6 +168,13 @@ export default function AdminSidebar({
                             </li>
                         </ul>
                     </nav>
+                    <div className="px-6 py-4 border-t border-zinc-900">
+                        <p className="text-[10px] text-zinc-600 font-mono">
+                            System: v1.0.0
+                            <br />
+                            Eng: <span className="opacity-50 hover:opacity-100 transition-opacity cursor-help" title="System Architecture & Maintenance: EPIOSO.TECH">EPS-88</span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
