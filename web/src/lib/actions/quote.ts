@@ -147,6 +147,9 @@ export async function submitQuote(submission: QuoteSubmissionData): Promise<Quot
         formData.notes || '',
       ].filter(Boolean).join('\n'),
 
+      // Location (dedicated field)
+      location: formData.location || undefined,
+
       // Language
       language: lng,
     }

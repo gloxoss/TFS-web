@@ -89,7 +89,11 @@ export async function getEquipmentList(
         }
 
         const client = await createAdminClient()
-        const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
+        const PB_URL_RAW = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+        if (!PB_URL_RAW && process.env.NODE_ENV === 'production') {
+            throw new Error('NEXT_PUBLIC_POCKETBASE_URL is not defined');
+        }
+        const baseUrl = PB_URL_RAW || 'http://127.0.0.1:8090'
 
         // Build filter
         const filterParts: string[] = []
@@ -146,7 +150,11 @@ export async function getEquipmentById(id: string): Promise<{
         }
 
         const client = await createAdminClient()
-        const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
+        const PB_URL_RAW = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+        if (!PB_URL_RAW && process.env.NODE_ENV === 'production') {
+            throw new Error('NEXT_PUBLIC_POCKETBASE_URL is not defined');
+        }
+        const baseUrl = PB_URL_RAW || 'http://127.0.0.1:8090'
         const record = await client.collection('equipment').getOne(id)
 
         return {

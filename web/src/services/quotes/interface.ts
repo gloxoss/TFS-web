@@ -38,6 +38,9 @@ export interface CreateQuotePayload {
   projectDescription?: string
   specialRequests?: string
 
+  // Location (shooting/delivery location)
+  location?: string
+
   // Language preference (for follow-up communications)
   language?: string
 
@@ -78,6 +81,7 @@ export interface Quote {
   rentalEndDate: string
   projectDescription?: string
   specialRequests?: string
+  location?: string
   status: QuoteStatus
   confirmationNumber?: string
   language?: string

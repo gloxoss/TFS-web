@@ -9,7 +9,7 @@
  * Steps:
  * 1. Go to Admin UI → Collections → Equipment
  * 2. Click "Edit Collection" (gear icon)
- * 3. Click "+ New Field"
+ * 3. Click "+ New Field"w
  * 4. Field Type: Relation
  * 5. Field Name: variants
  * 6. Collection: equipment (self-relation)

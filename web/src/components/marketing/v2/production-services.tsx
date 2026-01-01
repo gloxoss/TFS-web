@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Clapperboard, Tv, Radio, MonitorPlay, Mic2, Camera, Video, Settings, LayoutGrid, HardDrive, Truck, MapPin, Users, FileCheck, Utensils, Hotel, Car, UserCheck, Package } from 'lucide-react'
+import { ArrowRight, Clapperboard, Tv, Radio, MonitorPlay, Mic2, Camera, Video, Settings, LayoutGrid, HardDrive, Truck, MapPin, Users, FileCheck, Utensils, Hotel, Car, UserCheck, Package, Palette, Shirt, Box, Paintbrush, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
@@ -20,6 +20,12 @@ const ICON_MAP: Record<string, React.ReactNode> = {
     'accommodation': <Hotel className="w-6 h-6" />,
     'transportation': <Car className="w-6 h-6" />,
     'casting': <UserCheck className="w-6 h-6" />,
+    // New Services
+    'makeup-hair': <Palette className="w-6 h-6" />,
+    'costume-wardrobe': <Shirt className="w-6 h-6" />,
+    'props-set-dressing': <Box className="w-6 h-6" />,
+    'production-design': <Paintbrush className="w-6 h-6" />,
+    'security-management': <ShieldAlert className="w-6 h-6" />,
     // Legacy icons for fallback
     'sporting-events': <TrophyIcon className="w-6 h-6" />,
     'film-production': <Clapperboard className="w-6 h-6" />,
@@ -44,6 +50,12 @@ const DEFAULT_IMAGES: Record<string, string> = {
     'accommodation': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=75&w=800&auto=format&fit=crop',
     'transportation': 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=75&w=800&auto=format&fit=crop',
     'casting': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=75&w=800&auto=format&fit=crop',
+    // New Services Defaults
+    'makeup-hair': 'https://images.unsplash.com/photo-1487412947132-26c5c1b151d1?q=75&w=800&auto=format&fit=crop',
+    'costume-wardrobe': 'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?q=75&w=800&auto=format&fit=crop',
+    'props-set-dressing': 'https://images.unsplash.com/photo-1531346300883-e08739665243?q=75&w=800&auto=format&fit=crop',
+    'production-design': 'https://images.unsplash.com/photo-1531844251246-9a1bfaaeeb9a?q=75&w=800&auto=format&fit=crop',
+    'security-management': 'https://images.unsplash.com/photo-1555952494-efd681c7a3f9?q=75&w=800&auto=format&fit=crop',
 }
 
 // Mapped service type for the component
@@ -242,6 +254,7 @@ export function ProductionServices({ lng = 'en', services = [] }: ProductionServ
     // Split into rows (up to 5 per row)
     const row1 = mappedServices.slice(0, 5);
     const row2 = mappedServices.slice(5, 10);
+    const row3 = mappedServices.slice(10, 15);
 
     const t = translations[lng as keyof typeof translations] || translations.en;
 
@@ -270,6 +283,7 @@ export function ProductionServices({ lng = 'en', services = [] }: ProductionServ
                 <div className="flex flex-col gap-6">
                     {row1.length > 0 && <ExpandingCardRow items={row1} startIndex={0} lng={lng} />}
                     {row2.length > 0 && <ExpandingCardRow items={row2} startIndex={5} lng={lng} />}
+                    {row3.length > 0 && <ExpandingCardRow items={row3} startIndex={10} lng={lng} />}
                 </div>
             </div>
         </section>

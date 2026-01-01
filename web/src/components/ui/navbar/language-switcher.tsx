@@ -55,10 +55,11 @@ export function LanguageSwitcher({ lng }: LanguageSwitcherProps) {
                                     key={language}
                                     onClick={() => {
                                         const currentPath = window.location.pathname;
+                                        const currentSearch = window.location.search; // Preserve query params
                                         const newPath = currentPath === '/' || currentPath === `/${lng}` || currentPath === `/${lng}/`
                                             ? `/${language}`
                                             : currentPath.replace(`/${lng}/`, `/${language}/`);
-                                        router.push(newPath);
+                                        router.push(newPath + currentSearch);
                                         setIsOpen(false);
                                     }}
                                     className={cn(

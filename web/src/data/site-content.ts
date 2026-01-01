@@ -186,6 +186,97 @@ export const homePage = {
             text: { en: "Let's Talk", fr: "Parlons" },
             href: "/contact"
         }
+    },
+
+    // Expert Bento Grid component
+    expertBento: {
+        title: { en: "Global Expertise", fr: "Expertise Mondiale" },
+        mainTitle: { en: "RECOGNIZED EXPERTISE", fr: "EXPERTISE RECONNUE" },
+        mainDescription: {
+            en: [
+                "The expertise of our teams, combined with a high-tech equipment fleet, ensures our mastery of the entire audiovisual production chain.",
+                "Our know-how is now recognized in Morocco, Africa, and the Middle East for major audiovisual events: sports, entertainment, live performances, and TV production.",
+                "TFS has equipped a TV studio within its facilities that meets the highest requirements in terms of audiovisual equipment and soundproofing."
+            ],
+            fr: [
+                "L'expertise de nos équipes, combinée à une flotte d'équipements de haute technologie, garantit notre maîtrise de toute la chaîne de production audiovisuelle.",
+                "Notre savoir-faire est désormais reconnu au Maroc, en Afrique et au Moyen-Orient pour les grands événements audiovisuels : sport, divertissement, spectacles vivants et production TV.",
+                "TFS a équipé un studio TV dans ses locaux répondant aux plus hautes exigences en matière d'équipement audiovisuel et d'insonorisation."
+            ]
+        },
+        stats: {
+            stat1: {
+                title: { en: "21+ YEARS", fr: "21+ ANS" },
+                desc: { en: "Leading the industry since 2003 with consistent excellence.", fr: "Leader du secteur depuis 2003 avec une excellence constante." }
+            },
+            stat2: {
+                title: { en: "500+ PROJECTS", fr: "500+ PROJETS" },
+                desc: { en: "Successfully delivered major events across the region.", fr: "Événements majeurs livrés avec succès dans la région." }
+            },
+            fact1: {
+                title: { en: "INTERNATIONAL STANDARDS", fr: "NORMES INTERNATIONALES" },
+                desc: { en: "Production quality meeting strict global broadcast requirements.", fr: "Qualité de production répondant aux exigences strictes de diffusion mondiale." }
+            },
+            fact2: {
+                title: { en: "HIGH-TECH FLEET", fr: "FLOTTE HIGH-TECH" },
+                desc: { en: "State-of-the-art OB Vans and cameras.", fr: "Cars OB et caméras à la pointe de la technologie." }
+            },
+            fact3: {
+                title: { en: "EXPERT TEAMS", fr: "ÉQUIPES EXPERTES" },
+                desc: { en: "Highly trained technical staff.", fr: "Personnel technique hautement qualifié." }
+            }
+        }
+    }
+}
+
+// =============================================================================
+// PAGE CONTENT - QUOTE
+// =============================================================================
+
+export const quotePage = {
+    title: { en: "Request a Quote", fr: "Demander un Devis" },
+    subtitle: { en: "Complete the form below and we'll get back to you with pricing and availability.", fr: "Remplissez le formulaire ci-dessous et nous vous contacterons avec les prix et la disponibilité." },
+    steps: {
+        dates: { en: "Rental Dates", fr: "Dates de Location" },
+        contact: { en: "Contact Info", fr: "Coordonnées" },
+        project: { en: "Project Details", fr: "Détails du Projet" },
+        review: { en: "Review & Submit", fr: "Vérifier et Soumettre" }
+    },
+    datesStep: {
+        title: { en: "Rental Period", fr: "Période de Location" },
+        description: { en: "Select the start and end dates for your rental. We'll check availability for these dates.", fr: "Sélectionnez les dates de début et de fin de votre location. Nous vérifierons la disponibilité pour ces dates." },
+        note: { en: "Note:", fr: "Note:" },
+        noteText: { en: "Standard rental period is usually 1-3 days. Extended rentals may qualify for a discount, which will be applied in your formal quote.", fr: "La période de location standard est généralement de 1 à 3 jours. Les locations prolongées peuvent bénéficier d'une réduction, qui sera appliquée dans votre devis formel." },
+        yourItems: { en: "Your Equipment", fr: "Votre Équipement" },
+        itemsCount: { en: "items in your quote", fr: "articles dans votre devis" }
+    },
+    navigation: {
+        back: { en: "Back", fr: "Retour" },
+        backToCart: { en: "Back to Cart", fr: "Retour au Panier" },
+        continue: { en: "Continue", fr: "Continuer" },
+        submit: { en: "Submit Quote Request", fr: "Soumettre la Demande" },
+        submitting: { en: "Submitting...", fr: "Envoi en cours..." }
+    },
+    success: {
+        title: { en: "Quote Request Received!", fr: "Demande de Devis Reçue !" },
+        subtitle: { en: "Thank you. We've received your request and will get back to you with a formal quote shortly.", fr: "Merci. Nous avons reçu votre demande et vous contacterons avec un devis formel sous peu." },
+        reference: { en: "Reference", fr: "Référence" },
+        status: { en: "Request Pending", fr: "Demande en Attente" },
+        rentalPeriod: { en: "Rental Period", fr: "Période de Location" },
+        equipment: { en: "Equipment", fr: "Équipement" },
+        itemsRequested: { en: "items requested", fr: "articles demandés" },
+        includingKits: { en: "Including kits & accessories", fr: "Kits et accessoires inclus" },
+        step1Title: { en: "Review Process", fr: "Processus de Révision" },
+        step1Desc: { en: "Our team checks availability for your dates within 24 hours.", fr: "Notre équipe vérifie la disponibilité pour vos dates sous 24 heures." },
+        step2Title: { en: "Formal Quote", fr: "Devis Formel" },
+        step2Desc: { en: "You'll receive a detailed PDF quote with final pricing via email.", fr: "Vous recevrez un devis PDF détaillé avec les prix finaux par email." },
+        trackRequest: { en: "Track Request", fr: "Suivre la Demande" },
+        backToHome: { en: "Back to Home", fr: "Retour à l'Accueil" }
+    },
+    emptyCart: {
+        title: { en: "Your cart is empty", fr: "Votre panier est vide" },
+        description: { en: "Add some equipment to request a quote.", fr: "Ajoutez des équipements pour demander un devis." },
+        browseEquipment: { en: "Browse Equipment", fr: "Parcourir l'Équipement" }
     }
 }
 

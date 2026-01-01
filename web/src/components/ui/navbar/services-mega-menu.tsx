@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Package, Truck, FileCheck, Users, MapPin, Utensils, Hotel, Car, UserCheck, ArrowRight } from "lucide-react";
+import { ChevronDown, Package, Truck, FileCheck, Users, MapPin, Utensils, Hotel, Car, UserCheck, ArrowRight, Palette, Shirt, Box, Paintbrush, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { getServicesForNav, type ServiceItem } from "@/lib/actions/services";
@@ -27,18 +27,23 @@ const CORE_SERVICE_SLUGS = [
 ];
 
 // Categories for mega menu
+// Categories for mega menu
 const SERVICE_CATEGORIES: Record<string, { label: { en: string; fr: string }; slugs: string[] }> = {
     production: {
-        label: { en: 'Production', fr: 'Production' },
-        slugs: ['crewing', 'casting', 'scouting']
+        label: { en: 'Production Services', fr: 'Services de Production' },
+        slugs: ['crewing', 'casting', 'security-management']
     },
     equipment: {
         label: { en: 'Equipment & Logistics', fr: 'Équipement & Logistique' },
-        slugs: ['equipment-hire', 'film-shipping', 'transportation']
+        slugs: ['equipment-hire', 'film-shipping', 'transportation', 'accommodation']
     },
-    support: {
-        label: { en: 'Support Services', fr: 'Services de Support' },
-        slugs: ['catering', 'accommodation', 'film-permits']
+    art: {
+        label: { en: 'Art & Design', fr: 'Art & Design' },
+        slugs: ['production-design', 'props-set-dressing', 'costume-wardrobe', 'makeup-hair']
+    },
+    locations: {
+        label: { en: 'Locations & Support', fr: 'Lieux & Support' },
+        slugs: ['scouting', 'film-permits', 'catering']
     }
 };
 
@@ -53,6 +58,11 @@ const SERVICE_ICONS: Record<string, React.ElementType> = {
     'accommodation': Hotel,
     'transportation': Car,
     'casting': UserCheck,
+    'makeup-hair': Palette,
+    'costume-wardrobe': Shirt,
+    'props-set-dressing': Box,
+    'production-design': Paintbrush,
+    'security-management': ShieldAlert,
 };
 
 export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
@@ -194,10 +204,7 @@ export function ServicesMegaMenu({ lng, label }: ServicesDropdownProps) {
                             ) : (
                                 <>
                                     {/* Categories Grid - Adaptive Columns */}
-                                    <div className={cn(
-                                        "grid gap-8",
-                                        hasOther ? "grid-cols-4" : "grid-cols-3"
-                                    )}>
+                                    <div className="grid grid-cols-4 gap-8">
                                         {/* Standard Categories */}
                                         {Object.entries(SERVICE_CATEGORIES).map(([key, category]) => {
                                             const items = categorizedServices[key];

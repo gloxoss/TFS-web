@@ -2,7 +2,11 @@ import PocketBase from 'pocketbase';
 import { Cart, CartItem, KitTemplate, KitItem, ResolvedKit, ResolvedKitSlot } from '@/types/commerce';
 import { Product } from '@/services/products/types';
 
-const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
+const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+if (!PB_URL && process.env.NODE_ENV === 'production') {
+  throw new Error('NEXT_PUBLIC_POCKETBASE_URL is not defined');
+}
+const SAFE_PB_URL = PB_URL || 'http://127.0.0.1:8090';
 
 export class CartService {
   private pb: PocketBase;
@@ -86,56 +90,18 @@ export class CartService {
       return null;
     }
 
-    // Build resolved slots from category-based kit_slots
-    const resolvedSlots: ResolvedKitSlot[] = [];
-
-    for (const slot of bundleCheck.slots) {
+    // Build resolved slots from category-based kit_slots in PARALLEL
+    const slotPromises = bundleCheck.slots.map(async (slot) => {
       // Get ALL products from this category
+      // IMPORTANT: Use unique requestKey to prevent PocketBase auto-cancellation
       const categoryProducts = await this.pb.collection('equipment').getFullList({
         filter: `category="${slot.category_id}"`,
-        expand: 'variants'
+        expand: 'variants',
+        requestKey: `kit-slot-${slot.id}` // Unique key prevents auto-cancellation
       });
 
       // Map to Product objects
-      const availableOptions: Product[] = categoryProducts.map(record => {
-        const product: Product = {
-          id: record.id,
-          name: record.name_en || record.name,
-          nameEn: record.name_en || record.name,
-          nameFr: record.name_fr || record.name,
-          slug: record.slug,
-          categoryId: record.category,
-          isAvailable: (record.stock_available || record.stock || 1) > 0,
-          imageUrl: record.images?.[0]
-            ? `${PB_URL}/api/files/equipment/${record.id}/${record.images[0]}`
-            : record.image
-              ? `${PB_URL}/api/files/equipment/${record.id}/${record.image}`
-              : undefined,
-          variantOptions: record.variant_options ? (
-            typeof record.variant_options === 'string'
-              ? JSON.parse(record.variant_options)
-              : record.variant_options
-          ) : undefined,
-        };
-
-        // Map Variants if expanded
-        if (record.expand?.variants && Array.isArray(record.expand.variants)) {
-          product.variants = record.expand.variants.map((v: any) => ({
-            id: v.id,
-            name: v.name_en || v.name,
-            nameEn: v.name_en || v.name,
-            nameFr: v.name_fr || v.name,
-            slug: v.slug,
-            categoryId: v.category,
-            isAvailable: true, // simplified for nested
-            imageUrl: v.images?.[0]
-              ? `${PB_URL}/api/files/equipment/${v.id}/${v.images[0]}`
-              : undefined
-          }));
-        }
-
-        return product;
-      });
+      const availableOptions: Product[] = categoryProducts.map(record => this._mapRecordToProduct(record));
 
       // Create KitItem objects for recommended products (for defaultItems/selectedItems)
       const recommendedIds = slot.recommended_ids || [];
@@ -148,15 +114,19 @@ export class CartService {
         slot_name: slot.slot_name,
       }));
 
-      resolvedSlots.push({
+      const resolvedSlot: ResolvedKitSlot = {
         slotName: slot.slot_name,
         required: false,
         allowMultiple: true,
         defaultItems,
         selectedItems: defaultItems, // Pre-select recommended
-        availableOptions,
-      });
-    }
+        availableOptions
+      };
+
+      return resolvedSlot;
+    });
+
+    const resolvedSlots = await Promise.all(slotPromises);
 
     // Sort slots by display_order
     resolvedSlots.sort((a, b) => {
@@ -169,6 +139,42 @@ export class CartService {
       template: bundleCheck.template,
       mainProduct,
       slots: resolvedSlots,
+    };
+  }
+
+  private _mapRecordToProduct(record: any): Product {
+    return {
+      id: record.id,
+      name: record.name_en || record.name,
+      nameEn: record.name_en || record.name,
+      nameFr: record.name_fr || record.name,
+      slug: record.slug,
+      categoryId: record.category,
+      isAvailable: (record.stock_available || record.stock || 1) > 0,
+      imageUrl: record.images?.[0]
+        ? `${PB_URL}/api/files/equipment/${record.id}/${record.images[0]}`
+        : record.image
+          ? `${PB_URL}/api/files/equipment/${record.id}/${record.image}`
+          : undefined,
+      variantOptions: record.variant_options ? (
+        typeof record.variant_options === 'string'
+          ? JSON.parse(record.variant_options)
+          : record.variant_options
+      ) : undefined,
+      variants: (record.expand?.variants && Array.isArray(record.expand.variants))
+        ? record.expand.variants.map((v: any) => ({
+          id: v.id,
+          name: v.name_en || v.name,
+          nameEn: v.name_en || v.name,
+          nameFr: v.name_fr || v.name,
+          slug: v.slug,
+          categoryId: v.category,
+          isAvailable: true,
+          imageUrl: v.images?.[0]
+            ? `${PB_URL}/api/files/equipment/${v.id}/${v.images[0]}`
+            : undefined
+        }))
+        : undefined
     };
   }
 

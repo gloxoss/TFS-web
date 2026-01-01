@@ -12,15 +12,17 @@ import { productService } from '@/services'
 import { ProductDetailClient } from './product-detail-client'
 
 interface ProductDetailPageProps {
-  params: Promise<{ 
+  params: Promise<{
     lng: string
-    slug: string 
+    slug: string
   }>
 }
 
 // Disable caching for dynamic product pages to ensure fresh data
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Enable ISR with 60-second revalidation
+// This allows the page to be cached but updated frequently enough for content changes
+export const revalidate = 60
+export const dynamicParams = true // Allow generating pages for unknown slugs on demand
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { lng, slug } = await params

@@ -60,7 +60,11 @@ export async function checkEmailExists(email: string): Promise<boolean> {
     }
 
     try {
-        const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+        const PB_URL_RAW = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+        if (!PB_URL_RAW && process.env.NODE_ENV === 'production') {
+            throw new Error('NEXT_PUBLIC_POCKETBASE_URL is not defined');
+        }
+        const pb = new PocketBase(PB_URL_RAW || 'http://127.0.0.1:8090')
 
         // Authenticate as superuser to query users
         // This runs server-side so we can use admin credentials

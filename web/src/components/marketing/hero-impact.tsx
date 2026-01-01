@@ -15,15 +15,7 @@ const HERO_IMAGES = [
 ];
 
 // Word Stagger Animation Variants for Headline
-const wordVariants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
-    visible: {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }
-    }
-};
+// (Removed unused wordVariants)
 
 const fadeInBlur = {
     hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
@@ -47,16 +39,15 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
     const content = homePage.heroImpact;
 
     // Velocity-Based Motion Blur (Optimized for performance)
-    // Uses lower stiffness/damping for smoother updates and reduced repaints
     const scrollVelocity = useVelocity(scrollY);
     const smoothVelocity = useSpring(scrollVelocity, {
-        damping: 80,      // Higher damping = slower response = fewer updates
-        stiffness: 200,   // Lower stiffness = smoother interpolation
-        restDelta: 0.5    // Stop animating when velocity is very low
+        damping: 80,
+        stiffness: 200,
+        restDelta: 0.5
     });
     const blurPx = useTransform(
         smoothVelocity,
-        (latest) => `blur(${Math.min(Math.abs(latest / 80), 6)}px)`  // Capped at 6px, less sensitive
+        (latest) => `blur(${Math.min(Math.abs(latest / 80), 6)}px)`
     );
 
     // Parallax Position
@@ -72,7 +63,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
     }, []);
 
     // Helper to split text into word components
-    const AnimatedText = ({ text, className, delayOffset = 0 }: { text: string, className?: string, delayOffset?: number }) => (
+    const AnimatedText = ({ text, className }: { text: string, className?: string }) => (
         <span className={className}>
             {text}
         </span>
@@ -80,30 +71,45 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
 
     return (
         <div ref={containerRef} className="relative h-[80vh] min-h-[600px] sm:min-h-[700px] lg:h-screen lg:min-h-[1100px] w-full isolation-isolate overflow-hidden font-sans selection:bg-red-600 selection:text-white">
-            {/* Background Slideshow */}
+
+            {/* LCP Optimization: Static First Image (Always rendered server-side) */}
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src={HERO_IMAGES[0]}
+                    alt="Cinema production set"
+                    fill
+                    priority
+                    loading="eager"
+                    className="object-cover"
+                    sizes="100vw"
+                    quality={90}
+                    fetchPriority="high"
+                />
+            </div>
+
+            {/* Background Slideshow (Fades in/out on top of static image) */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.div style={{ scale }} className="absolute inset-0">
-                    <AnimatePresence mode="popLayout" initial={false}>
-                        <motion.div
-                            key={currentSlide}
-                            className="absolute inset-0"
-                            initial={currentSlide === 0 ? { opacity: 1 } : { opacity: 0, scale: 1.1 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 1.5 }}
-                        >
-                            <Image
-                                src={HERO_IMAGES[currentSlide]}
-                                alt="Cinema production set"
-                                fill
-                                priority={currentSlide === 0}
-                                loading="eager"
-                                className="object-cover"
-                                sizes="100vw"
-                                quality={90}
-                                {...(currentSlide === 0 ? { fetchPriority: "high" } : {})}
-                            />
-                        </motion.div>
+                    <AnimatePresence mode="popLayout">
+                        {currentSlide > 0 && (
+                            <motion.div
+                                key={currentSlide}
+                                className="absolute inset-0"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1.5 }}
+                            >
+                                <Image
+                                    src={HERO_IMAGES[currentSlide]}
+                                    alt="Cinema production set"
+                                    fill
+                                    className="object-cover"
+                                    sizes="100vw"
+                                    quality={90}
+                                />
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                 </motion.div>
             </div>
@@ -120,8 +126,8 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                 <div className="flex flex-col items-end text-right max-w-xl">
                     {/* Headline */}
                     <h2 className="text-6xl md:text-8xl font-display font-bold text-white uppercase leading-[0.85] tracking-tight mb-6">
-                        <div className="block"><AnimatedText text={t(content.headline.line1, lng)} delayOffset={0.2} /></div>
-                        <div className="block text-white/70"><AnimatedText text={t(content.headline.line2, lng)} delayOffset={0.5} /></div>
+                        <div className="block"><AnimatedText text={t(content.headline.line1, lng)} /></div>
+                        <div className="block text-white/70"><AnimatedText text={t(content.headline.line2, lng)} /></div>
                     </h2>
 
                     {/* Description */}

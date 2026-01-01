@@ -20,7 +20,11 @@ import type {
 import type { PaginatedResult } from '@/services/products/interface'
 import { createServiceLogger } from '@/lib/logger'
 
-const POCKETBASE_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'
+const PB_URL_RAW = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+if (!PB_URL_RAW && process.env.NODE_ENV === 'production') {
+  throw new Error('NEXT_PUBLIC_POCKETBASE_URL is not defined');
+}
+const POCKETBASE_URL = PB_URL_RAW || 'http://127.0.0.1:8090';
 
 export class PocketBaseQuoteService implements IQuoteService {
   private pb: PocketBase
@@ -51,6 +55,7 @@ export class PocketBaseQuoteService implements IQuoteService {
       rentalEndDate: record.rental_end_date as string,
       projectDescription: record.project_description as string | undefined,
       specialRequests: record.special_requests as string | undefined,
+      location: record.location as string | undefined,
       status: (Array.isArray(record.status) ? record.status[0] : record.status) as QuoteStatus || 'pending',
       internalNotes: record.internal_notes as string | undefined,
       estimatedPrice: record.estimated_price as number | undefined,
@@ -101,6 +106,7 @@ export class PocketBaseQuoteService implements IQuoteService {
         rental_end_date: new Date(payload.rentalEndDate).toISOString().split('T')[0],
         project_description: payload.projectDescription || '',
         special_requests: payload.specialRequests || '',
+        location: payload.location || '',
         status: 'pending' as QuoteStatus,
         // pdf_generated: false, // Let database use default (false)
         confirmation_number: confirmationNumber,
@@ -172,7 +178,7 @@ export class PocketBaseQuoteService implements IQuoteService {
       // Use Admin Auth to fetch quote + access_token securely
       // We create a new client here to avoid messing with the injected client's auth state
       // if it happens to be a user client.
-      const adminPb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+      const adminPb = new PocketBase(POCKETBASE_URL)
       await adminPb.collection('_superusers').authWithPassword(
         process.env.POCKETBASE_ADMIN_EMAIL || '',
         process.env.POCKETBASE_ADMIN_PASSWORD || ''

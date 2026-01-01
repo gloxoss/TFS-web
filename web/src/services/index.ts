@@ -68,6 +68,18 @@ export function getQuoteService(pbClient: PocketBase): IQuoteService {
 // Default instances (for convenience in server components)
 // ============================================================================
 
+// Helper to get safe PB URL
+const getPbUrl = () => {
+  const url = process.env.NEXT_PUBLIC_POCKETBASE_URL
+  if (!url) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('NEXT_PUBLIC_POCKETBASE_URL is not defined')
+    }
+    return 'http://127.0.0.1:8090'
+  }
+  return url
+}
+
 /**
  * Gets a product service instance.
  * Creates a fresh instance for each call to avoid stale connection issues
@@ -75,7 +87,7 @@ export function getQuoteService(pbClient: PocketBase): IQuoteService {
  */
 export function productService(): IProductService {
   // Create a fresh PocketBase client (anonymous - products are public)
-  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090')
+  const pb = new PocketBase(getPbUrl())
   return new PocketBaseProductService(pb)
 }
 
