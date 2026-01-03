@@ -738,10 +738,13 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
               <motion.div variants={fadeInBlur} className="lg:col-span-2 flex justify-center">
                 <div className="relative inline-block rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                   {product.imageUrl ? (
-                    <img
+                    <Image
                       src={product.imageUrl}
                       alt={product.name}
+                      width={500}
+                      height={400}
                       className="block h-auto max-h-[400px] max-w-full object-contain"
+                      sizes="(max-width: 768px) 100vw, 500px"
                     />
                   ) : (
                     <div className="w-64 h-64 flex items-center justify-center">
@@ -1342,10 +1345,13 @@ export function ProductDetailClient({ product, lng }: ProductDetailClientProps) 
             <motion.div variants={fadeInBlur} className="flex justify-center">
               <div className="relative w-fit h-fit rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                 {product.imageUrl ? (
-                  <img
+                  <Image
                     src={product.imageUrl}
                     alt={product.name}
+                    width={600}
+                    height={500}
                     className="block max-h-[500px] max-w-full object-contain"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                 ) : (
                   <div className="w-64 h-64 flex items-center justify-center">

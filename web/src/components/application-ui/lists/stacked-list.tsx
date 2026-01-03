@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface ListItem {
@@ -51,7 +52,7 @@ export default function StackedList({ items = defaultItems, className }: Stacked
       {items.map((person) => (
         <li key={person.id} className="flex justify-between gap-x-6 py-5">
           <div className="flex min-w-0 gap-x-4">
-            <img alt="" src={person.imageUrl} className="size-12 flex-none rounded-full bg-gray-800" />
+            <Image alt="" src={person.imageUrl} width={48} height={48} className="size-12 flex-none rounded-full bg-gray-800" sizes="48px" />
             <div className="min-w-0 flex-auto">
               <p className="text-sm/6 font-semibold text-white">{person.name}</p>
               <p className="mt-1 truncate text-xs/5 text-gray-400">{person.email}</p>

@@ -43,6 +43,7 @@ export default function CategorySection({ title, subtitle, items }: CategorySect
                                     "object-cover absolute inset-0 z-0 transition-transform duration-700",
                                     hoveredIndex === index ? "scale-110 blur-[1px]" : "grayscale scale-100"
                                 )}
+                                sizes="(max-width: 768px) 100vw, 50vw"
                             />
                             <div className={cn("absolute inset-0 bg-black/40 z-10 transition-opacity duration-500", hoveredIndex === index ? "opacity-60" : "opacity-30")} />
 

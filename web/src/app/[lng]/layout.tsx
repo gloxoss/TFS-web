@@ -47,11 +47,13 @@ import { ENABLE_CLIENT_PORTAL } from "@/lib/config";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const cormorant = Cormorant_Garamond({

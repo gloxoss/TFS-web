@@ -64,6 +64,7 @@ export default function BentoFeatures({ title, subtitle, description, items }: B
                                             alt=""
                                             fill
                                             className="object-cover -z-10 transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-40"
+                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         />
                                         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/50 to-transparent" />
                                     </>

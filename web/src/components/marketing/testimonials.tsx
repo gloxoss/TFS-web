@@ -58,6 +58,7 @@ export default function Testimonials({ testimonials = defaultTestimonials, class
                                     height={48}
                                     className="h-12 w-auto self-start"
                                     loading="lazy"
+                                    sizes="120px"
                                 />
                             )}
                             <figure className="mt-10 flex flex-auto flex-col justify-between">
@@ -72,6 +73,7 @@ export default function Testimonials({ testimonials = defaultTestimonials, class
                                         height={56}
                                         className="size-14 rounded-full bg-gray-800"
                                         loading="lazy"
+                                        sizes="56px"
                                     />
                                     <div className="text-base">
                                         <div className="font-semibold text-white">{testimonial.author.name}</div>
