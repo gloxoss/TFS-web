@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false, // IP Protection: Disable source maps in production
-  transpilePackages: ["three", "three-globe"],
   images: {
     // Disable optimization in development to avoid "resolved to private ip" errors with 127.0.0.1
     unoptimized: process.env.NODE_ENV === 'development',
@@ -15,7 +14,7 @@ const nextConfig: NextConfig = {
       {
         protocol: 'http',
         hostname: '72.62.27.47',
-        port: '8090',
+        port: '8091',
       },
       {
         protocol: 'http',
@@ -41,6 +40,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  output: 'standalone',
+  // ...other config
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',

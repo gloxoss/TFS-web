@@ -47,12 +47,14 @@ export default function CategorySection({ title, subtitle, items }: CategorySect
                             />
                             <div className={cn("absolute inset-0 bg-black/40 z-10 transition-opacity duration-500", hoveredIndex === index ? "opacity-60" : "opacity-30")} />
 
-                            {/* Evervault Effect Overlay (Only on hover) */}
+                            {/* Evervault Effect Overlay (Only on hover, disabled on mobile) */}
+                            {/* Performance Optimization: Conditional rendering prevents 7500+ char generation on load */}
                             <div className={cn(
-                                "absolute inset-0 z-20 opacity-0 transition-opacity duration-300 pointer-events-none mix-blend-screen",
-                                hoveredIndex === index ? "opacity-100" : ""
+                                "absolute inset-0 z-20 pointer-events-none mix-blend-screen hidden md:block", // Hidden on mobile
+                                "transition-opacity duration-300",
+                                hoveredIndex === index ? "opacity-100" : "opacity-0"
                             )}>
-                                <EvervaultCard className="w-full h-full" />
+                                {hoveredIndex === index && <EvervaultCard className="w-full h-full" />}
                             </div>
 
                             {/* Corner Icons (Decorative) */}
