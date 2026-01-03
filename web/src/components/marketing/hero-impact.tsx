@@ -1,28 +1,29 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence, useSpring, useVelocity } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { homePage, t } from "@/data/site-content";
 
-// TFS Cinema Rental Hero Images - Local optimized images
+// TFS Cinema Rental Hero Images - Only use optimized WebP for performance
+// Note: Other images are 4MB+ and kill LCP. Disabled until compressed.
 const HERO_IMAGES = [
-    "/images/hero/localize-uu-YGo9YVDw-unsplash-1-scaled.webp", // Already optimized webp
-    "/images/hero/20221115_124804.jpg", // Cinema gear shot
-    "/images/hero/xrabat-wall-sl.jpg.pagespeed.ic.16lhC1-Jv2.jpg", // Rabat wall shot
+    "/images/hero/localize-uu-YGo9YVDw-unsplash-1-scaled.webp", // Already optimized webp (225KB)
+    // "/images/hero/20221115_124804.jpg", // DISABLED: 4MB - needs compression
+    // "/images/hero/xrabat-wall-sl.jpg.pagespeed.ic.16lhC1-Jv2.jpg", // DISABLED: 1.2MB - needs compression
 ];
 
 // Word Stagger Animation Variants for Headline
 // (Removed unused wordVariants)
 
-const fadeInBlur = {
-    hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
+// Animation variant - opacity only (no blur filter to avoid forced reflows)
+const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
         opacity: 1,
         y: 0,
-        filter: "blur(0px)",
         transition: { duration: 0.8 }
     }
 };
@@ -38,19 +39,7 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
 
     const content = homePage.heroImpact;
 
-    // Velocity-Based Motion Blur (Optimized for performance)
-    const scrollVelocity = useVelocity(scrollY);
-    const smoothVelocity = useSpring(scrollVelocity, {
-        damping: 80,
-        stiffness: 200,
-        restDelta: 0.5
-    });
-    const blurPx = useTransform(
-        smoothVelocity,
-        (latest) => `blur(${Math.min(Math.abs(latest / 80), 6)}px)`
-    );
-
-    // Parallax Position
+    // Parallax Position (removed velocity blur - causes forced reflows)
     const scale = useTransform(scrollY, [0, 1000], [1, 1.2]);
     const xLeft = useTransform(scrollY, [0, 800], [0, -250]);
     const xRight = useTransform(scrollY, [0, 800], [0, 250]);
@@ -132,14 +121,14 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
 
                     {/* Description */}
                     <motion.p
-                        initial="hidden" animate="visible" variants={fadeInBlur} transition={{ delay: 0.8 }}
+                        initial="hidden" animate="visible" variants={fadeIn} transition={{ delay: 0.8 }}
                         className="text-gray-300 text-lg leading-relaxed mb-8 max-w-sm"
                     >
                         {t(content.description, lng)}
                     </motion.p>
 
                     {/* Button */}
-                    <motion.div initial="hidden" animate="visible" variants={fadeInBlur} transition={{ delay: 1.1 }}>
+                    <motion.div initial="hidden" animate="visible" variants={fadeIn} transition={{ delay: 1.1 }}>
                         <Link
                             href={`/${lng}${content.cta.href}`}
                             className="group flex items-center gap-3 bg-[#D00000] text-white px-8 py-4 rounded-full font-bold uppercase tracking-wide transition-all hover:bg-[#A00000] hover:scale-105"
@@ -157,8 +146,8 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase will-change-[transform,filter]"
-                    style={{ x: xLeft, filter: blurPx, transform: 'translate3d(0,0,0)' }}
+                    className="font-display font-bold text-[15vw] leading-[0.85] text-center tracking-tight uppercase will-change-transform"
+                    style={{ x: xLeft, transform: 'translate3d(0,0,0)' }}
                 >
                     {t(content.megaText.line1, lng)}
                 </motion.h1>
@@ -167,8 +156,8 @@ export default function HeroImpact({ lng = 'en' }: HeroImpactProps) {
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 1.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw] will-change-[transform,filter]"
-                    style={{ x: xRight, filter: blurPx, transform: 'translate3d(0,0,0)' }}
+                    className="font-display font-bold text-[15vw] leading-[0.75] text-center tracking-tight uppercase mt-[1vw] will-change-transform"
+                    style={{ x: xRight, transform: 'translate3d(0,0,0)' }}
                 >
                     {t(content.megaText.line2, lng)}
                 </motion.h1>
